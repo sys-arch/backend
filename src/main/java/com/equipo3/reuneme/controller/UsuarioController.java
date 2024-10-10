@@ -59,5 +59,11 @@ public class UsuarioController {
 		Empleado emp = new Empleado();
 		this.userservice.registrar(emp);
 	}
+	
+	@Autowired
+	@PutMapping("/delete")
+	public void delete (@RequestBody String email) {
+		this.userservice.delete(email);
+	}
 
 }

@@ -83,5 +83,15 @@ public class UsuarioService {
         this.empdao.save(user);
     }
 
+	public void delete(String email) {
+		Usuario u = this.userdao.findByEmail(email);
+		if (Objects.isNull(u)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error al borrar el usuario");
+		}
+		
+		userdao.delete(u);
+		
+	}
+
 
 }
