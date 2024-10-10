@@ -36,7 +36,7 @@ public class UsuarioController {
 			resultado.put("activo", this.userservice.findActivo(info));
 			return resultado;
 		}catch(Exception e) {
-			throw new ResponseStatusException (HttpStatus.CONFLICT);
+			throw new ResponseStatusException (HttpStatus.CONFLICT, "Error al procesar el login");
 		}
 		
 	}
@@ -59,5 +59,16 @@ public class UsuarioController {
 		Empleado emp = new Empleado();
 		this.userservice.registrar(emp);
 	}
+	
+	@Autowired
+	@PutMapping("/delete")
+	public void delete (@RequestBody String email) {
+		this.userservice.delete(email);
+	}
 
+	@Autowired
+	@PutMapping("/block")
+	public void delete (@RequestBody Map<String, Object>info) {
+		this.userservice.bloquear(info);
+	}
 }

@@ -83,5 +83,39 @@ public class UsuarioService {
         this.empdao.save(user);
     }
 
+	@Autowired
+	public void delete(String email) {
+		Usuario u = this.userdao.findByEmail(email);
+		if (Objects.isNull(u)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error al borrar el usuario");
+		}
+		
+		userdao.delete(u);
+		
+	}
+	
+	@Autowired
+	public void bloquear(Map<String, Object>info) {
+		String email = info.get("email").toString();
+		Boolean bloqueado = Boolean.parseBoolean(info.get("contrasena").toString());
+		
+		Empleado e = this.empdao.findByEmail(email);
+		if (Objects.isNull(e)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario que intentas borrar");
+		} else {
+			if(e.isBloqueado() == bloqueado) {
+				throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El usuario ya está en el estado peticionado");
+			}
+			
+			delete(email);
+			
+			e.setBloqueado(bloqueado);
+			empdao.save(e);
+		}
+		
+		
+		
+	}
+
 
 }
