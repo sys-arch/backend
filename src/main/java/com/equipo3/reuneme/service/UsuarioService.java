@@ -93,8 +93,8 @@ public class UsuarioService {
 		userdao.delete(u);
 		
 	}
-	
-	@Autowired
+
+  @Autowired
 	public void bloquear(Map<String, Object>info) {
 		String email = info.get("email").toString();
 		Boolean bloqueado = Boolean.parseBoolean(info.get("contrasena").toString());
