@@ -26,7 +26,7 @@ public class Empleado extends Usuario {
 	private boolean verificado;
 
 	@Column
-	private Ausencia ausencia;
+	//private Ausencia ausencia;
 	
 	public String getDepartamento() {
 		return departamento;
@@ -58,11 +58,11 @@ public class Empleado extends Usuario {
 	public void setVerificado(boolean verificado) {
 		this.verificado = verificado;
 	}
-	public Ausencia getAusencia() {
-		return ausencia;
-	}
-	public void setAusencia(Ausencia ausencia) {
-		this.ausencia = ausencia;
-	}	
+//	public Ausencia getAusencia() {
+//		return ausencia;
+//	}
+//	public void setAusencia(Ausencia ausencia) {
+//		this.ausencia = ausencia;
+//	}	
 
 }
