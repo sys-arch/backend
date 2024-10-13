@@ -82,6 +82,17 @@ public class UsuarioService {
 	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
 	    this.empdao.save(user);
 	}
+	
+	public void registrarAdmin(Administrador admin) {
+		//Comprobar que no existe un usuario con este email
+		Usuario userdb = this.userdao.findByEmail(admin.getEmail());
+		if (userdb != null) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"El administrador ya existe en la base de datos");
+		}
+		//Cifrar la contraseña
+		admin.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(admin.getPwd()));
+		this.admindao.save(admin);
+	}
 
 
 	
