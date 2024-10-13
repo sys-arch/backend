@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.equipo3.reuneme.model.Empleado;
-import com.equipo3.reuneme.model.RegistroEmp;
+import com.equipo3.reuneme.model.Administrador;
+import com.equipo3.reuneme.model.RegistroAdmin;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("admins")
 @CrossOrigin("*")
-public class UsuarioController {
+public class AdminController {
 
     @Autowired
     UsuarioService userservice;
@@ -27,7 +27,7 @@ public class UsuarioController {
 
     // Registro de Usuario normal a.k.a Empleado
     @PostMapping("/register")
-    public void register(@RequestBody RegistroEmp re) {
+    public void registerAdmin(@RequestBody RegistroAdmin re) {
         // Comprobamos que la contraseña cumple requisitos de seguridad y ambas contraseñas son iguales
         re.comprobarPwd();
 
@@ -37,19 +37,17 @@ public class UsuarioController {
         }
 
         // Si pasa los controles, se registra en BD
-        Empleado emp = new Empleado();
-        emp.setEmail(re.getEmail());
-        emp.setPwd(re.getPwd1()); // Asignar la contraseña validada
-        emp.setNombre(re.getNombre());
-        emp.setApellido1(re.getApellido1());
-        emp.setApellido2(re.getApellido2());
-        emp.setCentro(re.getCentro());
-        emp.setDepartamento(re.getDepartamento());
-        emp.setPerfil(re.getPerfil());
-        emp.setFechaalta(re.getFechaalta());
-        emp.setBloqueado(re.isBloqueado());
-        emp.setVerificado(re.isVerificado());
-
-        this.userservice.registrar(emp);
+        Administrador admin = new Administrador();
+        admin.setEmail(re.getEmail());
+        admin.setPwd(re.getPwd1());
+        admin.setNombre(re.getNombre());
+        admin.setApellido1(re.getApellido1());
+        admin.setApellido2(re.getApellido2());
+        admin.setCentro(re.getCentro());
+        admin.setInterno(re.isInterno());
+        
+        this.userservice.registrarAdmin(admin);
     }
 }
+        
+        

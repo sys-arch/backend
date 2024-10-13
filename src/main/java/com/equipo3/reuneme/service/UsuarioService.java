@@ -19,13 +19,15 @@ import com.equipo3.reuneme.model.Usuario;
 
 @Service
 public class UsuarioService {
-	
+	@Autowired
 	protected UsuarioDAO userdao;
+	@Autowired
 	protected EmpleadoDAO empdao;
+	@Autowired
 	protected AdministradorDAO admindao;
+	@Autowired
 	protected TokenService tokenService;
 	
-	@Autowired
 	public String login(Map<String, Object> info) {
 		String email = info.get("email").toString();
 		String password = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("contrasena").toString());
@@ -63,27 +65,37 @@ public class UsuarioService {
 		
 	}
 	
-	@Autowired
 	public String findActivo(Map<String, Object> info) {
 		Empleado e = this.empdao.findByEmail(info.get("email").toString());
 		return String.valueOf(e.isBloqueado());
 	}
 	
-	@Autowired
+	
 	public void registrar(Empleado user) {
-    	
-    	//Antes de registar, comprobamos que usuario existe
-        Empleado userdb = this.empdao.findByEmailAndPwd(user.getEmail(), user.getPwd());
-        if (userdb == null) {
-        	throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No se ha podido registrar el usuario");
-        }
-        
-        //Como no existe, pwd se hashea a SHA512. se guarda y se mete el usuario en BD
-        user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
-        this.empdao.save(user);
-    }
+	    // Comprobamos que el usuario no existe en la base de datos por email
+	    Empleado userdb = this.empdao.findByEmail(user.getEmail());
+	    if (userdb != null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El usuario ya existe en la base de datos.");
+	    }
+	    
+	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
+	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
+	    this.empdao.save(user);
+	}
+	
+	public void registrarAdmin(Administrador admin) {
+		//Comprobar que no existe un usuario con este email
+		Usuario userdb = this.userdao.findByEmail(admin.getEmail());
+		if (userdb != null) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"El administrador ya existe en la base de datos");
+		}
+		//Cifrar la contraseña
+		admin.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(admin.getPwd()));
+		this.admindao.save(admin);
+	}
 
-	@Autowired
+
+	
 	public void delete(String email) {
 		Usuario u = this.userdao.findByEmail(email);
 		if (Objects.isNull(u)) {
@@ -94,7 +106,6 @@ public class UsuarioService {
 		
 	}
 
-  @Autowired
 	public void bloquear(Map<String, Object>info) {
 		String email = info.get("email").toString();
 		Boolean bloqueado = Boolean.parseBoolean(info.get("contrasena").toString());

@@ -13,13 +13,13 @@ import com.equipo3.reuneme.service.TokenService;
 @RequestMapping("tokens")
 @CrossOrigin("*")
 public class TokenController {
-	
-	private TokenService tokenService;
-	
-	@Autowired
-	@GetMapping("/validarToken")  //?idToken=
-	public void validarToken(@RequestParam String idToken) {
-		this.tokenService.validarToken(idToken);
-	}
 
+    // Inyección correcta de dependencia con @Autowired
+    @Autowired
+    private TokenService tokenService;
+
+    @GetMapping("/validarToken")  //?idToken=valor
+    public void validarToken(@RequestParam(name = "idToken", required = true) String idToken) {
+        this.tokenService.validarToken(idToken);
+    }
 }
