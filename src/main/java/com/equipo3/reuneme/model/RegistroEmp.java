@@ -9,7 +9,6 @@ public class RegistroEmp extends RegistroDatos {
 	private String perfil;
 	private boolean bloqueado;
 	private boolean verificado;
-	private Ausencia ausencia;
 	
 	public String getDepartamento() {
 		return departamento;
@@ -41,12 +40,5 @@ public class RegistroEmp extends RegistroDatos {
 	public void setVerificado(boolean verificado) {
 		this.verificado = verificado;
 	}
-	public Ausencia getAusencia() {
-		return ausencia;
-	}
-	public void setAusencia(Ausencia ausencia) {
-		this.ausencia = ausencia;
-	}
-	
 	
 }

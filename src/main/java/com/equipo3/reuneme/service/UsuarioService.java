@@ -71,17 +71,28 @@ public class UsuarioService {
 	
 	@Autowired
 	public void registrar(Empleado user) {
-    	
-    	//Antes de registar, comprobamos que usuario existe
-        Empleado userdb = this.empdao.findByEmailAndPwd(user.getEmail(), user.getPwd());
-        if (userdb == null) {
-        	throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No se ha podido registrar el usuario");
-        }
-        
-        //Como no existe, pwd se hashea a SHA512. se guarda y se mete el usuario en BD
-        user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
-        this.empdao.save(user);
-    }
+	    // Comprobamos que el usuario no existe en la base de datos por email
+	    Empleado userdb = this.empdao.findByEmail(user.getEmail());
+	    if (userdb != null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El usuario ya existe en la base de datos.");
+	    }
+	    
+	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
+	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
+	    this.empdao.save(user);
+	}
+	
+	@Autowired
+	public void registrarAdmin(Administrador admin) {
+		//Comprobar que no existe un usuario con este email
+		Usuario userdb = this.userdao.findByEmail(admin.getEmail());
+		if (userdb != null) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"El administrador ya existe en la base de datos");
+		}
+		//Cifrar la contraseña
+		admin.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(admin.getPwd()));
+		this.admindao.save(admin);
+	}
 
 	@Autowired
 	public void delete(String email) {
@@ -93,23 +104,26 @@ public class UsuarioService {
 		userdao.delete(u);
 		
 	}
-	
+
 	@Autowired
 	public void bloquear(Map<String, Object>info) {
 		String email = info.get("email").toString();
 		Boolean bloqueado = Boolean.parseBoolean(info.get("contrasena").toString());
+		Boolean estado;
 		
 		Empleado e = this.empdao.findByEmail(email);
 		if (Objects.isNull(e)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario que intentas borrar");
 		} else {
-			if(e.isBloqueado() == bloqueado) {
+			estado = e.isBloqueado();
+			if(Boolean.compare(estado, bloqueado) == 0) {
 				throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El usuario ya está en el estado peticionado");
 			}
 			
 			delete(email);
 			
 			e.setBloqueado(bloqueado);
+			
 			empdao.save(e);
 		}
 		
