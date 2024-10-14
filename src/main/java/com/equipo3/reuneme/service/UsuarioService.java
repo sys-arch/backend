@@ -1,5 +1,6 @@
 package com.equipo3.reuneme.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -122,10 +123,12 @@ public class UsuarioService {
 			
 			e.setBloqueado(bloqueado);
 			empdao.save(e);
-		}
+		}		
 		
-		
-		
+	}
+
+	public List<Empleado> getEmpleados() {
+		return this.empdao.findAll();
 	}
 
 
