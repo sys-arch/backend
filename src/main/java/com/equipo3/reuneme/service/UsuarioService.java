@@ -29,40 +29,31 @@ public class UsuarioService {
 	@Autowired
 	protected TokenService tokenService;
 	
-	public String login(Map<String, Object> info) {
-		String email = info.get("email").toString();
-		String password = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("contrasena").toString());
+	public String login(String email, String pwd) {
 		
 		//¿Existe el usuario?
 		Usuario u = this.userdao.findByEmail(email);
 		if (Objects.isNull(u)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Las credenciales son incorrectas.");
-		} else {
-			//¿La contraseña es correcta?
-			if(u.getPwd().compareTo(password) != 0) {
-				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Estas credenciales son incorrectas.");
-			}
-			
-			String pretoken;
-			String idToken  = UUID.randomUUID().toString();
-			Token token;
-			
-			Empleado e = this.empdao.findByEmail(email);
-			Administrador a = this.admindao.findByEmail(email);
-			
-			if(Objects.isNull(e)) {
-				//Si Empleado es null entonces es que es Administrador
-				pretoken = "a-";
-				token = new Token(idToken, a);
-				//se devuelve prefijo + token para identificar tipo
-				return pretoken + this.tokenService.generarToken(token);
-			} else {
-				pretoken = "e-";
-				token = new Token(idToken, e);
-				return pretoken + this.tokenService.generarToken(token);
-			}
-			
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
+					"El usuario no existe o las credenciales son incorrectas.");
 		}
+		
+		//¿La contraseña es correcta?
+		if(!u.getPwd().equals(pwd)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciales inválidas.");
+		}
+			
+		String pretoken;
+		String idToken  = UUID.randomUUID().toString();
+		Token token = new Token(idToken, u);
+		
+		if (u instanceof Administrador) {
+			pretoken = "a-";
+			return pretoken + this.tokenService.generarToken(token);
+        } else {
+			pretoken = "e-";
+			return pretoken + this.tokenService.generarToken(token);
+        }
 		
 	}
 	
@@ -103,8 +94,12 @@ public class UsuarioService {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error al borrar el usuario");
 		}
 		
-		userdao.delete(u);
-		
+		if (u instanceof Empleado) {
+			empdao.deleteById(u.getId());
+		} else {
+			admindao.deleteById(u.getId());
+		}
+
 	}
 
 	public void bloquear(Map<String, Object>info) {
