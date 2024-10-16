@@ -2,7 +2,7 @@ package com.equipo3.reuneme.model;
 
 public class Token {
 	
-	private final static int DURACION = 900000;
+	private static final int DURACION = 900000;
 	private String id;
 	private Usuario usuario;
 	private long horaFin;
@@ -14,11 +14,6 @@ public class Token {
 		
 	}
 	
-	public String getId() {
-		return id;
-
-	}
-	
 	public boolean caducado() {
 		return System.currentTimeMillis()> this.horaFin;
 	}
@@ -26,6 +21,34 @@ public class Token {
 	public void incrementarTiempo() {
 		this.horaFin = System.currentTimeMillis() + DURACION;
 		
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public long getHoraFin() {
+		return horaFin;
+	}
+
+	public void setHoraFin(long horaFin) {
+		this.horaFin = horaFin;
+	}
+
+	public static int getDuracion() {
+		return DURACION;
 	}
 
 }

@@ -32,7 +32,7 @@ public class AdminController {
     
     @Autowired
     PasswordService pwdservice;
-    
+
     @Autowired
     AdminService adminservice;
 

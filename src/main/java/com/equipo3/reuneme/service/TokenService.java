@@ -1,4 +1,4 @@
-package com.equipo3.reuneme.services;
+package com.equipo3.reuneme.service;
 
 
 import java.util.HashMap;
