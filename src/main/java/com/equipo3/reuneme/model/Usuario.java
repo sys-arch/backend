@@ -1,60 +1,50 @@
 package com.equipo3.reuneme.model;
 
 import java.util.UUID;
-import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import jakarta.persistence.Index;
 
-@Entity 
-@Table(name = "users", indexes = {
-	@Index(columnList = "email", unique = true),
-	@Index(columnList = "pwd")
-})
-
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "Usuarios", indexes = {
+		@Index(columnList = "email", unique = true),
+		@Index(columnList = "pwd")
+	})
 public class Usuario {
 	
 	@Id @Column(length = 36)
 	private String id;
-	@Column(length = 100, nullable = false)
+	
+	@Column(length = 254, nullable = false)
 	private String email;
-	@Column(length = 100, nullable = false)
+	
+	@Column(length = 128, nullable = false)
 	private String pwd;
+	
 	@Column(length = 100, nullable = false)
 	private String nombre;
+	
 	@Column(length = 100, nullable = false)
 	private String apellido1;
+	
 	@Column(length = 100, nullable = false)
 	private String apellido2;
-	@Column(length = 50)
-	private String departamento;
-	@Column(length = 50, nullable = false)
+	
+	@Column(length = 100)
 	private String centro;
-	@Column(length = 100, nullable = false)
-	private LocalDate fechaalta;
-	@Column(length = 250)
-	private String perfil;
-	@Column
-	protected boolean desactivado;
 	
-	public Usuario(/*DatosRegistro datos*/) {
-		this.id = UUID.randomUUID().toString();
-		/*this.email = datos.getEmail();
-		this.pwd = datos.getPwd1();
-		this.nombre = datos.getNombre();
-		this.apellido1 = datos.getApellido1();
-		this.apellido2 = datos.getApellido2();
-		this.departamento = datos.getDepartamento();
-		this.centro = datos.getCentro();
-		this.fechaalta = datos.getFechaalta();
-		this.perfil = datos.getPerfil();*/
-	}
-	
+    public Usuario() {
+        this.id = UUID.randomUUID().toString();
+    }
+
 	public String getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(String id) {
@@ -101,43 +91,12 @@ public class Usuario {
 		this.apellido2 = apellido2;
 	}
 
-	public String getDepartamento() {
-		return departamento;
-	}
-
-	public void setDepartamento(String departamento) {
-		this.departamento = departamento;
-	}
-
 	public String getCentro() {
 		return centro;
 	}
 
 	public void setCentro(String centro) {
 		this.centro = centro;
-	}
-
-	public LocalDate getFechaalta() {
-		return fechaalta;
-	}
-
-	public void setFechaalta(LocalDate fechaalta) {
-		this.fechaalta = fechaalta;
-	}
-
-	public String getPerfil() {
-		return perfil;
-	}
-
-	public void setPerfil(String perfil) {
-		this.perfil = perfil;
-	}
-	
-	public void setDesactivado(boolean desactivado) {
-		this.desactivado = desactivado;
-	}
-	public boolean getDesactivado() {
-		return desactivado;
 	}
 
 }

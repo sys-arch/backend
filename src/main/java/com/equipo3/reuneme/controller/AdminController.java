@@ -32,7 +32,7 @@ public class AdminController {
     
     @Autowired
     PasswordService pwdservice;
-    
+  
     @Autowired
     AdminService adminservice;
 
@@ -80,7 +80,6 @@ public class AdminController {
     		throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al modifficar el empleado.");
     	}
 	}
-    
 }
         
         

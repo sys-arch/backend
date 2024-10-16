@@ -7,21 +7,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.equipo3.reuneme.services.TokenService;
+import com.equipo3.reuneme.service.TokenService;
 
 @RestController
 @RequestMapping("tokens")
 @CrossOrigin("*")
 public class TokenController {
-	
-	@Autowired
-	private TokenService tokenService;
-	
-	
-	
-	@GetMapping("/validarToken")  //?idToken=
-	public void validarToken(@RequestParam String idToken) {
-		this.tokenService.validarToken(idToken);
-	}
 
+    // Inyección correcta de dependencia con @Autowired
+    @Autowired
+    private TokenService tokenService;
+
+    @GetMapping("/validarToken")  //?idToken=valor
+    public void validarToken(@RequestParam(name = "idToken", required = true) String idToken) {
+        this.tokenService.validarToken(idToken);
+    }
 }
