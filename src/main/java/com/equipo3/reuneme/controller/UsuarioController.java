@@ -1,6 +1,10 @@
 package com.equipo3.reuneme.controller;
 
+<<<<<<< Updated upstream
 import java.util.HashMap;
+=======
+import java.util.List;
+>>>>>>> Stashed changes
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
