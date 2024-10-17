@@ -5,13 +5,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.equipo3.reuneme.model.Administrador;
+import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroAdmin;
+import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
@@ -29,6 +32,9 @@ public class AdminController {
     
     @Autowired
     PasswordService pwdservice;
+
+    @Autowired
+    AdminService adminservice;
 
     // Registro de Usuario normal a.k.a Empleado
     @PostMapping("/register")
@@ -65,6 +71,15 @@ public class AdminController {
         
         this.userservice.registrarAdmin(admin);
     }
+    
+    @PutMapping("/modificarEmpleado")
+    public void modificarEmpleado(@RequestBody Empleado empleadoActualizado) {
+    	try {
+    		adminservice.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado);
+    	} catch (Exception e) {
+    		throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al modifficar el empleado.");
+    	}
+	}
     
 }
         
