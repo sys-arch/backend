@@ -1,6 +1,7 @@
 package com.equipo3.reuneme.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -95,5 +96,10 @@ public class UsuarioController {
     @GetMapping("/getempleados")
     public List<Empleado> getEmpleados () {
     	return this.userservice.getEmpleados();
+    }
+    
+    @PutMapping("/getempleado")
+    public Empleado getEmpleado (@RequestBody String email) {
+    	return this.userservice.getEmpleado(email);
     }
 }

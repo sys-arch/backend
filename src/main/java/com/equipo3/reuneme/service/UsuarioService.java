@@ -123,7 +123,17 @@ public class UsuarioService {
 	}
 
 	public List<Empleado> getEmpleados() {
-		return this.empdao.findAll();
+		List<Empleado> lista = this.empdao.findAll();
+		
+		if(lista.isEmpty() || Objects.isNull(lista)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No hay empleados registrados");
+		}
+		
+		return lista;
+	}
+
+	public Empleado getEmpleado(String email) {
+		return this.empdao.findByEmail(email);
 	}
 
 
