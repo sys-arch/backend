@@ -57,6 +57,7 @@ public class UsuarioService {
 		
 	}
 	
+	
 	public String findActivo(Map<String, Object> info) {
 		Empleado e = this.empdao.findByEmail(info.get("email").toString());
 		return String.valueOf(e.isBloqueado());

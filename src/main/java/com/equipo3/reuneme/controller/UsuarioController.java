@@ -21,9 +21,10 @@ import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
 
+import java.util.Map;
 @RestController
 @RequestMapping("users")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired
@@ -32,8 +33,16 @@ public class UsuarioController {
     @Autowired
     EmailService emailservice;
     
+
+    @PostMapping("/login")
+    public String login(@RequestBody Map<String, Object> userInfo) {
+        // Llamamos al servicio para validar las credenciales y generar el token
+        return userservice.login(userInfo);
+    }
+
     @Autowired
     PasswordService pwdservice;
+
 
     // Registro de Usuario normal a.k.a Empleado
     @PostMapping("/register")
