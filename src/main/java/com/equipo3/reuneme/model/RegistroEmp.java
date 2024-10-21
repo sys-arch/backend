@@ -20,6 +20,7 @@ public class RegistroEmp extends RegistroDatos {
 	public void setDepartamento(String departamento) {
 		this.departamento = departamento;
 	}
+	
 	public LocalDate getFechaalta() {
 		return fechaalta;
 	}
