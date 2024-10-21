@@ -59,24 +59,4 @@ public class RegistroDatos {
 		this.centro = centro;
 	}
 	
-	public void comprobarPwd() {
-		if(!pwd1.equals(pwd2)) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Las contraseñas no coinciden");
-		}
-		if (pwd1.length()<8) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Las contraseña tiene que tener 8 o más caracteres");
-		}
-		
-        // Expresión regular para validar la contraseña
-        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
-
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(pwd1);
-        if(!matcher.matches()) {
-        	throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Las contraseña no cumple con los requisitos de seguridad: "
-        			+ "tener 1 mayuscula, 1 minuscula y 1 caracter especial");
-        }
-	}
-	
-	
 }
