@@ -42,6 +42,14 @@ public class UsuarioService {
 		if(!u.getPwd().equals(pwd)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciales inválidas.");
 		}
+		
+		if(u instanceof Empleado) {
+			Empleado e = this.empdao.findByEmail(u.getEmail());
+			
+			if(e.isBloqueado()) {
+				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario bloqueado");
+			}
+		}
 			
 		String pretoken;
 		String idToken  = UUID.randomUUID().toString();
@@ -56,7 +64,6 @@ public class UsuarioService {
         }
 		
 	}
-	
 	
 	public String findActivo(Map<String, Object> info) {
 		Empleado e = this.empdao.findByEmail(info.get("email").toString());
@@ -134,7 +141,27 @@ public class UsuarioService {
 	}
 
 	public Empleado getEmpleado(String email) {
-		return this.empdao.findByEmail(email);
+		
+		Empleado e = this.empdao.findByEmail(email);
+		
+		if (Objects.isNull(e)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario");
+		}
+		
+		return e;
+	}
+	
+	public void actualizar(Empleado e) {
+		
+		Empleado emp = this.empdao.findByEmail(e.getEmail());
+		if (Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario que intentas borrar");
+		}
+			
+		delete(emp.getEmail());
+			
+		this.empdao.save(emp);		
+		
 	}
 
 

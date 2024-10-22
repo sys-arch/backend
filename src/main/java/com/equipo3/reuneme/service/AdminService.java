@@ -14,12 +14,12 @@ import com.equipo3.reuneme.model.Empleado;
 public class AdminService {
 	
 	@Autowired
-	private EmpleadoDAO empleadoDAO;
+	private EmpleadoDAO empdao;
 
 	public void actualizarEmpleado(String email, Empleado empleadoActualizado) {
-		Empleado empleadoExistente = this.empleadoDAO.findByEmail(email);
+		Empleado empleadoExistente = this.empdao.findByEmail(email);
 		if(Objects.isNull(empleadoExistente)) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No exisate el empleado seleccionado");
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
 		}
 		
 		empleadoExistente.setNombre(empleadoActualizado.getNombre());
@@ -31,8 +31,48 @@ public class AdminService {
         empleadoExistente.setBloqueado(empleadoActualizado.isBloqueado());
         empleadoExistente.setVerificado(empleadoActualizado.isVerificado());
         
-        this.empleadoDAO.save(empleadoExistente);
+        this.empdao.save(empleadoExistente);
 
+	}
+
+	public void verificarEmpleado(String email) {
+		Empleado emp = this.empdao.findByEmail(email);
+		
+		if(Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
+		}
+		
+		if(emp.isVerificado()) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El empleado ya está verificado");
+		}
+		
+		this.empdao.deleteById(emp.getId());
+		
+		emp.setVerificado(true);
+		emp.setBloqueado(false);
+		
+		this.empdao.save(emp);
+		
+	}
+
+	public void desbloquearEmpleado(String email) {
+		Empleado emp = this.empdao.findByEmail(email);
+		
+		if(Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
+		}
+		
+		if(!emp.isBloqueado()) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El empleado ya está desbloqueado");
+		}
+		
+		this.empdao.deleteById(emp.getId());
+		
+		emp.setVerificado(true);
+		emp.setBloqueado(false);
+		
+		this.empdao.save(emp);
+		
 	}
 
 }

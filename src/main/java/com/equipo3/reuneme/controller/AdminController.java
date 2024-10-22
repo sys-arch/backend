@@ -1,8 +1,12 @@
 package com.equipo3.reuneme.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +23,8 @@ import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
-@RequestMapping("admins")
-@CrossOrigin("*")
+@RequestMapping("admin")
+@CrossOrigin(origins="*")
 public class AdminController {
 
     @Autowired
@@ -35,7 +39,7 @@ public class AdminController {
     @Autowired
     AdminService adminservice;
 
-    // Registro de Usuario normal a.k.a Empleado
+    // Registro de Administrador
     @PostMapping("/register")
     public void registerAdmin(@RequestBody RegistroAdmin re) {
         // Comprobamos que ambas contraseñas son iguales
@@ -76,9 +80,46 @@ public class AdminController {
     	try {
     		adminservice.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado);
     	} catch (Exception e) {
-    		throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al modifficar el empleado.");
+    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
     	}
 	}
+    
+    @PutMapping("/verificarEmpleado")
+    public void verificarEmpleado(@RequestBody String email) {
+    	
+    	if (!this.emailservice.validarEmail(email)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un buen formato");
+    	}
+    	
+    	this.adminservice.verificarEmpleado(email);
+	}
+    
+    @PutMapping("/desbloquearEmpleado")
+    public void desbloquearEmpleado(@RequestBody String email) {
+    	
+    	if (!this.emailservice.validarEmail(email)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un buen formato");
+    	}
+    	
+    	this.adminservice.desbloquearEmpleado(email);
+	}
+    
+	//Borrado cualquier usuario (Emp o Adm)
+	@DeleteMapping("/borrar")
+	public void delete(@RequestBody String email) {
+		this.userservice.delete(email);
+	}
+  
+    //Obtencion de todos los usuarios Empleados
+    @GetMapping("/verEmpleados")
+    public List<Empleado> verEmpleados () {
+    	return this.userservice.getEmpleados();
+    }
+    
+    @PutMapping("/verEmpleado")
+    public Empleado verEmpleado (@RequestBody String email) {
+    	return this.userservice.getEmpleado(email);
+    }
     
 }
         

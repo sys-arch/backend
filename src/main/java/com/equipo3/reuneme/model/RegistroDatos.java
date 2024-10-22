@@ -1,11 +1,5 @@
 package com.equipo3.reuneme.model;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
 public class RegistroDatos {
 	
 	private String email;

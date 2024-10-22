@@ -1,13 +1,10 @@
 package com.equipo3.reuneme.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,10 +18,9 @@ import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
 
-import java.util.Map;
 @RestController
-@RequestMapping("users")
-@CrossOrigin(origins = "*")
+@RequestMapping("")
+@CrossOrigin(origins="*")
 public class UsuarioController {
 
     @Autowired
@@ -33,18 +29,10 @@ public class UsuarioController {
     @Autowired
     EmailService emailservice;
     
-
-    @PostMapping("/login")
-    public String login(@RequestBody Map<String, Object> userInfo) {
-        // Llamamos al servicio para validar las credenciales y generar el token
-        return userservice.login(userInfo);
-    }
-
     @Autowired
     PasswordService pwdservice;
 
-
-    // Registro de Usuario normal a.k.a Empleado
+    // Registro de Empleados - acceso libre
     @PostMapping("/register")
     public void register(@RequestBody RegistroEmp re) {
         // Comprobamos que ambas contraseñas son iguales
@@ -94,21 +82,4 @@ public class UsuarioController {
 		return this.userservice.login(email, pwd);
 		
 	}
-	
-	//Borrado cualquier usuario (Emp o Adm)
-	@DeleteMapping("/delete")
-	public void delete(@RequestBody String email) {
-		this.userservice.delete(email);
-	}
-  
-    //Obtencion de todos los usuarios Empleados
-    @GetMapping("/getempleados")
-    public List<Empleado> getEmpleados () {
-    	return this.userservice.getEmpleados();
-    }
-    
-    @PutMapping("/getempleado")
-    public Empleado getEmpleado (@RequestBody String email) {
-    	return this.userservice.getEmpleado(email);
-    }
 }
