@@ -11,7 +11,7 @@ import com.equipo3.reuneme.service.TokenService;
 
 @RestController
 @RequestMapping("tokens")
-@CrossOrigin("*")
+@CrossOrigin(origins="*")
 public class TokenController {
 
     // Inyección correcta de dependencia con @Autowired
