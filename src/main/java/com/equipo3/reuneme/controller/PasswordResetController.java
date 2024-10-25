@@ -2,12 +2,14 @@ package com.equipo3.reuneme.controller;
 
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.model.PasswordResetToken;
-import com.equipo3.reuneme.model.RegistroDatos; 
 import com.equipo3.reuneme.service.PasswordResetTokenService;
+import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,9 @@ public class PasswordResetController {
     
     @Autowired
     private EmailService emailService;
+    
+    @Autowired
+    private PasswordService passwordService;
 
     // Endpoint para solicitar el token de recuperación de contraseña
     @PostMapping("/forgot")
@@ -33,7 +38,7 @@ public class PasswordResetController {
    	
     	//Verificar el email correctamente
         // Comprobamos que el email tiene un formato válido
-        if (!eservice.validarEmail(email)) {
+        if (!emailService.validarEmail(email)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
             		+ "usuario@dominio.com");
         }
@@ -90,20 +95,20 @@ public class PasswordResetController {
         String newPassword = request.get("newPassword");
         String confirmPassword = request.get("confirmPassword");
 
-        // Validación de la contraseña con los requisitos de seguridad
-        RegistroDatos datos = new RegistroDatos();
-        datos.setPwd1(newPassword);
-        datos.setPwd2(confirmPassword);
-        try {
-            datos.comprobarPwd();  // Verifica que las contraseñas cumplan los requisitos
+        // Validación de la contraseña
+        if (!passwordService.isSamePwd(newPassword, confirmPassword)) {
+            return ResponseEntity.badRequest().body("Las contraseñas no coinciden.");
+        }
+        if (!passwordService.isValid(newPassword)) {
+            return ResponseEntity.badRequest().body("La contraseña no cumple los requisitos de seguridad.");
+        }
 
-            // Si pasa la validación, restablece la contraseña en la base de datos
-            tokenService.resetPassword(token, newPassword);
+        try {
+            tokenService.resetPassword(token, newPassword); // Restablece la contraseña si es válida
             return ResponseEntity.ok("¡Contraseña restablecida con éxito!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
-
 
