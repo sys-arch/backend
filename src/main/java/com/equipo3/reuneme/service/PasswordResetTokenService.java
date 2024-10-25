@@ -17,27 +17,32 @@ import java.util.UUID;
 public class PasswordResetTokenService {
 
     @Autowired
-    private PasswordResetTokenRepository tokenRepository;
-    
+
+    private PasswordResetTokenDAO tokenrepo;
+
     @Autowired
     private UsuarioDAO usuarioDAO;
+
 
     // Generar un token seguro para la recuperación de contraseña
     public String createPasswordResetToken(String email) {
         // Eliminar cualquier token previo asociado al mismo email
-        tokenRepository.deleteByEmail(email);
+
+        tokenrepo.deleteByEmail(email);
 
         // Generar un nuevo token
         String token = UUID.randomUUID().toString();
         PasswordResetToken resetToken = new PasswordResetToken(token, email);
         
         // Guardar el token en la base de datos
-        tokenRepository.save(resetToken);
+
+        tokenrepo.save(resetToken);
 
         return token;
     }
+
     public boolean resetPassword(String token, String newPassword) {
-        Optional<PasswordResetToken> resetToken = tokenRepository.findByToken(token);
+        Optional<PasswordResetToken> resetToken = tokenrepo.findByToken(token);
         
         if (resetToken.isEmpty() || resetToken.get().isExpired()) {
             throw new IllegalArgumentException("Token inválido o caducado.");
@@ -56,7 +61,7 @@ public class PasswordResetTokenService {
         usuarioDAO.save(usuario);
 
         // Eliminar el token una vez utilizado
-        tokenRepository.deleteByToken(token);
+        tokenrepo.deleteByToken(token);
 
         return true;
     }
@@ -68,7 +73,8 @@ public class PasswordResetTokenService {
 
     // Validar si el token es válido (existe y no ha expirado)
     public Optional<PasswordResetToken> validatePasswordResetToken(String token) {
-        Optional<PasswordResetToken> resetTokenOpt = tokenRepository.findByToken(token);
+        Optional<PasswordResetToken> resetTokenOpt = tokenrepo.findByToken(token);
+
         
         // Comprobar si el token existe y no ha caducado
         if (resetTokenOpt.isPresent() && !resetTokenOpt.get().isExpired()) {
@@ -80,6 +86,8 @@ public class PasswordResetTokenService {
 
     // Eliminar un token después de usarlo o si ha caducado
     public void deleteToken(String token) {
-        tokenRepository.deleteByToken(token);
+
+        tokenrepo.deleteByToken(token);
     }
 }
+

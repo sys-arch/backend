@@ -60,3 +60,4 @@ public class PasswordResetToken {
         this.expirationTime = expirationTime;
     }
 }
+

@@ -30,9 +30,18 @@ public class PasswordResetController {
     // Endpoint para solicitar el token de recuperación de contraseña
     @PostMapping("/forgot")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+   	
+    	//Verificar el email correctamente
+        // Comprobamos que el email tiene un formato válido
+        if (!eservice.validarEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
+            		+ "usuario@dominio.com");
+        }
+    	
         // Verificar que el usuario con ese email existe
-        if (usuarioService.findByEmail(email) == null) {
-            return ResponseEntity.badRequest().body("No existe ningún usuario con ese email.");
+        if (usuarioService.getEmpleado(email) == null) {
+            return ResponseEntity.badRequest().body("No se ha podido realizar la petición");
+
         }
 
         // Generar el token de recuperación
@@ -48,10 +57,12 @@ public class PasswordResetController {
         emailService.enviarEmail(email, asunto, mensaje);
 
         return ResponseEntity.ok("Se ha enviado un enlace para recuperar la contraseña a tu email. Token: "+token);
+
     }
 
     // Endpoint para validar el token cuando el usuario hace clic en el enlace de recuperación
     @GetMapping("/reset")
+
     public ResponseEntity<Map<String, String>> validateResetToken(@RequestParam String token) {
         Optional<PasswordResetToken> resetToken = tokenService.validatePasswordResetToken(token);
 
@@ -94,4 +105,5 @@ public class PasswordResetController {
         }
     }
 }
+
 

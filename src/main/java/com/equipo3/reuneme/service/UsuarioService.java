@@ -1,5 +1,6 @@
 package com.equipo3.reuneme.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -28,43 +29,41 @@ public class UsuarioService {
 	@Autowired
 	protected TokenService tokenService;
 	
-	public String login(Map<String, Object> info) {
-		String email = info.get("email").toString();
-		String password = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("contrasena").toString());
+	public String login(String email, String pwd) {
 		
 		//¿Existe el usuario?
 		Usuario u = this.userdao.findByEmail(email);
 		if (Objects.isNull(u)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Las credenciales son incorrectas.");
-		} else {
-			//¿La contraseña es correcta?
-			if(u.getPwd().compareTo(password) != 0) {
-				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Estas credenciales son incorrectas.");
-			}
-			
-			String pretoken;
-			String idToken  = UUID.randomUUID().toString();
-			Token token;
-			
-			Empleado e = this.empdao.findByEmail(email);
-			Administrador a = this.admindao.findByEmail(email);
-			
-			if(Objects.isNull(e)) {
-				//Si Empleado es null entonces es que es Administrador
-				pretoken = "a-";
-				token = new Token(idToken, a);
-				//se devuelve prefijo + token para identificar tipo
-				return pretoken + this.tokenService.generarToken(token);
-			} else {
-				pretoken = "e-";
-				token = new Token(idToken, e);
-				return pretoken + this.tokenService.generarToken(token);
-			}
-			
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
+					"El usuario no existe o las credenciales son incorrectas.");
 		}
 		
+		//¿La contraseña es correcta?
+		if(!u.getPwd().equals(pwd)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciales inválidas.");
+		}
+		
+		if(u instanceof Empleado) {
+			Empleado e = this.empdao.findByEmail(u.getEmail());
+			
+			if(e.isBloqueado()) {
+				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario bloqueado");
+			}
+		}
+			
+		String pretoken;
+		String idToken  = UUID.randomUUID().toString();
+		Token token = new Token(idToken, u);
+		
+		if (u instanceof Administrador) {
+			pretoken = "a-";
+			return pretoken + this.tokenService.generarToken(token);
+        } else {
+			pretoken = "e-";
+			return pretoken + this.tokenService.generarToken(token);
+        }
+		
 	}
-	
 	
 	public String findActivo(Map<String, Object> info) {
 		Empleado e = this.empdao.findByEmail(info.get("email").toString());
@@ -110,8 +109,12 @@ public class UsuarioService {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error al borrar el usuario");
 		}
 		
-		userdao.delete(u);
-		
+		if (u instanceof Empleado) {
+			empdao.deleteById(u.getId());
+		} else {
+			admindao.deleteById(u.getId());
+		}
+
 	}
 
 	public void bloquear(Map<String, Object>info) {
@@ -130,8 +133,43 @@ public class UsuarioService {
 			
 			e.setBloqueado(bloqueado);
 			empdao.save(e);
+		}		
+		
+	}
+
+	public List<Empleado> getEmpleados() {
+		List<Empleado> lista = this.empdao.findAll();
+		
+		if(lista.isEmpty() || Objects.isNull(lista)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No hay empleados registrados");
 		}
 		
+		return lista;
+	}
+
+	public Empleado getEmpleado(String email) {
+		
+		Empleado e = this.empdao.findByEmail(email);
+		
+		if (Objects.isNull(e)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario");
+		}
+		
+		return e;
+	}
+	
+	public void actualizar(Empleado e) {
+		
+		Empleado emp = this.empdao.findByEmail(e.getEmail());
+		if (Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario que intentas borrar");
+		}
+			
+		delete(emp.getEmail());
+			
+		this.empdao.save(emp);		
+		
+
 	}
 	
 
