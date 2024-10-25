@@ -79,7 +79,7 @@ public class UsuarioService {
 	    }
 	    
 //	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
-//	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
+	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
 	    this.empdao.save(user);
 	}
 	public Usuario findByEmail(String email) {

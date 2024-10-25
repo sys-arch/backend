@@ -23,7 +23,7 @@ import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
-@RequestMapping("admin")
+@RequestMapping("/admins")
 @CrossOrigin(origins="*")
 public class AdminController {
 

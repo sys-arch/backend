@@ -1,6 +1,6 @@
 package com.equipo3.reuneme.service;
 
-import com.equipo3.reuneme.dao.PasswordResetTokenRepository;
+import com.equipo3.reuneme.dao.PasswordResetTokenDAO;
 import com.equipo3.reuneme.dao.UsuarioDAO;
 import com.equipo3.reuneme.model.PasswordResetToken;
 import com.equipo3.reuneme.model.Usuario;

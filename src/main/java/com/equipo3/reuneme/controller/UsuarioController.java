@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +20,7 @@ import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/users")
 @CrossOrigin(origins="*")
 public class UsuarioController {
 
@@ -82,4 +83,10 @@ public class UsuarioController {
 		return this.userservice.login(email, pwd);
 		
 	}
+	
+	@DeleteMapping("/delete")
+    public void deleteUser(@RequestBody Map<String, Object> info) {
+        String email = info.get("email").toString();
+        this.userservice.delete(email);
+    }
 }
