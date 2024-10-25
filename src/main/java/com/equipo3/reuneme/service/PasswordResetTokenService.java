@@ -1,11 +1,16 @@
 package com.equipo3.reuneme.service;
 
 import com.equipo3.reuneme.dao.PasswordResetTokenRepository;
+import com.equipo3.reuneme.dao.UsuarioDAO;
 import com.equipo3.reuneme.model.PasswordResetToken;
+import com.equipo3.reuneme.model.Usuario;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.Optional;
+
 import java.util.UUID;
 
 @Service
@@ -13,6 +18,9 @@ public class PasswordResetTokenService {
 
     @Autowired
     private PasswordResetTokenRepository tokenRepository;
+    
+    @Autowired
+    private UsuarioDAO usuarioDAO;
 
     // Generar un token seguro para la recuperación de contraseña
     public String createPasswordResetToken(String email) {
@@ -27,6 +35,35 @@ public class PasswordResetTokenService {
         tokenRepository.save(resetToken);
 
         return token;
+    }
+    public boolean resetPassword(String token, String newPassword) {
+        Optional<PasswordResetToken> resetToken = tokenRepository.findByToken(token);
+        
+        if (resetToken.isEmpty() || resetToken.get().isExpired()) {
+            throw new IllegalArgumentException("Token inválido o caducado.");
+        }
+
+        // Obtener el email asociado al token
+        String email = resetToken.get().getEmail();
+        Usuario usuario = usuarioDAO.findByEmail(email);
+
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+
+        // Encriptar la nueva contraseña usando SHA-512
+        usuario.setPwd(hashPassword(newPassword));
+        usuarioDAO.save(usuario);
+
+        // Eliminar el token una vez utilizado
+        tokenRepository.deleteByToken(token);
+
+        return true;
+    }
+
+    // Método para encriptar la contraseña usando SHA-512
+    private String hashPassword(String password) {
+        return DigestUtils.sha512Hex(password);
     }
 
     // Validar si el token es válido (existe y no ha expirado)

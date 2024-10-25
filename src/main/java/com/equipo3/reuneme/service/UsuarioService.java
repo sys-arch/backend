@@ -79,8 +79,8 @@ public class UsuarioService {
 	        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El usuario ya existe en la base de datos.");
 	    }
 	    
-	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
-	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
+//	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
+//	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
 	    this.empdao.save(user);
 	}
 	public Usuario findByEmail(String email) {
@@ -132,9 +132,8 @@ public class UsuarioService {
 			empdao.save(e);
 		}
 		
-		
-		
 	}
+	
 
 
 }
