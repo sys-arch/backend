@@ -78,11 +78,18 @@ public class UsuarioService {
 	        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El usuario ya existe en la base de datos.");
 	    }
 	    
-	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
-	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
+//	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
+//	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
 	    this.empdao.save(user);
 	}
-	
+	public Usuario findByEmail(String email) {
+        Usuario usuario = userdao.findByEmail(email);
+        if (usuario == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+        }
+        return usuario;
+    }
+
 	public void registrarAdmin(Administrador admin) {
 		//Comprobar que no existe un usuario con este email
 		Usuario userdb = this.userdao.findByEmail(admin.getEmail());
@@ -162,7 +169,9 @@ public class UsuarioService {
 			
 		this.empdao.save(emp);		
 		
+
 	}
+	
 
 
 }
