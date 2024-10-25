@@ -20,7 +20,7 @@ public class EmailService {
 
     public void enviarEmail(String email, String asunto, String mensaje) {
         CreateEmailOptions params = CreateEmailOptions.builder()
-                .from("ReuneMe <noreply@dev.swey.net>")
+        		.from("ReuneMe <noreply@mail.swey.net>")
                 .to(email)
                 .subject(asunto)
                 .html(mensaje)
