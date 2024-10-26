@@ -35,5 +35,13 @@ private Map<String,Token>tokens = new HashMap<>();
 	public void eliminarToken(String idToken) {
 		this.tokens.remove(idToken);
 	}
+	
+	public String obtenerEmail(String idToken) {
+        Token token = this.tokens.get(idToken);
+        if (token == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Token no encontrado");
+        }
+        return token.getEmail();
+    }
 
 }
