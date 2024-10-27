@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.ArrayList;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -171,6 +173,64 @@ public class UsuarioService {
 		
 
 	}
+	public Usuario getUserInfo(String email, String token) {
+	    // Determinar el tipo de usuario basándose en el prefijo del token
+	    boolean isEmpleado;
+
+	    if (token.startsWith("e-")) {
+	        isEmpleado = true;
+	        token = token.substring(2); // Remover el prefijo "e-"
+	    } else if (token.startsWith("a-")) {
+	        isEmpleado = false;
+	        token = token.substring(2); // Remover el prefijo "a-"
+	    } else {
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Token no válido.");
+	    }
+
+	    // Validar el token sin comparar el email
+	    if (!tokenService.isTokenValid(token)) {
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token inválido o no autorizado.");
+	    }
+
+	    // Si es un empleado, verificar que solo acceda a su propia información
+	    if (isEmpleado) {
+	        Token storedToken = tokenService.obtenerToken(token);
+	        if (storedToken == null || !storedToken.getEmail().equals(email)) {
+	            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado. Un empleado solo puede acceder a su propia información.");
+	        }
+	    }
+
+	    // Buscar al usuario en la base de datos (puede ser empleado o administrador)
+	    Usuario usuario = userdao.findByEmail(email);
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+	    
+	    return usuario;
+	}
+	public List<String> getAllEmails(String token) {
+	    // Verificar que el token pertenece a un administrador
+	    if (!token.startsWith("a-")) {
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado. Solo administradores pueden acceder a esta información.");
+	    }
+	    token = token.substring(2); // Remover el prefijo "a-"
+
+	    // Validar el token
+	    if (!tokenService.isTokenValid(token)) {
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token inválido o no autorizado.");
+	    }
+
+	    // Obtener emails de todos los usuarios (empleados y administradores)
+	    List<String> emails = new ArrayList<>();
+	    emails.addAll(userdao.findAllEmails()); // Todos los emails de la tabla usuarios
+	    return emails;
+	}
+
+
+
+
+
+
 	
 
 

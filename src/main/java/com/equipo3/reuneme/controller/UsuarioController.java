@@ -1,6 +1,7 @@
 package com.equipo3.reuneme.controller;
 
 import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,12 +13,17 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroEmp;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
+import com.equipo3.reuneme.model.Usuario;
+
 
 @RestController
 @RequestMapping("/users")
@@ -89,4 +95,17 @@ public class UsuarioController {
         String email = info.get("email").toString();
         this.userservice.delete(email);
     }
+	@GetMapping("/info")
+    public Usuario getUserInfo(
+        @RequestParam String email,
+        @RequestHeader("Authorization") String token
+    ) {
+        return this.userservice.getUserInfo(email, token);
+    }
+	
+	@GetMapping("/emails")
+    public List<String> getAllEmails(@RequestHeader("Authorization") String token) {
+        return this.userservice.getAllEmails(token);
+    }
 }
+
