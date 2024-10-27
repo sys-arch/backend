@@ -53,7 +53,7 @@ public class UsuarioService {
 			
 		String pretoken;
 		String idToken  = UUID.randomUUID().toString();
-		Token token = new Token(idToken, u);
+		Token token = new Token(idToken, u, u.getEmail());
 		
 		if (u instanceof Administrador) {
 			pretoken = "a-";

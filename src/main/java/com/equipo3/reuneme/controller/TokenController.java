@@ -22,4 +22,9 @@ public class TokenController {
     public void validarToken(@RequestParam(name = "idToken", required = true) String idToken) {
         this.tokenService.validarToken(idToken);
     }
+    
+    @GetMapping("/obtenerEmail")  // ?idToken=valor
+    public String obtenerEmail(@RequestParam(name = "idToken", required = true) String idToken) {
+        return this.tokenService.obtenerEmail(idToken);
+    }
 }
