@@ -16,9 +16,11 @@ public class TokenService {
 private Map<String,Token>tokens = new HashMap<>();
 	
 	public String generarToken(Token token) {
-		this.tokens.put(token.getId(), token);
-		return token.getId();
+	    this.tokens.put(token.getId(), token);
+	    System.out.println("Token generado y almacenado: " + token.getId());
+	    return token.getId();
 	}
+
 	
 	public void validarToken(String idToken) {
 		Token token = this.tokens.get(idToken);
@@ -31,6 +33,29 @@ private Map<String,Token>tokens = new HashMap<>();
 		}
 		token.incrementarTiempo();
 	}
+	public Token obtenerToken(String idToken) {
+	    return this.tokens.get(idToken);
+	}
+
+	
+	public boolean isTokenValid(String idToken) {
+	    Token token = this.tokens.get(idToken);
+	    if (token == null) {
+	        System.out.println("Token no encontrado: " + idToken);
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Token no válido o inexistente.");
+	    }
+	    if (token.caducado()) {
+	        this.tokens.remove(idToken);
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "El token ha expirado.");
+	    }
+	    System.out.println("Token encontrado y válido: " + idToken);
+	    return true;
+	}
+
+
+
+
+
 	
 	public void eliminarToken(String idToken) {
 		this.tokens.remove(idToken);
