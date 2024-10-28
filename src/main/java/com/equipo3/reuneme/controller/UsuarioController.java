@@ -107,5 +107,19 @@ public class UsuarioController {
     public List<String> getAllEmails(@RequestHeader("Authorization") String token) {
         return this.userservice.getAllEmails(token);
     }
+	
+	@PutMapping("/block")
+	public void blockUser(@RequestBody Map<String, Object> info) {
+	    userservice.bloquear(info); 
+	}
+	
+	@PutMapping("/verify")
+	public void verifyUser(@RequestBody Map<String, Object> info) {
+	    String email = info.get("email").toString();
+	    boolean verificado = Boolean.parseBoolean(info.get("verificado").toString());
+	    this.userservice.verifyUser(email, verificado);
+	}
+
+
 }
 

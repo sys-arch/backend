@@ -121,7 +121,7 @@ public class UsuarioService {
 
 	public void bloquear(Map<String, Object>info) {
 		String email = info.get("email").toString();
-		Boolean bloqueado = Boolean.parseBoolean(info.get("contrasena").toString());
+		Boolean bloqueado = Boolean.parseBoolean(info.get("bloquear").toString());
 		
 		Empleado e = this.empdao.findByEmail(email);
 		if (Objects.isNull(e)) {
@@ -225,6 +225,16 @@ public class UsuarioService {
 	    emails.addAll(userdao.findAllEmails()); // Todos los emails de la tabla usuarios
 	    return emails;
 	}
+	public void verifyUser(String email, boolean verificado) {
+	    Empleado empleado = this.empdao.findByEmail(email);
+	    if (empleado == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+	    empleado.setVerificado(verificado);
+	    empdao.save(empleado);
+	}
+
+	
 
 
 
