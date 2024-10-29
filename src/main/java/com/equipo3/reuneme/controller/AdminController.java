@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,6 +21,7 @@ import com.equipo3.reuneme.model.Administrador;
 import com.equipo3.reuneme.model.Ausencia;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroAdmin;
+import com.equipo3.reuneme.model.Usuario;
 import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
@@ -186,7 +188,12 @@ public class AdminController {
 		
 	    adminservice.anadirAusencias(email, ausencia); 
 	}
-
+	
+	@GetMapping("/all")
+	@ResponseStatus(HttpStatus.OK)
+	public List<Usuario> verTodosLosUsuarios() {
+	    return this.adminservice.obtenerTodosLosUsuarios();
+	}
 }
         
         
