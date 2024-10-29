@@ -89,5 +89,6 @@ public class PasswordResetTokenService {
 
         tokenrepo.deleteByToken(token);
     }
+
 }
 

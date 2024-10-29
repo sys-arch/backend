@@ -2,9 +2,11 @@ package com.equipo3.reuneme.controller;
 
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.model.PasswordResetToken;
+import com.equipo3.reuneme.model.Usuario;
 import com.equipo3.reuneme.service.PasswordResetTokenService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +15,19 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
-@CrossOrigin("*")
 @RestController
-@RequestMapping("/password")
+@RequestMapping("/pwd")
+@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST})
 public class PasswordResetController {
 
     @Autowired
     private PasswordResetTokenService tokenService;
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioService uservice;
     
     @Autowired
     private EmailService emailService;
@@ -44,14 +47,17 @@ public class PasswordResetController {
         }
     	
         // Verificar que el usuario con ese email existe
-        if (usuarioService.getEmpleado(email) == null) {
-            return ResponseEntity.badRequest().body("No se ha podido realizar la petición");
+        
+        Usuario u = uservice.findByEmail(email);
+        if (Objects.isNull(u)) {
+            return ResponseEntity.badRequest().body("Empleado no existe");
 
         }
 
         // Generar el token de recuperación
         String token = tokenService.createPasswordResetToken(email);
-        String resetLink = "http://localhost:4200/reset-contrasena?token=" + token;
+        String dominio = System.getenv("APP_URL");
+        String resetLink = dominio + "/reset-password?token=" + token;
         
         String asunto = "Recuperación de contraseña de tu cuenta ReuneMe";
         String mensaje = "<p>Hola,</p>"

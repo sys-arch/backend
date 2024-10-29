@@ -1,7 +1,6 @@
 package com.equipo3.reuneme.controller;
 
 import java.util.Map;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,25 +8,21 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroEmp;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
-import com.equipo3.reuneme.model.Usuario;
 
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST})
 public class UsuarioController {
 
     @Autowired
@@ -39,7 +34,13 @@ public class UsuarioController {
     @Autowired
     PasswordService pwdservice;
 
-    // Registro de Empleados - acceso libre
+    /*
+     * 
+     */
+    
+    /////////////////////////////
+    //REGISTRO EMPLEADOS
+    ////////////////////////////
     @PostMapping("/register")
     public void register(@RequestBody RegistroEmp re) {
         // Comprobamos que ambas contraseñas son iguales
@@ -79,6 +80,9 @@ public class UsuarioController {
         this.userservice.registrar(emp);
     }
     
+    /////////////////////////////
+    //REGISTRO EMPLEADOS
+    ////////////////////////////
     //Login unico
 	@PutMapping("/login")
 	public String login (@RequestBody Map<String, Object>info) {
@@ -88,36 +92,6 @@ public class UsuarioController {
 		
 		return this.userservice.login(email, pwd);
 		
-	}
-	
-	@DeleteMapping("/delete")
-    public void deleteUser(@RequestBody Map<String, Object> info) {
-        String email = info.get("email").toString();
-        this.userservice.delete(email);
-    }
-	@GetMapping("/info")
-    public Usuario getUserInfo(
-        @RequestParam String email,
-        @RequestHeader("Authorization") String token
-    ) {
-        return this.userservice.getUserInfo(email, token);
-    }
-	
-	@GetMapping("/emails")
-    public List<String> getAllEmails(@RequestHeader("Authorization") String token) {
-        return this.userservice.getAllEmails(token);
-    }
-	
-	@PutMapping("/block")
-	public void blockUser(@RequestBody Map<String, Object> info) {
-	    userservice.bloquear(info); 
-	}
-	
-	@PutMapping("/verify")
-	public void verifyUser(@RequestBody Map<String, Object> info) {
-	    String email = info.get("email").toString();
-	    boolean verificado = Boolean.parseBoolean(info.get("verificado").toString());
-	    this.userservice.verifyUser(email, verificado);
 	}
 
 
