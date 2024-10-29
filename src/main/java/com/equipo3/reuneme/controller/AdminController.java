@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,15 +22,11 @@ import com.equipo3.reuneme.model.RegistroAdmin;
 import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
-import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
 @RequestMapping("/admins")
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST, RequestMethod.GET, RequestMethod.DELETE})
 public class AdminController {
-
-    @Autowired
-    UsuarioService userservice;
 
     @Autowired
     EmailService emailservice;
@@ -39,7 +37,9 @@ public class AdminController {
     @Autowired
     AdminService adminservice;
 
-    // Registro de Administrador
+    /*********************************
+     *REGISTRO DE ADMINISTRADOR
+     ********************************/
     @PostMapping("/register")
     public void registerAdmin(@RequestBody RegistroAdmin re) {
         // Comprobamos que ambas contraseñas son iguales
@@ -72,9 +72,12 @@ public class AdminController {
         admin.setCentro(re.getCentro());
         admin.setInterno(re.isInterno());
         
-        this.userservice.registrarAdmin(admin);
+        this.adminservice.registrarAdmin(admin);
     }
     
+    /*********************************
+     *MODIFICAR EMPLEADO
+     ********************************/
     @PutMapping("/modificarEmpleado")
     public void modificarEmpleado(@RequestBody Empleado empleadoActualizado) {
     	try {
@@ -84,6 +87,9 @@ public class AdminController {
     	}
 	}
     
+    /*********************************
+     *VERIFICAR EMPLEADO
+     ********************************/    
     @PutMapping("/verificarEmpleado")
     public void verificarEmpleado(@RequestBody String email) {
     	
@@ -94,33 +100,66 @@ public class AdminController {
     	this.adminservice.verificarEmpleado(email);
 	}
     
+    /*********************************
+     *DESBLOQUEAR EMPLEADO
+     ********************************/
     @PutMapping("/desbloquearEmpleado")
     public void desbloquearEmpleado(@RequestBody String email) {
     	
     	if (!this.emailservice.validarEmail(email)) {
-    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un buen formato");
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email es inválido");
     	}
     	
     	this.adminservice.desbloquearEmpleado(email);
 	}
     
-	//Borrado cualquier usuario (Emp o Adm)
-	@DeleteMapping("/borrar")
+    /*********************************
+     *BORRAR EMPLEADO
+     ********************************/
+	@DeleteMapping("/borrarEmpleado")
 	public void delete(@RequestBody String email) {
-		this.userservice.delete(email);
+		
+    	if (!this.emailservice.validarEmail(email)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email es incorrecto");
+    	}
+    	
+		this.adminservice.delete(email);
 	}
   
-    //Obtencion de todos los usuarios Empleados
-    @GetMapping("/verEmpleados")
+    /*********************************
+     *OBTENER LISTA DE EMPLEADOS
+     ********************************/
+    @GetMapping("/listaEmpleados")
     public List<Empleado> verEmpleados () {
-    	return this.userservice.getEmpleados();
+    	return this.adminservice.getEmpleados();
     }
     
-    @PutMapping("/verEmpleado")
-    public Empleado verEmpleado (@RequestBody String email) {
-    	return this.userservice.getEmpleado(email);
+    /*********************************
+     *OBTENER EMPLEADO
+     ********************************/
+    @PutMapping("/obtenerEmpleado")
+    public Empleado verEmpleado (@RequestParam String email) {
+    	
+    	if (!this.emailservice.validarEmail(email)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un formato adecuado");
+    	}
+    	
+    	return this.adminservice.getEmpleado(email);
     }
     
+    /*********************************
+     *BLOQUEAR EMPLEADO
+     ********************************/
+	@PutMapping("/bloquearEmpleado")
+	public void blockUser(@RequestParam String email) {
+		
+    	if (!this.emailservice.validarEmail(email)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
+    	}
+		
+	    adminservice.bloquear(email); 
+	}
+
 }
         
         

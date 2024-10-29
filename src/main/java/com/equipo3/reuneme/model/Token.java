@@ -16,6 +16,8 @@ public class Token {
 		
 	}
 	
+	public Token () {}
+	
 	public boolean caducado() {
 		return System.currentTimeMillis()> this.horaFin;
 	}
