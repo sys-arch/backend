@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,7 +12,7 @@ import com.equipo3.reuneme.service.TokenService;
 
 @RestController
 @RequestMapping("tokens")
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*", methods= {RequestMethod.GET})
 public class TokenController {
 
     // Inyección correcta de dependencia con @Autowired

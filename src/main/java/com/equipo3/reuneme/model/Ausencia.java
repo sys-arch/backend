@@ -1,4 +1,4 @@
-package com.equipo3.reuneme.model;
+/*package com.equipo3.reuneme.model;
 
 import java.util.Date;
 
@@ -7,38 +7,41 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(name = "Ausencia", indexes = {
-		@Index(columnList = "idUsuario")
-	})
+@Table(name = "ausencias")
 public class Ausencia {
-	
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	
-    @Column(nullable = false)
+
+    @Column(name = "fecha_inicio")
+    @Temporal(TemporalType.DATE)
     private Date fechaInicio;
-    
+
+    @Column(name = "fecha_fin")
+    @Temporal(TemporalType.DATE)
+    private Date fechaFin;  
+
     @Column(nullable = false)
-    private Date fechaFin;
-    
-    @Column(length = 254, nullable = false)
     private String motivo;
     
-    @Column(length = 36, nullable = false)
-    private String idUsuario;
+    @ManyToOne
+    @JoinColumn(name = "idUsuario")
+    private Usuario usuario;
 
-    public Ausencia(Date fechaInicio, Date fechaFin, String motivo, String idUsuario) {
+    public Ausencia(Date fechaInicio, Date fechaFin, String motivo, Usuario usuario ) {
         // Validamos las fechas al crear la instancia
         validarFechas(fechaInicio, fechaFin);
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.motivo = motivo;
-        this.idUsuario = idUsuario;
+        this.usuario = usuario;
     }
 
     // Getters y setters
@@ -80,4 +83,4 @@ public class Ausencia {
             throw new IllegalArgumentException("La fecha de fin debe ser igual o posterior a la fecha de inicio y a la fecha actual.");
         }
     }
-}
+}*/
