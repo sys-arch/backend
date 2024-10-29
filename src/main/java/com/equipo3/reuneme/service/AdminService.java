@@ -207,5 +207,13 @@ public class AdminService {
 		}
 
 	}
+
+    /*********************************
+     *DEVOLVER TODOS LOS USUARIOS
+     ********************************/
+	public List<Usuario> obtenerTodosLosUsuarios() {
+		return userdao.findAll();
+
+	}
 	
 }

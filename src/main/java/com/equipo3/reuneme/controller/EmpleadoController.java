@@ -32,7 +32,7 @@ public class EmpleadoController {
 	////////////////////////////////////
 	// DEVOLVER INFORMACIÓN EMPLEADO
 	////////////////////////////////////
-	@GetMapping(value = "/verDatos")
+	@PutMapping(value = "/verDatos")
 	@ResponseStatus(HttpStatus.OK)
 	public Empleado verDatos(@RequestBody String email) {
 		
