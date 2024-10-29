@@ -1,4 +1,4 @@
-/*package com.equipo3.reuneme.model;
+package com.equipo3.reuneme.model;
 
 import java.util.Date;
 
@@ -16,7 +16,8 @@ import jakarta.persistence.TemporalType;
 @Entity
 @Table(name = "ausencias")
 public class Ausencia {
-    @Id
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -32,7 +33,7 @@ public class Ausencia {
     private String motivo;
     
     @ManyToOne
-    @JoinColumn(name = "idUsuario")
+    @JoinColumn(name = "fk_usuario", nullable = false)
     private Usuario usuario;
 
     public Ausencia(Date fechaInicio, Date fechaFin, String motivo, Usuario usuario ) {
@@ -72,6 +73,23 @@ public class Ausencia {
     public void setMotivo(String motivo) {
         this.motivo = motivo;
     }
+    
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
 
     // Método privado para validar las fechas
     private void validarFechas(Date fechaInicio, Date fechaFin) {
@@ -83,4 +101,4 @@ public class Ausencia {
             throw new IllegalArgumentException("La fecha de fin debe ser igual o posterior a la fecha de inicio y a la fecha actual.");
         }
     }
-}*/
+}
