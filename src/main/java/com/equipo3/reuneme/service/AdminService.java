@@ -1,7 +1,6 @@
 package com.equipo3.reuneme.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.equipo3.reuneme.dao.AdministradorDAO;
+import com.equipo3.reuneme.dao.AusenciaDAO;
 import com.equipo3.reuneme.dao.EmpleadoDAO;
+import com.equipo3.reuneme.dao.UsuarioDAO;
 import com.equipo3.reuneme.model.Administrador;
+import com.equipo3.reuneme.model.Ausencia;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.Usuario;
 
@@ -23,6 +25,12 @@ public class AdminService {
 	
 	@Autowired
 	private AdministradorDAO admindao;
+	
+	@Autowired
+	private UsuarioDAO userdao;
+	
+	@Autowired
+	private AusenciaDAO adao;
 	
 	/////////////////////////
 	//REGISTRO ADMINISTRADOR
@@ -165,5 +173,39 @@ public class AdminService {
 		}		
 		
 	}
+	
+	//////////////////////////
+	// CONSULTAR AUSENCIAS DE UN USUARIO
+	//////////////////////////
+	public List<Ausencia> consultarAusencias (String email) {
+		
+		Usuario u = this.userdao.findByEmail(email);
+		
+		if (Objects.isNull(u)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario que intentas consultar");
+		} else {
+			List<Ausencia> lista = this.adao.findByUsuario(u);
+			
+			return lista;
+		
+		}
 
+	}
+	
+	//////////////////////////
+	// AÑADIR AUSENCIA A UN USUARIO
+	//////////////////////////
+	public void anadirAusencias (String email, Ausencia au) {
+		
+		Usuario u = this.userdao.findByEmail(email);
+		
+		if (Objects.isNull(u)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario");
+		} else {
+			au.setUsuario(u);
+			this.adao.save(au);
+		}
+
+	}
+	
 }
