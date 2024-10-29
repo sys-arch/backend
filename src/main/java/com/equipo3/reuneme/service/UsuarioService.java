@@ -1,11 +1,8 @@
 package com.equipo3.reuneme.service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.ArrayList;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,20 +44,12 @@ public class UsuarioService {
 		if(!u.getPwd().equals(pwd)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciales inválidas.");
 		}
-		
-		Empleado e = this.empdao.findByEmail(u.getEmail());
-		
-		if(u instanceof Empleado) {
-			if(e.isBloqueado()) {
-				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario bloqueado");
-			}
-		}
 			
 		String pretoken;
 		String idToken  = UUID.randomUUID().toString();
 		Token token = new Token();
 		token.setId(idToken);
-		token.setEmail(e.getEmail());
+		token.setEmail(u.getEmail());
 		token.setUsuario(u);
 		
 		
@@ -69,6 +58,10 @@ public class UsuarioService {
 			return pretoken + this.tokenService.generarToken(token);
         } else {
 			pretoken = "e-";
+			Empleado e = this.empdao.findByEmail(email);
+			if(e.isBloqueado()) {
+				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario bloqueado");
+			}
 			return pretoken + this.tokenService.generarToken(token);
         }
 		

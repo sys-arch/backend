@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.equipo3.reuneme.model.Administrador;
+import com.equipo3.reuneme.model.Ausencia;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroAdmin;
 import com.equipo3.reuneme.service.AdminService;
@@ -158,6 +159,32 @@ public class AdminController {
     	}
 		
 	    adminservice.bloquear(email); 
+	}
+	
+    /*********************************
+     *CONSULTAR AUSENCIAS DE UN EMPLEADO
+     ********************************/
+	@PutMapping("/consultarAusencias")
+	public List<Ausencia> getAusencias(@RequestParam String email) {
+		
+    	if (!this.emailservice.validarEmail(email)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
+    	}
+		
+	    return this.adminservice.consultarAusencias(email); 
+	}
+	
+    /*********************************
+     *AÑADIR AUSENCIA
+     ********************************/
+	@PutMapping("/anadirAusencia")
+	public void anadirAusencia(@RequestParam String email, @RequestParam Ausencia ausencia) {
+		
+    	if (!this.emailservice.validarEmail(email)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
+    	}
+		
+	    adminservice.anadirAusencias(email, ausencia); 
 	}
 
 }
