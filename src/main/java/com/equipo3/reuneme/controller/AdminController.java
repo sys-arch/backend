@@ -95,15 +95,16 @@ public class AdminController {
      *VERIFICAR EMPLEADO
      ********************************/    
     @PutMapping("/verificarEmpleado")
-    public void verificarEmpleado(@RequestBody String email) {
-    	
-    	if (!this.emailservice.validarEmail(email)) {
-    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un buen formato");
-    	}
-    	
-    	this.adminservice.verificarEmpleado(email);
-	}
-    
+    public void verificarEmpleado(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+
+        if (!this.emailservice.validarEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un buen formato");
+        }
+        
+        this.adminservice.verificarEmpleado(email);
+    }
+
     /*********************************
      *BLOQUEAR/DESBLOQUEAR EMPLEADO
      ********************************/
