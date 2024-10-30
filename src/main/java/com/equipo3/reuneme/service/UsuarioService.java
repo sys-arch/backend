@@ -3,8 +3,6 @@ package com.equipo3.reuneme.service;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.List;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
