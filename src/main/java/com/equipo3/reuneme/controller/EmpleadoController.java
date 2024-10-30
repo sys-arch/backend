@@ -22,7 +22,7 @@ import com.equipo3.reuneme.service.EmpleadoService;
 
 @RestController
 @RequestMapping(value = "/empleados")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.GET})
 public class EmpleadoController {
 
 	@Autowired
