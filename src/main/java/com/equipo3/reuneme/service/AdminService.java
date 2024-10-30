@@ -94,14 +94,20 @@ public class AdminService {
 	//////////////////////////
 	// BORRAR EMPLEADO
 	//////////////////////////
-	public void delete(String email) {
-		Empleado e = this.empdao.findByEmail(email);
-		if (Objects.isNull(e)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El empleado que intenta borrar no existe");
-		}
-		
-		empdao.deleteById(e.getId());
+	public void deleteUser(String email) {
+	    Empleado empleado = this.empdao.findByEmail(email);
+	    if (empleado != null) {
+	        this.empdao.deleteById(empleado.getId());
+	        return;
+	    }
 
+	    Administrador administrador = this.admindao.findByEmail(email);
+	    if (administrador != null) {
+	        this.admindao.deleteById(administrador.getId());
+	        return;
+	    }
+
+	    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con el email especificado no existe");
 	}
 
 	//////////////////////////

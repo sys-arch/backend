@@ -120,15 +120,15 @@ public class AdminController {
     /*********************************
      *BORRAR EMPLEADO
      ********************************/
-	@DeleteMapping("/borrarEmpleado")
-	public void delete(@RequestBody String email) {
-		
-    	if (!this.emailservice.validarEmail(email)) {
-    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email es incorrecto");
-    	}
-    	
-		this.adminservice.delete(email);
-	}
+    @DeleteMapping("/borrarEmpleado")
+    public void borrarUsuario(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        if (email == null || email.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email es obligatorio");
+        }
+        
+        this.adminservice.deleteUser(email);
+    }
   
     /*********************************
      *OBTENER LISTA DE EMPLEADOS
