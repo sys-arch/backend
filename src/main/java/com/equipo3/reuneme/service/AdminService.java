@@ -67,6 +67,24 @@ public class AdminService {
         this.empdao.save(empleadoExistente);
 
 	}
+	
+	///////////////////////////
+	//ACTUALIZAR ADMINISTRADOR
+	///////////////////////////
+	public void actualizarAdmin(String email, Administrador adminActualizado) {
+		Administrador administradorExistente = this.admindao.findByEmail(email);
+		if(Objects.isNull(administradorExistente)) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado");
+		}
+		
+		administradorExistente.setNombre(adminActualizado.getNombre());
+        administradorExistente.setApellido1(adminActualizado.getApellido1());
+        administradorExistente.setApellido2(adminActualizado.getApellido2());
+        administradorExistente.setInterno(adminActualizado.isInterno());
+        
+        this.admindao.save(adminActualizado);
+
+	}
 
 	//////////////////////////
 	//VERIFICAR EMPLEADO
