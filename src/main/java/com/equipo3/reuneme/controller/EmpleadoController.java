@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.service.EmailService;
@@ -20,7 +22,7 @@ import com.equipo3.reuneme.service.EmpleadoService;
 
 @RestController
 @RequestMapping(value = "/empleados")
-@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.PUT})
+@CrossOrigin(origins = "*")
 public class EmpleadoController {
 
 	@Autowired
@@ -32,17 +34,16 @@ public class EmpleadoController {
 	////////////////////////////////////
 	// DEVOLVER INFORMACIÓN EMPLEADO
 	////////////////////////////////////
-	@PutMapping(value = "/verDatos")
+	@GetMapping(value = "/verDatos")
 	@ResponseStatus(HttpStatus.OK)
-	public Empleado verDatos(@RequestBody String email) {
-		
-        if (!emailService.validarEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
-            		+ "usuario@dominio.com");
-        }
-		
-		return this.eservice.verDatos(email);
+	public Empleado verDatos(@RequestParam String email) {
+	    if (!emailService.validarEmail(email)) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: usuario@dominio.com");
+	    }
+	    
+	    return this.eservice.verDatos(email);
 	}
+
 	
 	
 	////////////////////////////////////

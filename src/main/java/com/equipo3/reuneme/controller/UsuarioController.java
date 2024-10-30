@@ -26,7 +26,7 @@ import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST})
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired

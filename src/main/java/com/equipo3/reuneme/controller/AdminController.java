@@ -1,6 +1,7 @@
 package com.equipo3.reuneme.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -104,18 +105,17 @@ public class AdminController {
 	}
     
     /*********************************
-     *DESBLOQUEAR EMPLEADO
+     *BLOQUEAR/DESBLOQUEAR EMPLEADO
      ********************************/
-    @PutMapping("/desbloquearEmpleado")
-    public void desbloquearEmpleado(@RequestBody String email) {
-    	
-    	if (!this.emailservice.validarEmail(email)) {
-    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email es inválido");
-    	}
-    	
-    	this.adminservice.desbloquearEmpleado(email);
-	}
-    
+    @PutMapping("/cambiarEstadoBloqueo")
+    public void cambiarEstadoBloqueoEmpleado(@RequestParam String email, @RequestParam boolean bloquear) {
+        if (!this.emailservice.validarEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido: usuario@dominio.com");
+        }
+        this.adminservice.cambiarEstadoBloqueoEmpleado(email, bloquear);
+    }
+
+	    
     /*********************************
      *BORRAR EMPLEADO
      ********************************/
@@ -151,19 +151,6 @@ public class AdminController {
     }
     
     /*********************************
-     *BLOQUEAR EMPLEADO
-     ********************************/
-	@PutMapping("/bloquearEmpleado")
-	public void blockUser(@RequestParam String email) {
-		
-    	if (!this.emailservice.validarEmail(email)) {
-    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
-    	}
-		
-	    adminservice.bloquear(email); 
-	}
-	
-    /*********************************
      *CONSULTAR AUSENCIAS DE UN EMPLEADO
      ********************************/
 	@PutMapping("/consultarAusencias")
@@ -194,6 +181,19 @@ public class AdminController {
 	public List<Usuario> verTodosLosUsuarios() {
 	    return this.adminservice.obtenerTodosLosUsuarios();
 	}
+	
+	/*********************************
+	 * VER DATOS DEL ADMINISTRADOR
+	 ********************************/
+	@GetMapping("/verDatos")
+	public Administrador verDatosAdmin(@RequestParam String email) {
+	    if (!this.emailservice.validarEmail(email)) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido: usuario@dominio.com");
+	    }
+	    return this.adminservice.verDatos(email);
+	}
+
+
 }
         
         
