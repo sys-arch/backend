@@ -102,13 +102,6 @@ public class UsuarioService {
         }
         return usuario;
     }
-	/////////////////////////////////////
-	//DEVOLVER TODOS LOS USUARIOS
-	/////////////////////////////////////
-	
-	public List<Usuario> obtenerTodosLosUsuarios() {
-        return userdao.findAll();
-    }
 
 
 }

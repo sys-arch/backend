@@ -97,15 +97,6 @@ public class UsuarioController {
 		return this.userservice.login(email, pwd);
 		
 	}
-	 /////////////////////////////
-    // DEVOLVER TODOS LOS USUARIOS
-    /////////////////////////////
-    @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Usuario> verTodosLosUsuarios() {
-        return this.userservice.obtenerTodosLosUsuarios();
-    }
-
 
 }
 
