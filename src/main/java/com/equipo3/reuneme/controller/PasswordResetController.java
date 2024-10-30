@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 @RestController
 @RequestMapping("/pwd")
 @CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST})
@@ -34,6 +37,9 @@ public class PasswordResetController {
     
     @Autowired
     private PasswordService passwordService;
+    
+    @Value("${APP_URL}")
+    private String appUrl;
 
     // Endpoint para solicitar el token de recuperación de contraseña
     @PostMapping("/forgot")
@@ -56,8 +62,10 @@ public class PasswordResetController {
 
         // Generar el token de recuperación
         String token = tokenService.createPasswordResetToken(email);
-        String dominio = System.getenv("APP_URL");
-        String resetLink = dominio + "/reset-password?token=" + token;
+        String dominio = appUrl;
+        String resetLink = dominio + "/reset-contrasena?token=" + token;
+       
+        System.out.println("Link de APP_URL: " + resetLink); 
         
         String asunto = "Recuperación de contraseña de tu cuenta ReuneMe";
         String mensaje = "<p>Hola,</p>"
