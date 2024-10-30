@@ -94,38 +94,41 @@ public class AdminService {
 	//////////////////////////
 	// BORRAR EMPLEADO
 	//////////////////////////
-	public void delete(String email) {
-		Empleado e = this.empdao.findByEmail(email);
-		if (Objects.isNull(e)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El empleado que intenta borrar no existe");
-		}
-		
-		empdao.deleteById(e.getId());
+	public void deleteUser(String email) {
+	    Empleado empleado = this.empdao.findByEmail(email);
+	    if (empleado != null) {
+	        this.empdao.deleteById(empleado.getId());
+	        return;
+	    }
 
+	    Administrador administrador = this.admindao.findByEmail(email);
+	    if (administrador != null) {
+	        this.admindao.deleteById(administrador.getId());
+	        return;
+	    }
+
+	    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con el email especificado no existe");
 	}
 
 	//////////////////////////
-	// DESBLOQUEAR EMPLEADO
+	//BLOQUEAR/DESBLOQUEAR EMPLEADO
 	//////////////////////////
-	public void desbloquearEmpleado(String email) {
-		Empleado emp = this.empdao.findByEmail(email);
-		
-		if(Objects.isNull(emp)) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
-		}
-		
-		if(!emp.isBloqueado()) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El empleado ya está desbloqueado");
-		}
-		
-		this.empdao.deleteById(emp.getId());
-		
-		emp.setVerificado(true);
-		emp.setBloqueado(false);
-		
-		this.empdao.save(emp);
-		
-	}
+	public void cambiarEstadoBloqueoEmpleado(String email, boolean bloquear) {
+        Empleado empleado = this.empdao.findByEmail(email);
+
+        if (Objects.isNull(empleado)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado");
+        }
+
+        if (empleado.isBloqueado() == bloquear) {
+            String estado = bloquear ? "bloqueado" : "desbloqueado";
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El empleado ya está " + estado);
+        }
+
+        empleado.setBloqueado(bloquear);
+        this.empdao.save(empleado);
+    }
+
 	
 	//////////////////////////
 	// LISTA EMPLEADOS
@@ -154,25 +157,6 @@ public class AdminService {
 		return e;
 	}
 	
-	//////////////////////////
-	// BLOQUEAR EMPLEADO
-	//////////////////////////
-	public void bloquear(String email) {
-		
-		Empleado e = this.empdao.findByEmail(email);
-		if (Objects.isNull(e)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario que intentas borrar");
-		} else {
-			if(e.isBloqueado() == true) {
-				throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "El usuario ya está bloqueado");
-			}
-			
-			delete(email);
-			e.setBloqueado(true);
-			empdao.save(e);
-		}		
-		
-	}
 	
 	//////////////////////////
 	// CONSULTAR AUSENCIAS DE UN USUARIO
@@ -215,5 +199,17 @@ public class AdminService {
 		return userdao.findAll();
 
 	}
+	
+	//////////////////////////
+	//VER DATOS DEL ADMINISTRADOR
+	//////////////////////////
+	public Administrador verDatos(String email) {
+	Administrador administrador = this.admindao.findByEmail(email);
+	if (administrador == null) {
+	throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Administrador no encontrado");
+	}
+	return administrador;
+	}
+
 	
 }

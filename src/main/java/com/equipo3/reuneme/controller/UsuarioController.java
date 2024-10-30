@@ -1,11 +1,14 @@
 package com.equipo3.reuneme.controller;
 
 import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroEmp;
+import com.equipo3.reuneme.model.Usuario;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
@@ -22,7 +26,7 @@ import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST})
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired
@@ -93,6 +97,14 @@ public class UsuarioController {
 		return this.userservice.login(email, pwd);
 		
 	}
+	 /////////////////////////////
+    // DEVOLVER TODOS LOS USUARIOS
+    /////////////////////////////
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Usuario> verTodosLosUsuarios() {
+        return this.userservice.obtenerTodosLosUsuarios();
+    }
 
 
 }

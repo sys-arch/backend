@@ -1,6 +1,8 @@
 package com.equipo3.reuneme.service;
 
 import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,13 +13,18 @@ import com.equipo3.reuneme.model.Empleado;
 
 @Service
 public class EmpleadoService {
-	
+	@Autowired
 	private EmpleadoDAO edao;
 	
 	
 	public Empleado verDatos(String email) {
-		return this.edao.findByEmail(email);
+	    Empleado empleado = this.edao.findByEmail(email);
+	    if (empleado == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado");
+	    }
+	    return empleado;
 	}
+
 
 
 	public void actualizarPwd(String email, String pwd) {
