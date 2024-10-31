@@ -3,8 +3,6 @@ package com.equipo3.reuneme.service;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.List;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -101,13 +99,6 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
         }
         return usuario;
-    }
-	/////////////////////////////////////
-	//DEVOLVER TODOS LOS USUARIOS
-	/////////////////////////////////////
-	
-	public List<Usuario> obtenerTodosLosUsuarios() {
-        return userdao.findAll();
     }
 
 

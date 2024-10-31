@@ -2,6 +2,7 @@ package com.equipo3.reuneme.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,8 @@ import com.equipo3.reuneme.model.Administrador;
 import com.equipo3.reuneme.model.Ausencia;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroAdmin;
+import com.equipo3.reuneme.model.RegistroAusencia;
+import com.equipo3.reuneme.model.Turno;
 import com.equipo3.reuneme.model.Usuario;
 import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.EmailService;
@@ -87,7 +90,7 @@ public class AdminController {
     	try {
     		adminservice.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado);
     	} catch (Exception e) {
-    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
+    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modificar el empleado.");
     	}
 	}
     
@@ -99,7 +102,7 @@ public class AdminController {
     	try {
     		adminservice.actualizarAdmin(administradorActualizado.getEmail(), administradorActualizado);
     	} catch (Exception e) {
-    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el administrador.");
+    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modificar el administrador.");
     	}
 	}
     
@@ -180,10 +183,14 @@ public class AdminController {
      *AÑADIR AUSENCIA
      ********************************/
 	@PutMapping("/anadirAusencia")
-	public void anadirAusencia(@RequestParam String email, @RequestParam Ausencia ausencia) {
+	public void anadirAusencia(@RequestParam String email, @RequestParam RegistroAusencia ausencia) {
 		
     	if (!this.emailservice.validarEmail(email)) {
     		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
+    	}
+    	
+    	if(Objects.isNull(ausencia)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La ausencia que se intenta registrar está vacía");
     	}
 		
 	    adminservice.anadirAusencias(email, ausencia); 
@@ -204,6 +211,32 @@ public class AdminController {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido: usuario@dominio.com");
 	    }
 	    return this.adminservice.verDatos(email);
+	}
+	
+    /*********************************
+     *AÑADIR TURNO
+     ********************************/
+	@PostMapping("/anadirTurno")
+	@ResponseStatus(HttpStatus.OK)
+	public void anadirTurno( @RequestBody Turno t) {
+    	if (Objects.isNull(t)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
+    	}
+    	
+    	this.adminservice.anadirTurno(t);
+	}
+	
+    /*********************************
+     *DEVOLVER TODOS LOS TURNOS
+     ********************************/
+	@PostMapping("/turnos")
+	@ResponseStatus(HttpStatus.OK)
+	public List<Turno> turnos( @RequestBody Turno t) {
+    	if (Objects.isNull(t)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
+    	}
+    	
+    	return this.adminservice.turnos(t);
 	}
 
 
