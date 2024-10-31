@@ -87,7 +87,7 @@ public class AdminController {
     	try {
     		adminservice.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado);
     	} catch (Exception e) {
-    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
+    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modificar el empleado.");
     	}
 	}
     
@@ -99,7 +99,7 @@ public class AdminController {
     	try {
     		adminservice.actualizarAdmin(administradorActualizado.getEmail(), administradorActualizado);
     	} catch (Exception e) {
-    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el administrador.");
+    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modificar el administrador.");
     	}
 	}
     

@@ -80,9 +80,10 @@ public class AdminService {
 		administradorExistente.setNombre(adminActualizado.getNombre());
         administradorExistente.setApellido1(adminActualizado.getApellido1());
         administradorExistente.setApellido2(adminActualizado.getApellido2());
+        administradorExistente.setCentro(adminActualizado.getCentro());
         administradorExistente.setInterno(adminActualizado.isInterno());
         
-        this.admindao.save(adminActualizado);
+        this.admindao.save(administradorExistente);
 
 	}
 
