@@ -90,19 +90,7 @@ public class AdminController {
     	try {
     		adminservice.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado);
     	} catch (Exception e) {
-    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modificar el empleado.");
-    	}
-	}
-    
-    /*********************************
-     *MODIFICAR ADMINISTRADOR
-     ********************************/
-    @PutMapping("/modificarAdministrador")
-    public void modificarAdminsitrador(@RequestBody Administrador administradorActualizado) {
-    	try {
-    		adminservice.actualizarAdmin(administradorActualizado.getEmail(), administradorActualizado);
-    	} catch (Exception e) {
-    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modificar el administrador.");
+    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
     	}
 	}
     
