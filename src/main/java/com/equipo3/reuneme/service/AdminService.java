@@ -83,13 +83,13 @@ public class AdminService {
 		if(Objects.isNull(administradorExistente)) {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado");
 		}
-		
 		administradorExistente.setNombre(adminActualizado.getNombre());
         administradorExistente.setApellido1(adminActualizado.getApellido1());
         administradorExistente.setApellido2(adminActualizado.getApellido2());
         administradorExistente.setCentro(adminActualizado.getCentro());
         administradorExistente.setInterno(adminActualizado.isInterno());
-        
+        administradorExistente.setCentro(adminActualizado.getCentro());        
+
         this.admindao.save(administradorExistente);
 
 	}
