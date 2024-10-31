@@ -82,7 +82,6 @@ public class AdminService {
         administradorExistente.setInterno(adminActualizado.isInterno());
         administradorExistente.setCentro(adminActualizado.getCentro());        
         this.admindao.save(administradorExistente);
-
 	}
 
 	//////////////////////////
