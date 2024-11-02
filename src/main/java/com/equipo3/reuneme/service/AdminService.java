@@ -230,5 +230,24 @@ public class AdminService {
 	public List<Turno> turnos(Turno t) {
 		return this.tdao.findAll();
 	}
+	
+///////////////////////////
+// ACTUALIZAR ADMINISTRADOR
+///////////////////////////
+public void actualizarAdministrador(String email, Administrador administradorActualizado) {
+Administrador administradorExistente = this.admindao.findByEmail(email);
+if (Objects.isNull(administradorExistente)) {
+throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
+}
+
+administradorExistente.setNombre(administradorActualizado.getNombre());
+administradorExistente.setApellido1(administradorActualizado.getApellido1());
+administradorExistente.setApellido2(administradorActualizado.getApellido2());
+administradorExistente.setCentro(administradorActualizado.getCentro());
+administradorExistente.setInterno(administradorActualizado.isInterno());
+
+this.admindao.save(administradorExistente);
+
+}
 
 }

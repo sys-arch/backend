@@ -17,7 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.equipo3.reuneme.controller.AdminController;
 import com.equipo3.reuneme.controller.UsuarioController;
+import com.equipo3.reuneme.model.Administrador;
+import com.equipo3.reuneme.model.Empleado;
+import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.UsuarioService;
 
 @ExtendWith(SpringExtension.class)
@@ -26,9 +30,15 @@ public class AppTest {
 
     @Autowired
     private UsuarioController ucontrol;
+    
+    @Autowired
+    private AdminController adController;
 
     @MockBean
     private UsuarioService uservice;
+    
+    @MockBean
+    private AdminService adService;
 
     /*@Test
     public void testLoginBien() {
@@ -79,6 +89,96 @@ public class AppTest {
         // Capturamos la excepción esperada
         assertThrows(ResponseStatusException.class, () -> {
             ucontrol.login(loginInfo);
+        });
+    }*/
+    
+    /************ TESTS PARA MODIFICAR EMPLEADO ************/
+
+    /*@Test
+    public void testModificarEmpleadoExito() {
+        Empleado empleadoActualizado = new Empleado();
+        empleadoActualizado.setEmail("empleado@example.com");
+        empleadoActualizado.setNombre("Nuevo Nombre");
+
+        // Simulamos que el servicio actualiza correctamente
+        when(adService.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado)).thenReturn(empleadoActualizado);
+
+        // No esperamos excepción en este caso exitoso
+        adController.modificarEmpleado(empleadoActualizado);
+    }
+
+    @Test
+    public void testModificarEmpleadoNoExistente() {
+        Empleado empleadoActualizado = new Empleado();
+        empleadoActualizado.setEmail("inexistente@example.com");
+
+        // Simulamos que el servicio lanza excepción al no encontrar el empleado
+        when(adService.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado))
+            .thenThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado"));
+
+        // Validamos que se lance la excepción esperada
+        assertThrows(ResponseStatusException.class, () -> {
+            adController.modificarEmpleado(empleadoActualizado);
+        });
+    }
+
+    @Test
+    public void testModificarEmpleadoFormatoIncorrecto() {
+        Empleado empleadoActualizado = new Empleado();
+        empleadoActualizado.setEmail("empleado_malformateado");
+
+        // Simulamos que el servicio lanza excepción por email mal formado
+        when(adService.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado))
+            .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido"));
+
+        // Validamos que se lance la excepción esperada
+        assertThrows(ResponseStatusException.class, () -> {
+            adController.modificarEmpleado(empleadoActualizado);
+        });
+    }*/
+
+    /************ TESTS PARA MODIFICAR ADMINISTRADOR ************/
+
+    /*@Test
+    public void testModificarAdministradorExito() {
+        Administrador administradorActualizado = new Administrador();
+        administradorActualizado.setEmail("admin@example.com");
+        administradorActualizado.setNombre("Nuevo Nombre Admin");
+
+        // Simulamos que el servicio actualiza correctamente
+        when(adService.actualizarAdministrador(administradorActualizado.getEmail(), administradorActualizado)).thenReturn(administradorActualizado);
+
+        // No esperamos excepción en este caso exitoso
+        adController.modificarAdministrador(administradorActualizado);
+    }
+
+    @Test
+    public void testModificarAdministradorNoExistente() {
+        Administrador administradorActualizado = new Administrador();
+        administradorActualizado.setEmail("inexistente_admin@example.com");
+
+        // Simulamos que el servicio lanza excepción al no encontrar el administrador
+        when(adService.actualizarAdministrador(administradorActualizado.getEmail(), administradorActualizado))
+            .thenThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado"));
+
+        // Validamos que se lance la excepción esperada
+        assertThrows(ResponseStatusException.class, () -> {
+            adController.modificarAdministrador(administradorActualizado);
+        });
+    }
+
+    @Test
+    public void testModificarAdministradorFormatoIncorrecto() {
+        Administrador administradorActualizado = new Administrador();
+        administradorActualizado.setEmail("admin_malformateado");
+
+        // Simulamos que el servicio lanza excepción por email mal formado
+        when(adService.actualizarAdministrador(administradorActualizado.getEmail(), administradorActualizado))
+            .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido"));
+
+        // Validamos que se lance la excepción esperada
+        assertThrows(ResponseStatusException.class, () -> {
+            adController.modificarAdministrador(administradorActualizado);
         });
     }*/
 

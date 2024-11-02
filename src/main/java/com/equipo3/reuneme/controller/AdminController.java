@@ -226,6 +226,18 @@ public class AdminController {
     	
     	return this.adminservice.turnos(t);
 	}
+	
+	/*********************************
+     *MODIFICAR ADMINISTRADOR
+     ********************************/
+    @PutMapping("/modificarAdministrador")
+    public void modificarAdministrador(@RequestBody Administrador administradorActualizado) {
+    	try {
+    		adminservice.actualizarAdministrador(administradorActualizado.getEmail(), administradorActualizado);
+    	} catch (Exception e) {
+    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
+    	}
+	}
 
 
 }
