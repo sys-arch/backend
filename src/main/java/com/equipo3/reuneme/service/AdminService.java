@@ -34,7 +34,7 @@ public class AdminService {
 
 	@Autowired
 	private AusenciaDAO adao;
-	
+
 	@Autowired
 	private TurnoDAO tdao;
 
@@ -191,9 +191,9 @@ public class AdminService {
 		if (Objects.isNull(u)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario");
 		}
-		
+
 		Ausencia a = new Ausencia(au.getFecha_inicio(), au.getFecha_fin(), au.getMotivo(), u);
-			
+
 		this.adao.save(a);
 
 	}
@@ -216,7 +216,7 @@ public class AdminService {
 		}
 		return administrador;
 	}
-	
+
 	//////////////////////////
 	// AÑADIR TURNO
 	//////////////////////////
@@ -230,24 +230,51 @@ public class AdminService {
 	public List<Turno> turnos(Turno t) {
 		return this.tdao.findAll();
 	}
-	
+
 ///////////////////////////
 // ACTUALIZAR ADMINISTRADOR
 ///////////////////////////
-public void actualizarAdministrador(String email, Administrador administradorActualizado) {
-Administrador administradorExistente = this.admindao.findByEmail(email);
-if (Objects.isNull(administradorExistente)) {
-throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
-}
+	public void actualizarAdministrador(String email, Administrador administradorActualizado) {
+		Administrador administradorExistente = this.admindao.findByEmail(email);
+		if (Objects.isNull(administradorExistente)) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
+		}
 
-administradorExistente.setNombre(administradorActualizado.getNombre());
-administradorExistente.setApellido1(administradorActualizado.getApellido1());
-administradorExistente.setApellido2(administradorActualizado.getApellido2());
-administradorExistente.setCentro(administradorActualizado.getCentro());
-administradorExistente.setInterno(administradorActualizado.isInterno());
+		administradorExistente.setNombre(administradorActualizado.getNombre());
+		administradorExistente.setApellido1(administradorActualizado.getApellido1());
+		administradorExistente.setApellido2(administradorActualizado.getApellido2());
+		administradorExistente.setCentro(administradorActualizado.getCentro());
+		administradorExistente.setInterno(administradorActualizado.isInterno());
 
-this.admindao.save(administradorExistente);
+		this.admindao.save(administradorExistente);
 
-}
+	}
+
+	
+	///////////////////////////
+	//BUSCAR ROL POR EMAIL
+	///////////////////////////
+	public String getUserRoleByEmail(String email) {
+	    String rol = "";
+
+	    // Intenta buscar al empleado por el email
+	    Empleado empleado = empdao.findByEmail(email);
+	    if (empleado != null) {
+	        rol = "empleado";
+	    } else {
+	        // Intenta buscar al administrador por el email solo si no se encontró un empleado
+	        Administrador admin = admindao.findByEmail(email);
+	        if (admin != null) {
+	            rol = "administrador";
+	        }
+	    }
+
+	    // Si no se encontró ni como empleado ni como administrador, lanza una excepción
+	    if (rol.isEmpty()) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe un usuario con ese email");
+	    }
+
+	    return rol;
+	}
 
 }

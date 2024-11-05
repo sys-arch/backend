@@ -1,5 +1,6 @@
 package com.equipo3.reuneme.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -238,6 +239,26 @@ public class AdminController {
     		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
     	}
 	}
+
+    /*********************************
+     * OBTENER ROL DE USUARIO POR EMAIL
+     ********************************/
+    @GetMapping("/getUserRoleByEmail")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, String> getUserRoleByEmail(@RequestParam String email) {
+        try {
+            String role = adminservice.getUserRoleByEmail(email);
+            Map<String, String> response = new HashMap<>();
+            response.put("role", role); // Clave "role" con el valor del rol
+            return response;
+        } catch (ResponseStatusException e) {
+            throw e; // Lanza la excepción tal cual para que el controlador maneje la respuesta HTTP
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener el rol del usuario.");
+        }
+    }
+
+
 
 
 }
