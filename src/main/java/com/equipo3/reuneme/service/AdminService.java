@@ -57,7 +57,7 @@ public class AdminService {
 	// ACTUALIZAR EMPLEADO
 	///////////////////////////
 	public void actualizarEmpleado(String email, Empleado empleadoActualizado) {
-		Empleado empleadoExistente = this.empdao.findByEmail(email);
+		Empleado empleadoExistente = this.empdao.findByEmail(email.toLowerCase());
 		if (Objects.isNull(empleadoExistente)) {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
 		}
@@ -68,8 +68,6 @@ public class AdminService {
 		empleadoExistente.setDepartamento(empleadoActualizado.getDepartamento());
 		empleadoExistente.setPerfil(empleadoActualizado.getPerfil());
 		empleadoExistente.setCentro(empleadoActualizado.getCentro());
-		empleadoExistente.setBloqueado(empleadoActualizado.isBloqueado());
-		empleadoExistente.setVerificado(empleadoActualizado.isVerificado());
 
 		this.empdao.save(empleadoExistente);
 
@@ -235,7 +233,7 @@ public class AdminService {
 // ACTUALIZAR ADMINISTRADOR
 ///////////////////////////
 	public void actualizarAdministrador(String email, Administrador administradorActualizado) {
-		Administrador administradorExistente = this.admindao.findByEmail(email);
+		Administrador administradorExistente = this.admindao.findByEmail(email.toLowerCase());
 		if (Objects.isNull(administradorExistente)) {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
 		}
