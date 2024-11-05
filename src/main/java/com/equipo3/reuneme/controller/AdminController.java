@@ -64,14 +64,14 @@ public class AdminController {
         
 
         // Comprobamos que el email tiene un formato válido
-        if (!emailservice.validarEmail(re.getEmail())) {
+        if (!emailservice.validarEmail(re.getEmail().toLowerCase())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
             		+ "usuario@dominio.com");
         }
 
         // Si pasa los controles, se registra en BD
         Administrador admin = new Administrador();
-        admin.setEmail(re.getEmail());
+        admin.setEmail(re.getEmail().toLowerCase());
         admin.setPwd(re.getPwd1());
         admin.setNombre(re.getNombre());
         admin.setApellido1(re.getApellido1());
@@ -88,7 +88,7 @@ public class AdminController {
     @PutMapping("/modificarEmpleado")
     public void modificarEmpleado(@RequestBody Empleado empleadoActualizado) {
     	try {
-    		adminservice.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado);
+    		adminservice.actualizarEmpleado(empleadoActualizado.getEmail().toLowerCase(), empleadoActualizado);
     	} catch (Exception e) {
     		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
     	}
@@ -100,6 +100,7 @@ public class AdminController {
     @PutMapping("/verificarEmpleado")
     public void verificarEmpleado(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
+        email = email.toLowerCase();
 
         if (!this.emailservice.validarEmail(email)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un buen formato");
@@ -113,6 +114,9 @@ public class AdminController {
      ********************************/
     @PutMapping("/cambiarEstadoBloqueo")
     public void cambiarEstadoBloqueoEmpleado(@RequestParam String email, @RequestParam boolean bloquear) {
+    	
+    	email = email.toLowerCase();
+    	
         if (!this.emailservice.validarEmail(email)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido: usuario@dominio.com");
         }
@@ -126,6 +130,8 @@ public class AdminController {
     @DeleteMapping("/borrarEmpleado")
     public void borrarUsuario(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
+        email = email.toLowerCase();
+        
         if (email == null || email.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email es obligatorio");
         }
@@ -146,6 +152,8 @@ public class AdminController {
      ********************************/
     @PutMapping("/obtenerEmpleado")
     public Empleado verEmpleado (@RequestParam String email) {
+    	
+    	email = email.toLowerCase();
     	
     	if (!this.emailservice.validarEmail(email)) {
     		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un formato adecuado");
@@ -237,6 +245,20 @@ public class AdminController {
     	} catch (Exception e) {
     		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
     	}
+	}
+    
+	/*********************************
+     *COMPROBAR BLOQ./VALIDADO EMPLEADO
+     ********************************/
+    @PutMapping("/verificar")
+    public boolean verificar(@RequestBody String email) {
+    	
+    	email = email.toLowerCase();
+    	
+	    if (!this.emailservice.validarEmail(email)) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido: usuario@dominio.com");
+	    }
+	    return this.adminservice.comprobar(email);
 	}
 
 

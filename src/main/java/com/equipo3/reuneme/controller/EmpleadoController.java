@@ -37,6 +37,9 @@ public class EmpleadoController {
 	@GetMapping(value = "/verDatos")
 	@ResponseStatus(HttpStatus.OK)
 	public Empleado verDatos(@RequestParam String email) {
+		
+		email = email.toLowerCase();
+		
 	    if (!emailService.validarEmail(email)) {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: usuario@dominio.com");
 	    }
@@ -55,6 +58,8 @@ public class EmpleadoController {
 		
 		String email = info.get("email").toString();
 		String pwd = info.get("pwd").toString();
+		
+		email = email.toLowerCase();
 		
         if (!emailService.validarEmail(email)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "

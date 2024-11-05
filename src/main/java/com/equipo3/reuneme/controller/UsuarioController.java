@@ -65,7 +65,7 @@ public class UsuarioController {
 
         // Si pasa los controles, se registra en BD
         Empleado emp = new Empleado();
-        emp.setEmail(re.getEmail());
+        emp.setEmail(re.getEmail().toLowerCase());
         emp.setPwd(re.getPwd1()); // Asignar la contraseña validada
         emp.setNombre(re.getNombre());
         emp.setApellido1(re.getApellido1());
@@ -86,7 +86,7 @@ public class UsuarioController {
 	@PutMapping("/login")
 	public String login (@RequestBody Map<String, Object>info) {
 		
-		String email = info.get("email").toString();
+		String email = info.get("email").toString().toLowerCase();
 		String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
 		
 		return this.userservice.login(email, pwd);
