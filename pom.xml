@@ -98,10 +98,10 @@
 			<artifactId>passay</artifactId>
 			<version>1.6.0</version>
 		</dependency>
-		<!--dependency>
+		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
-		</dependency-->
+		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
