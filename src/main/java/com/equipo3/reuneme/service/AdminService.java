@@ -58,12 +58,18 @@ public class AdminService {
 	// ACTUALIZAR EMPLEADO
 	///////////////////////////
 	public void actualizarEmpleado(String email, Empleado empleadoActualizado) {
-		Empleado empleadoExistente = this.empdao.findByEmail(email);
+		Empleado empleadoExistente = this.empdao.findByEmail(email.toLowerCase());
 		if (Objects.isNull(empleadoExistente)) {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
 		}
+		empleadoExistente.setNombre(empleadoActualizado.getNombre());
+		empleadoExistente.setApellido1(empleadoActualizado.getApellido1());
+		empleadoExistente.setApellido2(empleadoActualizado.getApellido2());
+		empleadoExistente.setDepartamento(empleadoActualizado.getDepartamento());
+		empleadoExistente.setPerfil(empleadoActualizado.getPerfil());
+		empleadoExistente.setCentro(empleadoActualizado.getCentro());
 
-
+		this.empdao.save(empleadoExistente);
 	}
 	
 	///////////////////////////
@@ -197,9 +203,7 @@ public class AdminService {
 		if (Objects.isNull(u)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario");
 		}
-
-		Ausencia a = new Ausencia(au.getFechaInicio(), au.getFechaFin(), au.getMotivo(), u);
-
+		Ausencia a = new Ausencia(au.getFecha_inicio(), au.getFecha_fin(), au.getMotivo(), u);
 		this.adao.save(a);
 
 	}
@@ -237,11 +241,11 @@ public class AdminService {
 		return this.tdao.findAll();
 	}
 
-///////////////////////////
-// ACTUALIZAR ADMINISTRADOR
-///////////////////////////
+  ///////////////////////////
+  // ACTUALIZAR ADMINISTRADOR
+  ///////////////////////////
 	public void actualizarAdministrador(String email, Administrador administradorActualizado) {
-		Administrador administradorExistente = this.admindao.findByEmail(email);
+		Administrador administradorExistente = this.admindao.findByEmail(email.toLowerCase());
 		if (Objects.isNull(administradorExistente)) {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
 		}
@@ -255,6 +259,7 @@ public class AdminService {
 		this.admindao.save(administradorExistente);
 
 	}
+
 
 ///////////////////////////
 //COMPROBAR EMP BLOQ./VERIFICADO
@@ -270,6 +275,31 @@ public class AdminService {
 		}
 		
 		return res;
+
+	///////////////////////////
+	//BUSCAR ROL POR EMAIL
+	///////////////////////////
+	public String getUserRoleByEmail(String email) {
+	    String rol = "";
+
+	    // Intenta buscar al empleado por el email
+	    Empleado empleado = empdao.findByEmail(email);
+	    if (empleado != null) {
+	        rol = "empleado";
+	    } else {
+	        // Intenta buscar al administrador por el email solo si no se encontró un empleado
+	        Administrador admin = admindao.findByEmail(email);
+	        if (admin != null) {
+	            rol = "administrador";
+	        }
+	    }
+
+	    // Si no se encontró ni como empleado ni como administrador, lanza una excepción
+	    if (rol.isEmpty()) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe un usuario con ese email");
+	    }
+
+	    return rol;
 	}
 
 }
