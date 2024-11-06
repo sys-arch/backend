@@ -62,18 +62,25 @@ public class AdminService {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
 		}
 
-		empleadoExistente.setNombre(empleadoActualizado.getNombre());
-		empleadoExistente.setApellido1(empleadoActualizado.getApellido1());
-		empleadoExistente.setApellido2(empleadoActualizado.getApellido2());
-		empleadoExistente.setDepartamento(empleadoActualizado.getDepartamento());
-		empleadoExistente.setPerfil(empleadoActualizado.getPerfil());
-		empleadoExistente.setCentro(empleadoActualizado.getCentro());
-		empleadoExistente.setBloqueado(empleadoActualizado.isBloqueado());
-		empleadoExistente.setVerificado(empleadoActualizado.isVerificado());
-
-		this.empdao.save(empleadoExistente);
 
 	}
+	
+	///////////////////////////
+	//ACTUALIZAR ADMINISTRADOR
+	///////////////////////////
+	public void actualizarAdmin(String email, Administrador adminActualizado) {
+		Administrador administradorExistente = this.admindao.findByEmail(email);
+		if(Objects.isNull(administradorExistente)) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado");
+		}
+		administradorExistente.setNombre(adminActualizado.getNombre());
+        administradorExistente.setApellido1(adminActualizado.getApellido1());
+        administradorExistente.setApellido2(adminActualizado.getApellido2());
+        administradorExistente.setInterno(adminActualizado.isInterno());
+        administradorExistente.setCentro(adminActualizado.getCentro());        
+        this.admindao.save(administradorExistente);
+	}
+
 
 	//////////////////////////
 	// VERIFICAR EMPLEADO
