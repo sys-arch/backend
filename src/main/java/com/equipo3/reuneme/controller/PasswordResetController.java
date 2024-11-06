@@ -1,6 +1,8 @@
 package com.equipo3.reuneme.controller;
 
+import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.EmailService;
+import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.PasswordResetToken;
 import com.equipo3.reuneme.model.Usuario;
 import com.equipo3.reuneme.service.PasswordResetTokenService;
@@ -33,11 +35,16 @@ public class PasswordResetController {
     private EmailService emailService;
     
     @Autowired
+    private AdminService aservice;
+    
+    @Autowired
     private PasswordService passwordService;
 
     // Endpoint para solicitar el token de recuperación de contraseña
     @PostMapping("/forgot")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+    	
+    	email = email.toLowerCase();
    	
     	//Verificar el email correctamente
         // Comprobamos que el email tiene un formato válido
@@ -50,8 +57,14 @@ public class PasswordResetController {
         
         Usuario u = uservice.findByEmail(email);
         if (Objects.isNull(u)) {
-            return ResponseEntity.badRequest().body("Empleado no existe");
-
+            return ResponseEntity.badRequest().body("El usuario que buscas no existe");
+        }
+        
+        if(u instanceof Empleado) {
+        	Empleado e = aservice.getEmpleado(email);
+        	if(e.isBloqueado()) {
+        		return ResponseEntity.status(403).body("El usuario que buscas no existe");
+        	}
         }
 
         // Generar el token de recuperación

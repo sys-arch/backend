@@ -6,9 +6,9 @@ public class RegistroAusencia {
 	
 	private String motivo;
 	
-	private Date fecha_inicio;
+	private Date fechaInicio;
 	
-	private Date fecha_fin;
+	private Date fechaFin;
 
 	public RegistroAusencia() {}
 
@@ -20,20 +20,20 @@ public class RegistroAusencia {
 		this.motivo = motivo;
 	}
 
-	public Date getFecha_inicio() {
-		return fecha_inicio;
+	public Date getFechaInicio() {
+		return fechaInicio;
 	}
 
-	public void setFecha_inicio(Date fecha_inicio) {
-		this.fecha_inicio = fecha_inicio;
+	public void setFechaInicio(Date fecha_inicio) {
+		this.fechaInicio = fecha_inicio;
 	}
 
-	public Date getFecha_fin() {
-		return fecha_fin;
+	public Date getFechaFin() {
+		return fechaFin;
 	}
 
-	public void setFecha_fin(Date fecha_fin) {
-		this.fecha_fin = fecha_fin;
+	public void setFechaFin(Date fecha_fin) {
+		this.fechaFin = fecha_fin;
 	}
 
 }
