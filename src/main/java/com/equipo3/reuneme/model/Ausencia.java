@@ -44,6 +44,8 @@ public class Ausencia {
         this.motivo = motivo;
         this.usuario = usuario;
     }
+    
+    public Ausencia() {}
 
     // Getters y setters
     public Date getFechaInicio() {

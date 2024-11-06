@@ -17,10 +17,10 @@ public class Turno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(nullable = false)
+	@Column(name="hora_inicio", nullable = false)
 	private Time horaInicio;
 	
-	@Column(nullable = false)
+	@Column(name="hora_final", nullable = false)
 	private Time horaFinal;
 
 	public Turno(Long id, Time horaInicio, Time horaFinal) {
@@ -29,6 +29,8 @@ public class Turno {
 		this.horaInicio = horaInicio;
 		this.horaFinal = horaFinal;
 	}
+	
+	public Turno() {}
 
 	public Long getId() {
 		return id;
