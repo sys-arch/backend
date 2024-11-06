@@ -50,6 +50,7 @@ public class AdminService {
 		}
 		// Cifrar la contraseña
 		admin.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(admin.getPwd()));
+		admin.setTwoFA(true);
 		this.admindao.save(admin);
 	}
 

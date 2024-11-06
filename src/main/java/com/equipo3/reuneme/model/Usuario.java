@@ -39,10 +39,32 @@ public class Usuario {
 	@Column(length = 100)
 	private String centro;
 	
+	@Column(length = 100)
+	private String clavesecreta;
+	
+	@Column(nullable = false)
+	private boolean twoFA;
+	
     public Usuario() {
         this.id = UUID.randomUUID().toString();
     }
 
+    public String getClavesecreta() {
+    	return clavesecreta;
+    }
+    
+    public void setClavesecreta(String clavesecreta) {
+    	this.clavesecreta = clavesecreta;
+    }
+    
+    public boolean getTwoFA() {
+    	return twoFA;
+    }
+    
+    public void setTwoFA(boolean TwoFA) {
+    	this.twoFA = TwoFA;
+    }
+    
 	public String getId() {
 		return this.id;
 	}
