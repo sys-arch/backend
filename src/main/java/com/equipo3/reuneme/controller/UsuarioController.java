@@ -25,7 +25,7 @@ import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST})
+@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST, RequestMethod.GET})
 public class UsuarioController {
 
     @Autowired
@@ -101,7 +101,6 @@ public class UsuarioController {
 	
 	@PutMapping("/activar-2fa")
 	public String activar2FA(@RequestBody Map<String, String> info) {
-		System.out.print(false);
 	    String email = info.get("email").toLowerCase();
 	    return userservice.activar2FA(email);
 	}
