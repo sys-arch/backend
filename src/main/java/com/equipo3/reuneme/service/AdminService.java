@@ -3,6 +3,7 @@ package com.equipo3.reuneme.service;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,7 @@ public class AdminService {
 		if (Objects.isNull(empleadoExistente)) {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
 		}
+
 		empleadoExistente.setNombre(empleadoActualizado.getNombre());
 		empleadoExistente.setApellido1(empleadoActualizado.getApellido1());
 		empleadoExistente.setApellido2(empleadoActualizado.getApellido2());
@@ -71,23 +73,6 @@ public class AdminService {
 
 		this.empdao.save(empleadoExistente);
 	}
-	
-	///////////////////////////
-	//ACTUALIZAR ADMINISTRADOR
-	///////////////////////////
-	public void actualizarAdmin(String email, Administrador adminActualizado) {
-		Administrador administradorExistente = this.admindao.findByEmail(email);
-		if(Objects.isNull(administradorExistente)) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado");
-		}
-		administradorExistente.setNombre(adminActualizado.getNombre());
-        administradorExistente.setApellido1(adminActualizado.getApellido1());
-        administradorExistente.setApellido2(adminActualizado.getApellido2());
-        administradorExistente.setInterno(adminActualizado.isInterno());
-        administradorExistente.setCentro(adminActualizado.getCentro());        
-        this.admindao.save(administradorExistente);
-	}
-
 
 	//////////////////////////
 	// VERIFICAR EMPLEADO
@@ -203,7 +188,8 @@ public class AdminService {
 		if (Objects.isNull(u)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario");
 		}
-		Ausencia a = new Ausencia(au.getFecha_inicio(), au.getFecha_fin(), au.getMotivo(), u);
+    
+		Ausencia a = new Ausencia(au.getFechaInicio(), au.getFechaFin(), au.getMotivo(), u);
 		this.adao.save(a);
 
 	}
@@ -241,29 +227,32 @@ public class AdminService {
 		return this.tdao.findAll();
 	}
 
-  ///////////////////////////
-  // ACTUALIZAR ADMINISTRADOR
-  ///////////////////////////
-	public void actualizarAdministrador(String email, Administrador administradorActualizado) {
-		Administrador administradorExistente = this.admindao.findByEmail(email.toLowerCase());
-		if (Objects.isNull(administradorExistente)) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
+	///////////////////////////
+	//ACTUALIZAR ADMINISTRADOR
+	///////////////////////////
+	public void actualizarAdmin(String email, Administrador adminActualizado) {
+		Administrador administradorExistente = this.admindao.findByEmail(email);
+		
+		if(Objects.isNull(administradorExistente)) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado");
 		}
-
-		administradorExistente.setNombre(administradorActualizado.getNombre());
-		administradorExistente.setApellido1(administradorActualizado.getApellido1());
-		administradorExistente.setApellido2(administradorActualizado.getApellido2());
-		administradorExistente.setCentro(administradorActualizado.getCentro());
-		administradorExistente.setInterno(administradorActualizado.isInterno());
-
-		this.admindao.save(administradorExistente);
-
+		
+		this.admindao.delete(administradorExistente);
+		
+		administradorExistente.setNombre(adminActualizado.getNombre());
+        administradorExistente.setApellido1(adminActualizado.getApellido1());
+        administradorExistente.setApellido2(adminActualizado.getApellido2());
+        administradorExistente.setInterno(adminActualizado.isInterno());
+        administradorExistente.setCentro(adminActualizado.getCentro());
+        administradorExistente.setPwd(DigestUtils.sha512Hex(adminActualizado.getPwd()));
+        
+        this.admindao.save(administradorExistente);
 	}
 
 
-///////////////////////////
-//COMPROBAR EMP BLOQ./VERIFICADO
-///////////////////////////
+	///////////////////////////
+	//COMPROBAR EMP BLOQ./VERIFICADO
+	///////////////////////////
 	public boolean comprobar(String email) {
 		boolean res = false;
 		Empleado e = this.empdao.findByEmail(email);

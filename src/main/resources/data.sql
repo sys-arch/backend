@@ -14,6 +14,7 @@ INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoF
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA) VALUES ('1cff7cf2-4c6f-463f-b671-256d7c534fd6', 'ivan.jimenez4@alu.uclm.es', 'admin1234', 'Iván', 'Jimenez', 'Quintana', 'ESI UCLM', true);
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA) VALUES ('b6c34fef-9d99-423d-82cd-daa178f05f11', 'antonio.sanchez36@alu.uclm.es', 'admin1234', 'Antonio', 'Sanchez', 'Sanchez', 'ESI UCLM', true);
 
+
 INSERT INTO Admins (id, interno) VALUES ('c084162a-133f-4046-8866-fe5b8f43f6c9', 1);
 INSERT INTO Admins (id, interno) VALUES ('4b95832f-685e-4116-b4ca-e681d7c03542', 0);
 INSERT INTO Admins (id, interno) VALUES ('7a6f309b-091e-4c23-9c5a-2b06d079361b', 0);
