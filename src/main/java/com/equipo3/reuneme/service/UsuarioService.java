@@ -27,6 +27,8 @@ public class UsuarioService {
 	protected AdministradorDAO admindao;
 	@Autowired
 	protected TokenService tokenService;
+	@Autowired
+	private TwoFactorAuthService twoFactorAuthService;
 	
 	/////////////////////////////////////
 	//LOGIN GENERAL - EMPLEADOS Y ADMINS
@@ -87,6 +89,7 @@ public class UsuarioService {
 	    
 //	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
 	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
+	    user.setTwoFA(true);
 	    this.empdao.save(user);
 	}
 	
@@ -100,6 +103,45 @@ public class UsuarioService {
         }
         return usuario;
     }
+	
+	
+	/////////////////////////////////////
+	//GUARDA LA CLAVE SECRETA DE USUARIO POR PRIMERA VEZ
+	/////////////////////////////////////
+	public String activar2FA(String email) {
+	    Usuario usuario = this.userdao.findByEmail(email);
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+	    String secretKey = twoFactorAuthService.generateSecretKey();
+	    usuario.setClavesecreta(secretKey);
+	    usuario.setTwoFA(true);
+	    userdao.save(usuario); 
+
+	    return secretKey; 
+	}
+	
+	/////////////////////////////////////
+	//VERIFICA CODIGO DE GOOGLE AUTHENTICATOR
+	/////////////////////////////////////
+	public boolean verificarTwoFactorAuthCode(String email, Integer authCode) {
+	    Usuario usuario = this.userdao.findByEmail(email);
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+	    if (authCode == null) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de autenticación de dos factores requerido.");
+	    }
+
+	    if (!usuario.getTwoFA()) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario no tiene activado el 2FA.");
+	    }
+
+	    return twoFactorAuthService.verifyCode(usuario.getClavesecreta(), authCode);
+	}
+	
+	
+
 
 
 }

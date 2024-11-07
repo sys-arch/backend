@@ -1,6 +1,8 @@
 package com.equipo3.reuneme.controller;
 
 import java.util.Map;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,7 +25,7 @@ import com.equipo3.reuneme.service.UsuarioService;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST})
+@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST, RequestMethod.GET})
 public class UsuarioController {
 
     @Autowired
@@ -92,6 +95,47 @@ public class UsuarioController {
 		return this.userservice.login(email, pwd);
 		
 	}
+	/////////////////////////////
+	//GENERA CLAVE DOBLE FACTOR DE AUTHENTICACIÓN
+	////////////////////////////
+	
+	@PutMapping("/activar-2fa")
+	public String activar2FA(@RequestBody Map<String, String> info) {
+	    String email = info.get("email").toLowerCase();
+	    return userservice.activar2FA(email);
+	}
+	
+	/////////////////////////////
+	//VERIFICACIÓN DOBLE FACTOR DE AUTHENTICACIÓN
+	////////////////////////////
+	@PutMapping("/verify-2fa")
+	public boolean verificarTwoFactorAuth(@RequestBody Map<String, Object> info) {
+	    String email = info.get("email").toString().toLowerCase();
+	    Integer authCode = (Integer) info.get("authCode");
+
+	    return userservice.verificarTwoFactorAuthCode(email, authCode);
+	}
+	
+	/////////////////////////////
+	//GENERACIÓN CÓDIGO QR
+	////////////////////////////
+	@GetMapping("/generate-qr-code")
+	public String getQRCodeUrl(String secretKey, String account) {
+	    String issuer = "ReuneMeApp";
+	    String qrCodeData = String.format(
+	        "otpauth://totp/%s:%s?secret=%s&issuer=%s",
+	        URLEncoder.encode(issuer, StandardCharsets.UTF_8),
+	        URLEncoder.encode(account, StandardCharsets.UTF_8),
+	        URLEncoder.encode(secretKey, StandardCharsets.UTF_8),
+	        URLEncoder.encode(issuer, StandardCharsets.UTF_8)
+	    );
+
+	    return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + URLEncoder.encode(qrCodeData, StandardCharsets.UTF_8);
+	}
+
+
+
+
 
 }
 

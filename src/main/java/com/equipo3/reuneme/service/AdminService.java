@@ -51,6 +51,7 @@ public class AdminService {
 		}
 		// Cifrar la contraseña
 		admin.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(admin.getPwd()));
+		admin.setTwoFA(true);
 		this.admindao.save(admin);
 	}
 
@@ -71,7 +72,6 @@ public class AdminService {
 		empleadoExistente.setCentro(empleadoActualizado.getCentro());
 
 		this.empdao.save(empleadoExistente);
-
 	}
 
 	//////////////////////////
@@ -249,6 +249,7 @@ public class AdminService {
         this.admindao.save(administradorExistente);
 	}
 
+
 	///////////////////////////
 	//COMPROBAR EMP BLOQ./VERIFICADO
 	///////////////////////////
@@ -263,7 +264,7 @@ public class AdminService {
 		}
 		
 		return res;
-	
+
 	///////////////////////////
 	//BUSCAR ROL POR EMAIL
 	///////////////////////////
