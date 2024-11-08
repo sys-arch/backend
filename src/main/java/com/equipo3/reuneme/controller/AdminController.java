@@ -91,7 +91,7 @@ public class AdminController {
     	try {
     		adminservice.actualizarEmpleado(empleadoActualizado.getEmail().toLowerCase(), empleadoActualizado);
     	} catch (Exception e) {
-    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
+    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modificar el empleado.");
     	}
 	}
     
@@ -102,6 +102,7 @@ public class AdminController {
     public void verificarEmpleado(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
         email = email.toLowerCase();
+        System.out.println(email);
 
         if (!this.emailservice.validarEmail(email)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no tiene un buen formato");

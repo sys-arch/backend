@@ -43,7 +43,7 @@ public class Usuario {
 	private String clavesecreta;
 	
 	@Column(nullable = false)
-	private boolean twoFA;
+	private Boolean twoFA;
 	
     public Usuario() {
         this.id = UUID.randomUUID().toString();
@@ -57,7 +57,7 @@ public class Usuario {
     	this.clavesecreta = clavesecreta;
     }
     
-    public boolean getTwoFA() {
+    public Boolean getTwoFA() {
     	return twoFA;
     }
     
