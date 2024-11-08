@@ -20,10 +20,10 @@ public class Empleado extends Usuario {
 	private String perfil;
 	
 	@Column(nullable = false)
-	private boolean bloqueado;
+	private Boolean bloqueado;
 	
 	@Column(nullable = false)
-	private boolean verificado;
+	private Boolean verificado;
 
 	@Column
 	//private Ausencia ausencia;

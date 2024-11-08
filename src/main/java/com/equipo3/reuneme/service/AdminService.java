@@ -54,35 +54,6 @@ public class AdminService {
 		this.admindao.save(admin);
 	}
 
-	///////////////////////////
-	// ACTUALIZAR EMPLEADO
-	///////////////////////////
-	public void actualizarEmpleado(String email, Empleado empleadoActualizado) {
-		Empleado empleadoExistente = this.empdao.findByEmail(email);
-		if (Objects.isNull(empleadoExistente)) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
-		}
-
-
-	}
-	
-	///////////////////////////
-	//ACTUALIZAR ADMINISTRADOR
-	///////////////////////////
-	public void actualizarAdmin(String email, Administrador adminActualizado) {
-		Administrador administradorExistente = this.admindao.findByEmail(email);
-		if(Objects.isNull(administradorExistente)) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado");
-		}
-		administradorExistente.setNombre(adminActualizado.getNombre());
-        administradorExistente.setApellido1(adminActualizado.getApellido1());
-        administradorExistente.setApellido2(adminActualizado.getApellido2());
-        administradorExistente.setInterno(adminActualizado.isInterno());
-        administradorExistente.setCentro(adminActualizado.getCentro());        
-        this.admindao.save(administradorExistente);
-	}
-
-
 	//////////////////////////
 	// VERIFICAR EMPLEADO
 	/////////////////////////
@@ -236,29 +207,88 @@ public class AdminService {
 	public List<Turno> turnos(Turno t) {
 		return this.tdao.findAll();
 	}
-
-///////////////////////////
-// ACTUALIZAR ADMINISTRADOR
-///////////////////////////
+	
+	///////////////////////////
+	// ACTUALIZAR ADMINISTRADOR
+	///////////////////////////
 	public void actualizarAdministrador(String email, Administrador administradorActualizado) {
-		Administrador administradorExistente = this.admindao.findByEmail(email);
-		if (Objects.isNull(administradorExistente)) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
-		}
+	    Administrador administradorExistente = this.admindao.findByEmail(email);
+	    if (Objects.isNull(administradorExistente)) {
+	        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado");
+	    }
 
-		administradorExistente.setNombre(administradorActualizado.getNombre());
-		administradorExistente.setApellido1(administradorActualizado.getApellido1());
-		administradorExistente.setApellido2(administradorActualizado.getApellido2());
-		administradorExistente.setCentro(administradorActualizado.getCentro());
-		administradorExistente.setInterno(administradorActualizado.isInterno());
+	    // Solo actualiza los campos si el valor en administradorActualizado no es null
+	    if (administradorActualizado.getNombre() != null) {
+	        administradorExistente.setNombre(administradorActualizado.getNombre());
+	    }
+	    if (administradorActualizado.getApellido1() != null) {
+	        administradorExistente.setApellido1(administradorActualizado.getApellido1());
+	    }
+	    if (administradorActualizado.getApellido2() != null) {
+	        administradorExistente.setApellido2(administradorActualizado.getApellido2());
+	    }
+	    if (administradorActualizado.getCentro() != null) {
+	        administradorExistente.setCentro(administradorActualizado.getCentro());
+	    }
+	    if (administradorActualizado.isInterno() != null) { // si Interno es Boolean en la entidad
+	        administradorExistente.setInterno(administradorActualizado.isInterno());
+	    }
+	    if (administradorActualizado.getTwoFA() != null) { // si TwoFA es Boolean en la entidad
+	        administradorExistente.setTwoFA(administradorActualizado.getTwoFA());
+	    }
+	    if (administradorActualizado.getClavesecreta() != null) {
+	        administradorExistente.setClavesecreta(administradorActualizado.getClavesecreta());
+	    }
 
-		this.admindao.save(administradorExistente);
-
+	    // Guarda los cambios
+	    this.admindao.save(administradorExistente);
 	}
 
-///////////////////////////
-//COMPROBAR EMP BLOQ./VERIFICADO
-///////////////////////////
+	
+	///////////////////////////
+	// ACTUALIZAR EMPLEADO
+	///////////////////////////
+	public void actualizarEmpleado(String email, Empleado empleadoActualizado) {
+	    Empleado empleadoExistente = this.empdao.findByEmail(email.toLowerCase());
+	    
+	    if (Objects.isNull(empleadoExistente)) {
+	        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado");
+	    }
+
+	    // Solo actualiza los campos si el valor en empleadoActualizado no es null
+	    if (empleadoActualizado.getNombre() != null) {
+	        empleadoExistente.setNombre(empleadoActualizado.getNombre());
+	    }
+	    if (empleadoActualizado.getApellido1() != null) {
+	        empleadoExistente.setApellido1(empleadoActualizado.getApellido1());
+	    }
+	    if (empleadoActualizado.getApellido2() != null) {
+	        empleadoExistente.setApellido2(empleadoActualizado.getApellido2());
+	    }
+	    if (empleadoActualizado.getDepartamento() != null) {
+	        empleadoExistente.setDepartamento(empleadoActualizado.getDepartamento());
+	    }
+	    if (empleadoActualizado.getPerfil() != null) {
+	        empleadoExistente.setPerfil(empleadoActualizado.getPerfil());
+	    }
+	    if (empleadoActualizado.getCentro() != null) {
+	        empleadoExistente.setCentro(empleadoActualizado.getCentro());
+	    }
+	    if (empleadoActualizado.getClavesecreta() != null) {
+	        empleadoExistente.setClavesecreta(empleadoActualizado.getClavesecreta());
+	    }
+	    if (empleadoActualizado.getTwoFA() != null) {
+	        empleadoExistente.setTwoFA(empleadoActualizado.getTwoFA());
+	    }
+
+	    // Guarda los cambios
+	    this.empdao.save(empleadoExistente);
+	}
+
+
+	///////////////////////////
+	//COMPROBAR EMP BLOQ./VERIFICADO
+	///////////////////////////
 	public boolean comprobar(String email) {
 		boolean res = false;
 		Empleado e = this.empdao.findByEmail(email);

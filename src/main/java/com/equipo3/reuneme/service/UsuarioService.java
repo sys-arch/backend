@@ -132,11 +132,6 @@ public class UsuarioService {
 	    if (authCode == null) {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de autenticación de dos factores requerido.");
 	    }
-
-	    if (!usuario.getTwoFA()) {
-	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario no tiene activado el 2FA.");
-	    }
-
 	    return twoFactorAuthService.verifyCode(usuario.getClavesecreta(), authCode);
 	}
 	
