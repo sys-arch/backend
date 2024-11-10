@@ -243,7 +243,9 @@ public class AdminController {
     @PutMapping("/modificarAdministrador")
     public void modificarAdministrador(@RequestBody Administrador admin) {
     	try {
+  
     		adminservice.actualizarAdministrador(admin.getEmail(), admin);
+        
     	} catch (Exception e) {
     		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
     	}
