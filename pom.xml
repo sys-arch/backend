@@ -18,11 +18,6 @@
 	</parent>
 	<dependencies>
 		<dependency>
-	    	<groupId>com.warrenstrange</groupId>
-	    	<artifactId>googleauth</artifactId>
-	    	<version>1.3.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -117,12 +112,16 @@
 			<artifactId>junit-jupiter-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>0.8.11</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.warrenstrange</groupId>
+			<artifactId>googleauth</artifactId>
+			<version>1.3.0</version>
 		</dependency>
 
 	</dependencies>

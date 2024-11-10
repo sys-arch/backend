@@ -1,4 +1,4 @@
-package com.equipo3.reuneme;
+package com.equipo3.reuneme.config;
 
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
