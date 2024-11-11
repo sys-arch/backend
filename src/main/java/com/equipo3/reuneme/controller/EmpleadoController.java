@@ -1,5 +1,6 @@
 package com.equipo3.reuneme.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,14 @@ public class EmpleadoController {
     public Reunion añadirReunion(@RequestBody Reunion reunion) {
         return empleadoService.añadirReunion(reunion);
     }
+    
+	////////////////////////////////////
+	// VER REUNION
+	////////////////////////////////////
+    @PostMapping("/reunion/{id}/ver")
+    public Reunion verReunion(@PathVariable Long id) {
+        return empleadoService.verReunion(id);
+    }
 
 	////////////////////////////////////
 	// CANCELAR REUNIÓN
@@ -134,6 +143,14 @@ public class EmpleadoController {
     @PutMapping("/reunion/{idReunion}/asistente/{idUsuario}/asistir")
     public Asistente asistir(@PathVariable Long idReunion, @PathVariable String idUsuario) {
         return empleadoService.asistir(idReunion, idUsuario);
+    }
+    
+    /*********************************
+     *OBTENER LISTA DE EMPLEADOS
+     ********************************/
+    @GetMapping("/reunion/asistentes")
+    public List<Empleado> posiblesAsistentes () {
+    	return this.empleadoService.posiblesAsistentes(null);
     }
 	
 }
