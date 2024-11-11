@@ -24,7 +24,7 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # Encuentra el archivo JAR y súbelo al servidor
+      # Encuentra el archivo JAR y súbelo al servidor usando sshpass y sftp
       - name: Upload JAR via SFTP
         id: upload_step  # Identificador para hacer referencia
         env:
@@ -33,11 +33,19 @@ jobs:
           SFTP_USER: ${{ secrets.SFTP_USER }}
           SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
         run: |
+          # Instala sshpass para autenticar la sesión
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
           # Encuentra el archivo JAR que comienza con "reuneme-"
           JAR_FILE=$(ls target/reuneme-*.jar | head -n 1)
           if [ -f "$JAR_FILE" ]; then
             echo "Uploading $JAR_FILE to SFTP server..."
-            curl -T "$JAR_FILE" "sftp://$SFTP_USER:$SFTP_PASSWORD@$SFTP_HOST:$SFTP_PORT/path/to/remote/directory/$(basename $JAR_FILE)"
+
+            # Usa sshpass para pasar la contraseña y establecer una sesión SFTP
+            sshpass -p "$SFTP_PASSWORD" sftp -o StrictHostKeyChecking=no -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST" << EOF
+put $JAR_FILE /home/container/$(basename $JAR_FILE)
+EOF
             echo "UPLOAD_SUCCESS=true" >> $GITHUB_ENV  # Guarda éxito en el entorno
           else
             echo "No JAR file found!"
