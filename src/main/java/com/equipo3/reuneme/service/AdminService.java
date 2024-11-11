@@ -153,6 +153,28 @@ public class AdminService {
 		
 		return lista;
 	}
+	
+	//////////////////////////
+	// ELIMINAR AUSENCIA
+	//////////////////////////
+	public void eliminarAusencia(String ausenciaId) {
+        if (!adao.existsById(ausenciaId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La ausencia no existe");
+        }
+        adao.deleteById(ausenciaId);
+    }
+	//////////////////////////
+	// DEVOLVER TODAS LAS AUSENCIAS
+	//////////////////////////
+	public List<Ausencia> obtenerTodasLasAusencias() {
+	List<Ausencia> lista = this.adao.findAll();
+	
+	if (lista.isEmpty()) {
+	throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No hay ausencias registradas");
+	}
+	
+	return lista;
+	}
 
 	//////////////////////////
 	// AÑADIR AUSENCIA A UN USUARIO
