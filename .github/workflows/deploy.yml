@@ -38,7 +38,7 @@ jobs:
           sudo apt-get install -y sshpass
 
           # Encuentra el archivo JAR que comienza con "reuneme-"
-          JAR_FILE=$(ls target/Reuneme*.jar | head -n 1)
+          JAR_FILE=$(ls target/ReuneMe.jar | head -n 1)
           if [ -f "$JAR_FILE" ]; then
             echo "Uploading $JAR_FILE to SFTP server..."
 
