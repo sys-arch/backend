@@ -3,7 +3,6 @@ package com.equipo3.reuneme.service;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -303,6 +302,7 @@ public class AdminService {
 		}
 		
 		return res;
+	}
 
 	///////////////////////////
 	//BUSCAR ROL POR EMAIL
