@@ -87,9 +87,9 @@ public class AdminController {
      *MODIFICAR EMPLEADO
      ********************************/
     @PutMapping("/modificarEmpleado")
-    public void modificarEmpleado(@RequestBody Empleado empleadoActualizado) {
+    public void modificarEmpleado(@RequestBody Empleado emp) {
     	try {
-    		adminservice.actualizarEmpleado(empleadoActualizado.getEmail().toLowerCase(), empleadoActualizado);
+    		adminservice.actualizarEmpleado(emp.getEmail().toLowerCase(), emp);
     	} catch (Exception e) {
     		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modificar el empleado.");
     	}
@@ -241,9 +241,13 @@ public class AdminController {
      *MODIFICAR ADMINISTRADOR
      ********************************/
     @PutMapping("/modificarAdministrador")
-    public void modificarAdministrador(@RequestBody Administrador administradorActualizado) {
+    public void modificarAdministrador(@RequestBody Administrador admin) {
     	try {
-    		adminservice.actualizarAdministrador(administradorActualizado.getEmail(), administradorActualizado);
+
+  
+    		adminservice.actualizarAdministrador(admin.getEmail(), admin);
+        
+
     	} catch (Exception e) {
     		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
     	}
@@ -280,8 +284,6 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener el rol del usuario.");
         }
     }
-
-
 
 
 }
