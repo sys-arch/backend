@@ -10,13 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Descarga el repositorio
       - name: Checkout repository
-        uses: actions/checkout@v3  # Versión actualizada
+        uses: actions/checkout@v3
 
-      # Configura Maven y compila la aplicación con OpenJDK 21
       - name: Set up JDK 21
-        uses: actions/setup-java@v3  # Versión actualizada
+        uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -24,9 +22,8 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # Encuentra el archivo JAR, elimina el existente en el servidor y sube el nuevo
       - name: Upload JAR via SFTP
-        id: upload_step  # Identificador para hacer referencia
+        id: upload_step
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
@@ -37,13 +34,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y sshpass
 
-          # Encuentra el archivo JAR que comienza con "reuneme-"
-          JAR_FILE=$(ls target/ReuneMe.jar | head -n 1)
+          # Ruta al archivo JAR
+          JAR_FILE="target/ReuneMe.jar"
           if [ -f "$JAR_FILE" ]; then
             echo "Uploading $JAR_FILE to SFTP server..."
 
             # Nombre del archivo en el servidor
-            REMOTE_FILE="$(basename $JAR_FILE)"
+            REMOTE_FILE="ReuneMe.jar"
 
             # Crea un archivo temporal con los comandos sftp
             echo "-rm $REMOTE_FILE" > sftp_commands.txt
@@ -61,9 +58,8 @@ jobs:
             exit 1
           fi
 
-      # Realiza la llamada API solo si la subida fue exitosa
       - name: Trigger API on Successful Upload
-        if: env.UPLOAD_SUCCESS == 'true'  # Condición de éxito
+        if: env.UPLOAD_SUCCESS == 'true'
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           API_KEY: ${{ secrets.API_KEY }}
