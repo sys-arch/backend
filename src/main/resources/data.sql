@@ -32,8 +32,8 @@ INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificad
 INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) VALUES ('5a6b7c8d-9e0f-1g2h-3i4j-5k6l7m8n9o0', 'Recepción', '2024-02-10', 'Recepcionista', 1, 0);
 INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) VALUES ('7d8e9f0a-1b2c-3d4e-5f6g-7h8i9j0k1l2', 'Cocina', '2023-12-15', 'Cocinero', 0, 1);
 
-INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, fk_usuario) VALUES ('2024-03-15', '2024-03-16', 'Enfermedad', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
-INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, fk_usuario) VALUES ('2024-04-05', '2024-04-20', 'Vacaciones', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
-INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, fk_usuario) VALUES ('2024-03-20', '2024-03-22', 'Asuntos personales', '3a72b9f5-864c-40fe-821b-7d5ca1234567');
+INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, fk_usuario) VALUES ('2024-03-15', '2025-03-16', 'Enfermedad', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
+INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, fk_usuario) VALUES ('2024-04-05', '2025-04-20', 'Vacaciones', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
+INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, fk_usuario) VALUES ('2024-03-20', '2025-03-22', 'Asuntos personales', '3a72b9f5-864c-40fe-821b-7d5ca1234567');
 
 --INSERT INTO turnos (hora_inicio, hora_final) VALUES ("")
