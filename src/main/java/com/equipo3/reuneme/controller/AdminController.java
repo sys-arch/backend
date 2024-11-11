@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -167,21 +168,24 @@ public class AdminController {
     /*********************************
      *CONSULTAR AUSENCIAS DE UN EMPLEADO
      ********************************/
-	@PutMapping("/consultarAusencias")
-	public List<Ausencia> getAusencias(@RequestParam String email) {
-		
-    	if (!this.emailservice.validarEmail(email)) {
-    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
-    	}
-		
-	    return this.adminservice.consultarAusencias(email); 
+	@PutMapping("/todasAusencias")
+	public List<Ausencia> getAusencias() {
+	    return this.adminservice.consultarAusencias(); 
 	}
+	
+	/*********************************
+     *CONSULTAR TODAS LAS AUSENCIAS
+     ********************************/
+	@DeleteMapping("/eliminarAusencia/{id}")
+    public void eliminarAusencia(@PathVariable String id) {
+        adminservice.eliminarAusencia(id);
+    }
 	
     /*********************************
      *AÑADIR AUSENCIA
      ********************************/
 	@PutMapping("/anadirAusencia")
-	public void anadirAusencia(@RequestParam String email, @RequestParam RegistroAusencia ausencia) {
+	public void anadirAusencia(@RequestParam String email, @RequestBody RegistroAusencia ausencia) {
 		
     	if (!this.emailservice.validarEmail(email)) {
     		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
