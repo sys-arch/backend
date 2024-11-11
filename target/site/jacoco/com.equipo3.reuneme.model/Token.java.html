@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Token.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ReuneMe</a> &gt; <a href="index.source.html" class="el_package">com.equipo3.reuneme.model</a> &gt; <span class="el_source">Token.java</span></div><h1>Token.java</h1><pre class="source lang-java linenums">package com.equipo3.reuneme.model;
+
+public class Token {
+	
+	private static final int DURACION = 900000;
+	private String id;
+	private Usuario usuario;
+	private String email;
+	private long horaFin;
+	
+<span class="nc" id="L11">	public Token (String id, Usuario usu2, String email) {</span>
+<span class="nc" id="L12">		this.id = id;</span>
+<span class="nc" id="L13">		this.usuario = usu2;</span>
+<span class="nc" id="L14">		this.email = email;</span>
+<span class="nc" id="L15">		this.horaFin = System.currentTimeMillis() + DURACION;</span>
+		
+<span class="nc" id="L17">	}</span>
+	
+<span class="nc" id="L19">	public Token () {}</span>
+	
+	public boolean caducado() {
+<span class="nc bnc" id="L22" title="All 2 branches missed.">		return System.currentTimeMillis()&gt; this.horaFin;</span>
+	}
+
+	public void incrementarTiempo() {
+<span class="nc" id="L26">		this.horaFin = System.currentTimeMillis() + DURACION;</span>
+		
+<span class="nc" id="L28">	}</span>
+
+	public String getId() {
+<span class="nc" id="L31">		return id;</span>
+	}
+
+	public void setId(String id) {
+<span class="nc" id="L35">		this.id = id;</span>
+<span class="nc" id="L36">	}</span>
+
+	public Usuario getUsuario() {
+<span class="nc" id="L39">		return usuario;</span>
+	}
+
+	public void setUsuario(Usuario usuario) {
+<span class="nc" id="L43">		this.usuario = usuario;</span>
+<span class="nc" id="L44">	}</span>
+	
+	public String getEmail() {
+<span class="nc" id="L47">		return email;</span>
+	}
+	
+	public void setEmail(String email) {
+<span class="nc" id="L51">		this.email = email;</span>
+<span class="nc" id="L52">	}</span>
+
+	public long getHoraFin() {
+<span class="nc" id="L55">		return horaFin;</span>
+	}
+
+	public void setHoraFin(long horaFin) {
+<span class="nc" id="L59">		this.horaFin = horaFin;</span>
+<span class="nc" id="L60">	}</span>
+
+	public static int getDuracion() {
+<span class="nc" id="L63">		return DURACION;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

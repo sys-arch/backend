@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmpleadoService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ReuneMe</a> &gt; <a href="index.source.html" class="el_package">com.equipo3.reuneme.service</a> &gt; <span class="el_source">EmpleadoService.java</span></div><h1>EmpleadoService.java</h1><pre class="source lang-java linenums">package com.equipo3.reuneme.service;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.equipo3.reuneme.dao.AsistenteDAO;
+import com.equipo3.reuneme.dao.AusenciaDAO;
+import com.equipo3.reuneme.dao.EmpleadoDAO;
+import com.equipo3.reuneme.dao.ReunionDAO;
+import com.equipo3.reuneme.model.Asistente;
+import com.equipo3.reuneme.model.AsistenteId;
+import com.equipo3.reuneme.model.Ausencia;
+import com.equipo3.reuneme.model.Empleado;
+import com.equipo3.reuneme.model.Reunion;
+import com.equipo3.reuneme.model.EstadoReunion;
+import com.equipo3.reuneme.model.EstadoAsistente;
+
+@Service
+<span class="nc" id="L27">public class EmpleadoService {</span>
+	@Autowired
+	private EmpleadoDAO edao;
+	
+    @Autowired
+    private ReunionDAO reunionRepository;
+
+    @Autowired
+    private AsistenteDAO asistenteRepository;
+    
+    @Autowired
+    private AusenciaDAO audao;
+	
+	/////////////////////////
+	//VER DATOS (DEL PROPIO EMPLEADO)
+	/////////////////////////
+	public Empleado verDatos(String email) {
+<span class="nc" id="L44">	    Empleado empleado = this.edao.findByEmail(email);</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">	    if (empleado == null) {</span>
+<span class="nc" id="L46">	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Empleado no encontrado&quot;);</span>
+	    }
+<span class="nc" id="L48">	    return empleado;</span>
+	}
+
+
+	/////////////////////////
+	//ACTUALIZAR CONTRASEÑA EMPLEADO
+	/////////////////////////
+	public void actualizarPwd(String email, String pwd) {
+<span class="nc" id="L56">		Empleado e = this.edao.findByEmail(email);</span>
+		
+<span class="nc bnc" id="L58" title="All 2 branches missed.">		if(Objects.isNull(e)) {</span>
+<span class="nc" id="L59">			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El empleado no existe!&quot;);</span>
+		}
+		
+<span class="nc" id="L62">		this.edao.delete(e);</span>
+<span class="nc" id="L63">		pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(pwd);</span>
+<span class="nc" id="L64">		e.setPwd(pwd);</span>
+<span class="nc" id="L65">		this.edao.save(e);</span>
+		
+<span class="nc" id="L67">	}</span>
+	
+	/////////////////////////
+	//AÑADIR REUNIÓN
+	/////////////////////////
+	public Reunion añadirReunion(Reunion reunion) {
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (reunionRepository.existsById(reunion.getId())) {</span>
+<span class="nc" id="L74">            throw new ResponseStatusException(HttpStatus.CONFLICT, &quot;La reunión ya existe&quot;);</span>
+        }
+        
+<span class="nc" id="L77">        return reunionRepository.save(reunion);</span>
+    }
+
+	/////////////////////////
+	//CANCELAR REUNIÓN
+	/////////////////////////
+    public Reunion cancelarReunion(Long id) {
+<span class="nc" id="L84">        Reunion reunion = verReunion(id);</span>
+<span class="nc" id="L85">        reunion.setEstado(EstadoReunion.CANCELADA);</span>
+<span class="nc" id="L86">        return reunionRepository.save(reunion);</span>
+    }
+
+	/////////////////////////
+	//MODIFICAR REUNIÓN
+	/////////////////////////
+    public Reunion modificarReunion(Long id, Reunion reunionModificada) {
+<span class="nc" id="L93">        Reunion reunion = verReunion(id);</span>
+
+<span class="nc bnc" id="L95" title="All 4 branches missed.">        if (reunion.getEstado() == EstadoReunion.CERRADA || reunion.getEstado() == EstadoReunion.CANCELADA) {</span>
+<span class="nc" id="L96">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;No se puede modificar una reunión cerrada o cancelada&quot;);</span>
+        }
+
+<span class="nc" id="L99">        LocalDateTime ahora = LocalDateTime.now();</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (ahora.isAfter(reunion.getInicio().minusDays(1).withHour(23).withMinute(59))) {</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if (reunion.getEstado() == EstadoReunion.ABIERTA) {</span>
+<span class="nc" id="L102">                reunion.setEstado(EstadoReunion.CERRADA);</span>
+<span class="nc" id="L103">                throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;La reunión está abierta y ha sido cerrada automáticamente por exceder el límite de tiempo de modificación&quot;);</span>
+            }
+<span class="nc" id="L105">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;No se puede modificar la reunión después de las 23:59 del día anterior&quot;);</span>
+        }
+
+        // Actualizar los campos permitidos
+<span class="nc" id="L109">        reunion.setInicio(reunionModificada.getInicio());</span>
+<span class="nc" id="L110">        reunion.setFin(reunionModificada.getFin());</span>
+<span class="nc" id="L111">        reunion.setUbicacion(reunionModificada.getUbicacion());</span>
+<span class="nc" id="L112">        reunion.setObservaciones(reunionModificada.getObservaciones());</span>
+<span class="nc" id="L113">        return reunionRepository.save(reunion);</span>
+    }
+    
+	/////////////////////////
+	//CERRAR REUNIÓN
+	/////////////////////////
+    public Reunion cerrarReunion(Long id) {
+<span class="nc" id="L120">        Reunion reunion = verReunion(id);</span>
+<span class="nc" id="L121">        reunion.setEstado(EstadoReunion.CERRADA);</span>
+<span class="nc" id="L122">        return reunionRepository.save(reunion);</span>
+    }
+
+	/////////////////////////
+	//AÑADIR ASISTENTE
+	/////////////////////////
+    public Asistente añadirAsistente(Long idReunion, String idUsuario) {
+<span class="nc" id="L129">        AsistenteId asistenteId = new AsistenteId(idReunion, idUsuario);</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (asistenteRepository.existsById(asistenteId)) {</span>
+<span class="nc" id="L131">            throw new ResponseStatusException(HttpStatus.CONFLICT, &quot;El asistente ya está registrado en esta reunión&quot;);</span>
+        }
+        
+<span class="nc" id="L134">        List&lt;Ausencia&gt; ausencias = this.audao.findByIdUsuario(idUsuario);</span>
+<span class="nc" id="L135">		Reunion reunion = this.reunionRepository.getReferenceById(idReunion);</span>
+        
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        for (Ausencia ausencia : ausencias) {</span>
+            // Convertir las fechas de ausencia de Date a LocalDateTime
+<span class="nc" id="L139">            LocalDateTime ausenciaInicio = ausencia.getFechaInicio().toInstant()</span>
+<span class="nc" id="L140">                    .atZone(ZoneId.systemDefault()).toLocalDateTime();</span>
+<span class="nc" id="L141">            LocalDateTime ausenciaFin = ausencia.getFechaFin().toInstant()</span>
+<span class="nc" id="L142">                    .atZone(ZoneId.systemDefault()).toLocalDateTime();</span>
+
+            // Verificar si hay superposición entre la reunión y la ausencia
+            // Si hay superposición, el usuario no está disponible
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            if (reunion.getInicio().isBefore(ausenciaFin)</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                    || ausenciaInicio.isBefore(reunion.getFin())) {</span>
+<span class="nc" id="L148">            	throw new ResponseStatusException(HttpStatus.CONFLICT, &quot;El usuario que intenta añadir estará ausente en las fechas de la reunión&quot;);</span>
+            }
+<span class="nc" id="L150">        }</span>
+        
+<span class="nc" id="L152">        Asistente asistente = new Asistente();</span>
+<span class="nc" id="L153">        asistente.setIdReunion(idReunion);</span>
+<span class="nc" id="L154">        asistente.setIdUsuario(idUsuario);</span>
+<span class="nc" id="L155">        asistente.setEstado(EstadoAsistente.PENDIENTE);</span>
+<span class="nc" id="L156">        asistente.setAsiste(false);</span>
+<span class="nc" id="L157">        return asistenteRepository.save(asistente);</span>
+    }
+
+	/////////////////////////
+	//ELIMINAR ASISTENTE
+	/////////////////////////
+    public void eliminarAsistente(Long idReunion, String idUsuario) {
+<span class="nc" id="L164">        AsistenteId asistenteId = new AsistenteId(idReunion, idUsuario);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        if (!asistenteRepository.existsById(asistenteId)) {</span>
+<span class="nc" id="L166">            throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;El asistente no existe en esta reunión&quot;);</span>
+        }
+<span class="nc" id="L168">        asistenteRepository.deleteById(asistenteId);</span>
+<span class="nc" id="L169">    }</span>
+
+	/////////////////////////
+	//CONFIRMAR ASISTENCIA
+	/////////////////////////
+    public Asistente confirmarAsistencia(Long idReunion, String idUsuario) {
+<span class="nc" id="L175">        Asistente asistente = obtenerAsistente(idReunion, idUsuario);</span>
+<span class="nc" id="L176">        asistente.setEstado(EstadoAsistente.ACEPTADA);</span>
+<span class="nc" id="L177">        return asistenteRepository.save(asistente);</span>
+    }
+
+	/////////////////////////
+	//ASISTIR (COMO ASISTENTE A REUNION)
+	/////////////////////////
+    public Asistente asistir(Long idReunion, String idUsuario) {
+<span class="nc" id="L184">        Asistente asistente = obtenerAsistente(idReunion, idUsuario);</span>
+<span class="nc" id="L185">        Reunion reunion = verReunion(idReunion);</span>
+
+<span class="nc" id="L187">        LocalDateTime ahora = LocalDateTime.now();</span>
+<span class="nc bnc" id="L188" title="All 4 branches missed.">        if (ahora.isBefore(reunion.getInicio()) || ahora.isAfter(reunion.getFin())) {</span>
+<span class="nc" id="L189">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Solo se puede registrar asistencia dentro de las horas de la reunión&quot;);</span>
+        }
+
+<span class="nc" id="L192">        asistente.setAsiste(true);</span>
+<span class="nc" id="L193">        return asistenteRepository.save(asistente);</span>
+    }
+    
+	/////////////////////////
+	//VER REUNIÓN
+	/////////////////////////
+	public Reunion verReunion(Long id) {
+<span class="nc" id="L200">        return reunionRepository.findById(id)</span>
+<span class="nc" id="L201">                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Reunión no encontrada&quot;));</span>
+	}
+
+	/////////////////////////
+	//COMPROBAR SI USUARIO ASISTE A TAL REUNION
+	/////////////////////////
+    private Asistente obtenerAsistente(Long idReunion, String idUsuario) {
+<span class="nc" id="L208">        AsistenteId asistenteId = new AsistenteId(idReunion, idUsuario);</span>
+<span class="nc" id="L209">        return asistenteRepository.findById(asistenteId)</span>
+<span class="nc" id="L210">                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Asistente no encontrado&quot;));</span>
+    }
+    
+	/////////////////////////
+	//OBTENER ASISTENTES DE REUNION
+	/////////////////////////
+    public List&lt;Asistente&gt; obtenerAsistentesPorReunion(Long idReunion) {
+        // Verifica si la reunión existe
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        if (!reunionRepository.existsById(idReunion)) {</span>
+<span class="nc" id="L219">            throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Reunión no encontrada&quot;);</span>
+        }
+        // Retorna la lista de asistentes a la reunión
+<span class="nc" id="L222">        return asistenteRepository.findByIdReunion(idReunion);</span>
+    }
+
+
+	/////////////////////////
+	//LISTADO EMPLEADOS A REUNIÓN
+	/////////////////////////
+	public List&lt;Empleado&gt; posiblesAsistentes(Object object) {
+<span class="nc" id="L230">		List&lt;Empleado&gt; lista = this.edao.findAll();</span>
+
+<span class="nc bnc" id="L232" title="All 4 branches missed.">		if (lista.isEmpty() || Objects.isNull(lista)) {</span>
+<span class="nc" id="L233">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;No existen empleados para añadir como asistente&quot;);</span>
+		}
+		
+<span class="nc bnc" id="L236" title="All 4 branches missed.">		lista.removeIf(empleado -&gt; empleado.isBloqueado() &amp;&amp; !empleado.isVerificado());</span>
+
+<span class="nc" id="L238">		return lista;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

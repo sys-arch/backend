@@ -38,12 +38,12 @@ jobs:
           sudo apt-get install -y sshpass
 
           # Encuentra el archivo JAR que comienza con "reuneme-"
-          JAR_FILE=$(ls target/reuneme-*.jar | head -n 1)
+          JAR_FILE=$(ls target/Reuneme*.jar | head -n 1)
           if [ -f "$JAR_FILE" ]; then
             echo "Uploading $JAR_FILE to SFTP server..."
 
             # Nombre del archivo en el servidor
-            REMOTE_FILE="/home/container/$(basename $JAR_FILE)"
+            REMOTE_FILE="$(basename $JAR_FILE)"
 
             # Crea un archivo temporal con los comandos sftp
             echo "-rm $REMOTE_FILE" > sftp_commands.txt

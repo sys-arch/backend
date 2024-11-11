@@ -6,8 +6,8 @@
 	<artifactId>reuneme</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
-	<name>reuneme</name>
-	<url>http://maven.apache.org</url>
+	<name>ReuneMe</name>
+	<url>https://srv.swey.net:8442</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -126,6 +126,7 @@
 
 	</dependencies>
 	<build>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

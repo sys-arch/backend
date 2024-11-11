@@ -347,12 +347,4 @@ public class AdminService {
 	    return rol;
 	}
 
-
-	public void eliminarAusencia(String id) {
-        if (!adao.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La ausencia no existe");
-        }
-        adao.deleteById(id);
-	}
-
 }
