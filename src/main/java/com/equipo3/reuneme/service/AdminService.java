@@ -144,19 +144,14 @@ public class AdminService {
 	//////////////////////////
 	// CONSULTAR AUSENCIAS DE UN USUARIO
 	//////////////////////////
-	public List<Ausencia> consultarAusencias(String email) {
-
-		Usuario u = this.userdao.findByEmail(email);
-
-		if (Objects.isNull(u)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario que intentas consultar");
-		} else {
-			List<Ausencia> lista = this.adao.findByUsuario(u);
-
-			return lista;
-
+	public List<Ausencia> consultarAusencias() {
+		List<Ausencia> lista = this.adao.findAll();
+		
+		if (lista.isEmpty()) {
+		throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No hay ausencias registradas");
 		}
-
+		
+		return lista;
 	}
 	
 	//////////////////////////

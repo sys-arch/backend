@@ -26,10 +26,10 @@ public class Reunion {
     private Usuario organizador;
 
     @Column(nullable = false)
-    private LocalDateTime horaInicio;
+    private LocalDateTime inicio;
 
     @Column(nullable = false)
-    private LocalDateTime horaFin;
+    private LocalDateTime fin;
 
     @Column(nullable = false)
     private String ubicacion;
@@ -43,11 +43,11 @@ public class Reunion {
 
 	public Reunion() {}
 
-	public Reunion(Long id, Usuario organizador, LocalDateTime horaInicio, LocalDateTime horaFin, String ubicacion, String observaciones, EstadoReunion estado) {
+	public Reunion(Long id, Usuario organizador, LocalDateTime inicio, LocalDateTime fin, String ubicacion, String observaciones, EstadoReunion estado) {
 		this.id = id;
 		this.organizador = organizador;
-		this.horaInicio = horaInicio;
-		this.horaFin = horaFin;
+		this.inicio = inicio;
+		this.fin = fin;
 		this.ubicacion = ubicacion;
 		this.observaciones = observaciones;
 		this.estado = estado;
@@ -69,20 +69,20 @@ public class Reunion {
 		this.organizador = organizador;
 	}
 
-	public LocalDateTime getHoraInicio() {
-		return horaInicio;
+	public LocalDateTime getInicio() {
+		return this.inicio;
 	}
 
-	public void setHoraInicio(LocalDateTime horaInicio) {
-		this.horaInicio = horaInicio;
+	public void setInicio(LocalDateTime horaInicio) {
+		this.inicio = horaInicio;
 	}
 
-	public LocalDateTime getHoraFin() {
-		return horaFin;
+	public LocalDateTime getFin() {
+		return this.fin;
 	}
 
-	public void setHoraFin(LocalDateTime horaFin) {
-		this.horaFin = horaFin;
+	public void setFin(LocalDateTime horaFin) {
+		this.fin = horaFin;
 	}
 
 	public String getUbicacion() {

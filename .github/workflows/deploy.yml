@@ -10,13 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Descarga el repositorio
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      # Configura Maven y compila la aplicación con OpenJDK 21
       - name: Set up JDK 21
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -24,36 +22,51 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # Encuentra el archivo JAR y súbelo al servidor
       - name: Upload JAR via SFTP
-        id: upload_step  # Identificador para hacer referencia
+        id: upload_step
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
           SFTP_USER: ${{ secrets.SFTP_USER }}
           SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
         run: |
-          # Encuentra el archivo JAR que comienza con "reuneme-"
-          JAR_FILE=$(ls target/reuneme-*.jar | head -n 1)
+          # Instala sshpass para autenticar la sesión
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
+          # Ruta al archivo JAR
+          JAR_FILE="target/ReuneMe.jar"
           if [ -f "$JAR_FILE" ]; then
             echo "Uploading $JAR_FILE to SFTP server..."
-            curl -T "$JAR_FILE" "sftp://$SFTP_USER:$SFTP_PASSWORD@$SFTP_HOST:$SFTP_PORT/path/to/remote/directory/$(basename $JAR_FILE)"
-            echo "UPLOAD_SUCCESS=true" >> $GITHUB_ENV  # Guarda éxito en el entorno
+
+            # Nombre del archivo en el servidor
+            REMOTE_FILE="ReuneMe.jar"
+
+            # Crea un archivo temporal con los comandos sftp
+            echo "-rm $REMOTE_FILE" > sftp_commands.txt
+            echo "put $JAR_FILE $REMOTE_FILE" >> sftp_commands.txt
+
+            # Usa sshpass y sftp para ejecutar los comandos
+            if sshpass -p "$SFTP_PASSWORD" sftp -o StrictHostKeyChecking=no -P "$SFTP_PORT" -b sftp_commands.txt "$SFTP_USER@$SFTP_HOST"; then
+              echo "UPLOAD_SUCCESS=true" >> $GITHUB_ENV  # Guarda éxito en el entorno
+            else
+              echo "SFTP upload failed!"
+              exit 1
+            fi
           else
             echo "No JAR file found!"
             exit 1
           fi
 
-      # Realiza la llamada API solo si la subida fue exitosa
       - name: Trigger API on Successful Upload
-        if: env.UPLOAD_SUCCESS == 'true'  # Condición de éxito
+        if: env.UPLOAD_SUCCESS == 'true'
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           API_KEY: ${{ secrets.API_KEY }}
           PTEROSERVER: ${{ secrets.PTEROSERVER }}
         run: |
           echo "Triggering API to start server..."
-          curl "https://$SFTP_HOST/api/client/servers/$PTEROSERVER/power" \
+          curl -k "https://$SFTP_HOST/api/client/servers/$PTEROSERVER/power" \
             -H 'Accept: application/json' \
             -H 'Content-Type: application/json' \
             -H "Authorization: Bearer $API_KEY" \
