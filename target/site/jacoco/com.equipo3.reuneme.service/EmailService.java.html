@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmailService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ReuneMe</a> &gt; <a href="index.source.html" class="el_package">com.equipo3.reuneme.service</a> &gt; <span class="el_source">EmailService.java</span></div><h1>EmailService.java</h1><pre class="source lang-java linenums">package com.equipo3.reuneme.service;
+import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
+
+@Service
+public class EmailService {
+
+    private final Resend resend;
+
+    // Inyecta la clave de API desde `application.properties`
+<span class="nc" id="L17">    public EmailService(@Value(&quot;${resend.api.key}&quot;) String apiKey) {</span>
+<span class="nc" id="L18">        this.resend = new Resend(apiKey);</span>
+<span class="nc" id="L19">    }</span>
+
+    public void enviarEmail(String email, String asunto, String mensaje) {
+<span class="nc" id="L22">        CreateEmailOptions params = CreateEmailOptions.builder()</span>
+<span class="nc" id="L23">        		.from(&quot;ReuneMe &lt;noreply@mail.swey.net&gt;&quot;)</span>
+<span class="nc" id="L24">                .to(email)</span>
+<span class="nc" id="L25">                .subject(asunto)</span>
+<span class="nc" id="L26">                .html(mensaje)</span>
+<span class="nc" id="L27">                .build();</span>
+
+        try {
+<span class="nc" id="L30">            CreateEmailResponse data = resend.emails().send(params);</span>
+<span class="nc" id="L31">            System.out.println(&quot;Correo enviado, ID de mensaje: &quot; + data.getId());</span>
+<span class="nc" id="L32">        } catch (ResendException e) {</span>
+<span class="nc" id="L33">            e.printStackTrace();</span>
+<span class="nc" id="L34">        }</span>
+<span class="nc" id="L35">    }</span>
+
+    public boolean validarEmail(String email) {
+<span class="nc" id="L38">        EmailValidator validator = EmailValidator.getInstance();</span>
+<span class="nc" id="L39">        return validator.isValid(email);</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
