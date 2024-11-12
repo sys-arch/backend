@@ -113,13 +113,16 @@ public class EmpleadoController {
         return empleadoService.cerrarReunion(id);
     }
 
-	////////////////////////////////////
-	// AÑADIR ASISTENTE
-	////////////////////////////////////
-    @PostMapping("/reunion/{idReunion}/asistente/{idUsuario}")
-    public Asistente añadirAsistente(@PathVariable Long idReunion, @PathVariable String idUsuario) {
-        return empleadoService.añadirAsistente(idReunion, idUsuario);
-    }
+//	////////////////////////////////////
+//	//AÑADIR ASISTENTE
+//	////////////////////////////////////
+//	@PostMapping("/reunion/{idReunion}/asistente/{idUsuario}")
+//	public Asistente añadirAsistente(@PathVariable Long idReunion, @PathVariable String idUsuario) {
+//	Usuario usuario = usuarioRepository.findById(idUsuario)
+//	.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+//	return empleadoService.añadirAsistente(idReunion, usuario);
+//	}
+
 
 	////////////////////////////////////
 	// BORRAR ASISTENTE

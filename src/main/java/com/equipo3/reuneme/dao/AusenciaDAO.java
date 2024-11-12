@@ -10,6 +10,6 @@ import com.equipo3.reuneme.model.Usuario;
 public interface AusenciaDAO extends JpaRepository<Ausencia, String> {
 	
 	public List<Ausencia> findByUsuario(Usuario usuario);
-	public List<Ausencia> findByIdUsuario (String idUsuario);
+	//public List<Ausencia> findByIdUsuario (String idUsuario);
 
 }
