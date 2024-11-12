@@ -122,40 +122,40 @@ public class EmpleadoService {
         return reunionRepository.save(reunion);
     }
 
-	/////////////////////////
-	//AÑADIR ASISTENTE
-	/////////////////////////
-    public Asistente añadirAsistente(Long idReunion, String idUsuario) {
-        AsistenteId asistenteId = new AsistenteId(idReunion, idUsuario);
-        if (asistenteRepository.existsById(asistenteId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El asistente ya está registrado en esta reunión");
-        }
-        
-        List<Ausencia> ausencias = this.audao.findByIdUsuario(idUsuario);
-		Reunion reunion = this.reunionRepository.getReferenceById(idReunion);
-        
-        for (Ausencia ausencia : ausencias) {
-            // Convertir las fechas de ausencia de Date a LocalDateTime
-            LocalDateTime ausenciaInicio = ausencia.getFechaInicio().toInstant()
-                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime ausenciaFin = ausencia.getFechaFin().toInstant()
-                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-            // Verificar si hay superposición entre la reunión y la ausencia
-            // Si hay superposición, el usuario no está disponible
-            if (reunion.getInicio().isBefore(ausenciaFin)
-                    || ausenciaInicio.isBefore(reunion.getFin())) {
-            	throw new ResponseStatusException(HttpStatus.CONFLICT, "El usuario que intenta añadir estará ausente en las fechas de la reunión");
-            }
-        }
-        
-        Asistente asistente = new Asistente();
-        asistente.setIdReunion(idReunion);
-        asistente.setIdUsuario(idUsuario);
-        asistente.setEstado(EstadoAsistente.PENDIENTE);
-        asistente.setAsiste(false);
-        return asistenteRepository.save(asistente);
-    }
+//	/////////////////////////
+//	//AÑADIR ASISTENTE
+//	/////////////////////////
+//    public Asistente añadirAsistente(Long idReunion, String idUsuario) {
+//        AsistenteId asistenteId = new AsistenteId(idReunion, idUsuario);
+//        if (asistenteRepository.existsById(asistenteId)) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "El asistente ya está registrado en esta reunión");
+//        }
+//        
+//        List<Ausencia> ausencias = this.audao.findByIdUsuario(idUsuario);
+//		Reunion reunion = this.reunionRepository.getReferenceById(idReunion);
+//        
+//        for (Ausencia ausencia : ausencias) {
+//            // Convertir las fechas de ausencia de Date a LocalDateTime
+//            LocalDateTime ausenciaInicio = ausencia.getFechaInicio().toInstant()
+//                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+//            LocalDateTime ausenciaFin = ausencia.getFechaFin().toInstant()
+//                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+//
+//            // Verificar si hay superposición entre la reunión y la ausencia
+//            // Si hay superposición, el usuario no está disponible
+//            if (reunion.getInicio().isBefore(ausenciaFin)
+//                    || ausenciaInicio.isBefore(reunion.getFin())) {
+//            	throw new ResponseStatusException(HttpStatus.CONFLICT, "El usuario que intenta añadir estará ausente en las fechas de la reunión");
+//            }
+//        }
+//        
+//        Asistente asistente = new Asistente();
+//        asistente.setIdReunion(idReunion);
+//        asistente.setIdUsuario(idUsuario);
+//        asistente.setEstado(EstadoAsistente.PENDIENTE);
+//        asistente.setAsiste(false);
+//        return asistenteRepository.save(asistente);
+//    }
 
 	/////////////////////////
 	//ELIMINAR ASISTENTE
