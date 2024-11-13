@@ -1,5 +1,7 @@
 package com.equipo3.reuneme.controller;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.equipo3.reuneme.model.Asistente;
 import com.equipo3.reuneme.model.Empleado;
+import com.equipo3.reuneme.model.RegistroReunion;
 import com.equipo3.reuneme.model.Reunion;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.EmpleadoService;
@@ -77,8 +80,8 @@ public class EmpleadoController {
 	// AÑADIR REUNION
 	////////////////////////////////////
     @PostMapping("/reunion")
-    public Reunion añadirReunion(@RequestBody Reunion reunion) {
-        return empleadoService.añadirReunion(reunion);
+    public Reunion añadirReunion(@RequestBody RegistroReunion reunion) {
+        return empleadoService.anadirReunion(reunion);
     }
     
 	////////////////////////////////////
@@ -113,15 +116,21 @@ public class EmpleadoController {
         return empleadoService.cerrarReunion(id);
     }
 
-//	////////////////////////////////////
-//	//AÑADIR ASISTENTE
-//	////////////////////////////////////
-//	@PostMapping("/reunion/{idReunion}/asistente/{idUsuario}")
-//	public Asistente añadirAsistente(@PathVariable Long idReunion, @PathVariable String idUsuario) {
-//	Usuario usuario = usuarioRepository.findById(idUsuario)
-//	.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-//	return empleadoService.añadirAsistente(idReunion, usuario);
-//	}
+	////////////////////////////////////
+	//AÑADIR ASISTENTE
+	////////////////////////////////////
+	@PostMapping("/reunion/{idReunion}/asistente/{email}")
+	public void anadirAsistente(@PathVariable Long idReunion, @PathVariable String email) {
+		
+		email = URLDecoder.decode(email, StandardCharsets.UTF_8);
+		
+        if (!emailService.validarEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
+            		+ "usuario@dominio.com");
+        }
+		
+		this.empleadoService.anadirAsistente(idReunion, email);
+	}
 
 
 	////////////////////////////////////

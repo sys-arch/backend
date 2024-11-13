@@ -195,7 +195,7 @@ public class AdminController {
      *AÑADIR AUSENCIA
      ********************************/
 	@PutMapping("/anadirAusencia")
-	public void anadirAusencia(@RequestParam String email, @RequestBody RegistroAusencia ausencia) {
+	public Ausencia anadirAusencia(@RequestParam String email, @RequestBody RegistroAusencia ausencia) {
 		
     	if (!this.emailservice.validarEmail(email)) {
     		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
@@ -205,7 +205,7 @@ public class AdminController {
     		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La ausencia que se intenta registrar está vacía");
     	}
 		
-	    adminservice.anadirAusencias(email, ausencia); 
+	    return adminservice.anadirAusencias(email, ausencia); 
 	}
 	
 	@GetMapping("/all")

@@ -1,14 +1,14 @@
 package com.equipo3.reuneme.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class RegistroAusencia {
 	
 	private String motivo;
 	
-	private Date fechaInicio;
+	private LocalDateTime fechaInicio;
 	
-	private Date fechaFin;
+	private LocalDateTime fechaFin;
 
 	public RegistroAusencia() {}
 
@@ -20,19 +20,19 @@ public class RegistroAusencia {
 		this.motivo = motivo;
 	}
 
-	public Date getFechaInicio() {
+	public LocalDateTime getFechaInicio() {
 		return fechaInicio;
 	}
 
-	public void setFechaInicio(Date fecha_inicio) {
+	public void setFechaInicio(LocalDateTime fecha_inicio) {
 		this.fechaInicio = fecha_inicio;
 	}
 
-	public Date getFechaFin() {
+	public LocalDateTime getFechaFin() {
 		return fechaFin;
 	}
 
-	public void setFechaFin(Date fecha_fin) {
+	public void setFechaFin(LocalDateTime fecha_fin) {
 		this.fechaFin = fecha_fin;
 	}
 

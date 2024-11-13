@@ -1,9 +1,11 @@
 package com.equipo3.reuneme.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -21,10 +23,12 @@ import com.equipo3.reuneme.model.Ausencia;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.Reunion;
 import com.equipo3.reuneme.model.EstadoReunion;
+import com.equipo3.reuneme.model.RegistroReunion;
 import com.equipo3.reuneme.model.EstadoAsistente;
 
 @Service
 public class EmpleadoService {
+	
 	@Autowired
 	private EmpleadoDAO edao;
 	
@@ -42,7 +46,7 @@ public class EmpleadoService {
 	/////////////////////////
 	public Empleado verDatos(String email) {
 	    Empleado empleado = this.edao.findByEmail(email);
-	    if (empleado == null) {
+	    if (Objects.isNull(empleado)) {
 	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado");
 	    }
 	    return empleado;
@@ -69,13 +73,31 @@ public class EmpleadoService {
 	/////////////////////////
 	//AÑADIR REUNIÓN
 	/////////////////////////
-	public Reunion añadirReunion(Reunion reunion) {
-        if (reunionRepository.existsById(reunion.getId())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "La reunión ya existe");
-        }
+	public Reunion anadirReunion(RegistroReunion reunion) {
+		
+		Empleado emp = this.edao.findByEmail(reunion.getOrganizador());
+		
+		if(Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El organizador proporcionado no existe o no es un empleado");
+		}
+		
+		Reunion re = new Reunion();
+		re.setEstado(reunion.getEstado());
+		re.setFin(formatoFechaHora(reunion.getFin()));
+		re.setInicio(formatoFechaHora(reunion.getInicio()));
+		re.setOrganizador(emp);
+		re.setObservaciones(reunion.getObservaciones());
+		re.setUbicacion(reunion.getUbicacion());
         
-        return reunionRepository.save(reunion);
+        return reunionRepository.save(re);
     }
+	
+	//Conversion String a LocalDateTime
+	private LocalDateTime formatoFechaHora(String fh) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		return LocalDateTime.parse(fh, formatter);
+	}
+
 
 	/////////////////////////
 	//CANCELAR REUNIÓN
@@ -92,7 +114,7 @@ public class EmpleadoService {
     public Reunion modificarReunion(Long id, Reunion reunionModificada) {
         Reunion reunion = verReunion(id);
 
-        if (reunion.getEstado() == EstadoReunion.CERRADA || reunion.getEstado() == EstadoReunion.CANCELADA) {
+        if (reunion.getEstado() == EstadoReunion.CERRADA) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No se puede modificar una reunión cerrada o cancelada");
         }
 
@@ -100,7 +122,7 @@ public class EmpleadoService {
         if (ahora.isAfter(reunion.getInicio().minusDays(1).withHour(23).withMinute(59))) {
             if (reunion.getEstado() == EstadoReunion.ABIERTA) {
                 reunion.setEstado(EstadoReunion.CERRADA);
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La reunión está abierta y ha sido cerrada automáticamente por exceder el límite de tiempo de modificación");
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La reunión estaba abierta y ha sido cerrada automáticamente por exceder el límite de tiempo de modificación");
             }
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No se puede modificar la reunión después de las 23:59 del día anterior");
         }
@@ -122,40 +144,59 @@ public class EmpleadoService {
         return reunionRepository.save(reunion);
     }
 
-//	/////////////////////////
-//	//AÑADIR ASISTENTE
-//	/////////////////////////
-//    public Asistente añadirAsistente(Long idReunion, String idUsuario) {
-//        AsistenteId asistenteId = new AsistenteId(idReunion, idUsuario);
-//        if (asistenteRepository.existsById(asistenteId)) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "El asistente ya está registrado en esta reunión");
-//        }
-//        
-//        List<Ausencia> ausencias = this.audao.findByIdUsuario(idUsuario);
-//		Reunion reunion = this.reunionRepository.getReferenceById(idReunion);
-//        
-//        for (Ausencia ausencia : ausencias) {
-//            // Convertir las fechas de ausencia de Date a LocalDateTime
-//            LocalDateTime ausenciaInicio = ausencia.getFechaInicio().toInstant()
-//                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
-//            LocalDateTime ausenciaFin = ausencia.getFechaFin().toInstant()
-//                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
-//
-//            // Verificar si hay superposición entre la reunión y la ausencia
-//            // Si hay superposición, el usuario no está disponible
-//            if (reunion.getInicio().isBefore(ausenciaFin)
-//                    || ausenciaInicio.isBefore(reunion.getFin())) {
-//            	throw new ResponseStatusException(HttpStatus.CONFLICT, "El usuario que intenta añadir estará ausente en las fechas de la reunión");
-//            }
-//        }
-//        
-//        Asistente asistente = new Asistente();
-//        asistente.setIdReunion(idReunion);
-//        asistente.setIdUsuario(idUsuario);
-//        asistente.setEstado(EstadoAsistente.PENDIENTE);
-//        asistente.setAsiste(false);
-//        return asistenteRepository.save(asistente);
-//    }
+	/////////////////////////
+	//AÑADIR ASISTENTE
+	/////////////////////////
+    public void anadirAsistente(Long idReunion, String email) {
+        
+    	Empleado emp = this.edao.findByEmail(email);
+    	
+		if(Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El empleado no existe!");
+		}
+    		
+    	AsistenteId asistenteId = new AsistenteId(idReunion, emp.getId());
+        if (asistenteRepository.existsById(asistenteId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El asistente ya está registrado en esta reunión");
+        }
+        
+        List<Ausencia> ausencias = this.audao.findAllByEmpleado(emp);
+		Reunion reunion = this.reunionRepository.getReferenceById(idReunion);
+		
+		if(Objects.isNull(reunion)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La reunion no existe!");
+		}
+		
+		if(reunion.getOrganizador().getEmail().equals(email)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario al que intenta añadir es organizador");
+		}
+
+		if (!Objects.isNull(ausencias)) {
+		    // Filtrar ausencias eliminando aquellas que finalizan antes de hoy
+		    LocalDateTime now = LocalDateTime.now();
+		    List<Ausencia> ausenciasFiltradas = ausencias.stream()
+		            .filter(ausencia -> ausencia.getFechaFin().isAfter(now))
+		            .collect(Collectors.toList());
+
+		    // Procesar las ausencias filtradas
+		    for (Ausencia ausencia : ausenciasFiltradas) {
+		        LocalDateTime ausenciaInicio = ausencia.getFechaInicio();
+		        LocalDateTime ausenciaFin = ausencia.getFechaFin();
+
+		        // Verificar si hay superposición entre la reunión y la ausencia
+		        if (reunion.getInicio().isBefore(ausenciaFin) && ausenciaInicio.isBefore(reunion.getFin())) {
+		            throw new ResponseStatusException(HttpStatus.CONFLICT, "El usuario que intenta añadir estará ausente en las fechas de la reunión");
+		        }
+		    }
+		}
+        
+        Asistente asistente = new Asistente();
+        asistente.setIdReunion(idReunion);
+        asistente.setIdUsuario(emp.getId());
+        asistente.setEstado(EstadoAsistente.PENDIENTE);
+        asistente.setAsiste(false);
+        asistenteRepository.save(asistente);
+    }
 
 	/////////////////////////
 	//ELIMINAR ASISTENTE

@@ -31,6 +31,7 @@ com\equipo3\reuneme\controller\AdminController.class
 com\equipo3\reuneme\model\Turno.class
 com\equipo3\reuneme\controller\UsuarioController.class
 com\equipo3\reuneme\config\AppConfiguration.class
+com\equipo3\reuneme\model\RegistroReunion.class
 com\equipo3\reuneme\model\Empleado.class
 com\equipo3\reuneme\controller\PasswordResetController.class
 com\equipo3\reuneme\model\Asistente.class

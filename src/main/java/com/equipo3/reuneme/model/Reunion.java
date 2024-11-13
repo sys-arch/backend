@@ -22,8 +22,8 @@ public class Reunion {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "organizador_id", nullable = false)
-    private Usuario organizador;
+    @JoinColumn(name = "id_organizador", nullable = false)
+    private Empleado organizador;
 
     @Column(nullable = false)
     private LocalDateTime inicio;
@@ -43,7 +43,7 @@ public class Reunion {
 
 	public Reunion() {}
 
-	public Reunion(Long id, Usuario organizador, LocalDateTime inicio, LocalDateTime fin, String ubicacion, String observaciones, EstadoReunion estado) {
+	public Reunion(Long id, Empleado organizador, LocalDateTime inicio, LocalDateTime fin, String ubicacion, String observaciones, EstadoReunion estado) {
 		this.id = id;
 		this.organizador = organizador;
 		this.inicio = inicio;
@@ -61,11 +61,11 @@ public class Reunion {
 		this.id = id;
 	}
 
-	public Usuario getOrganizador() {
+	public Empleado getOrganizador() {
 		return organizador;
 	}
 
-	public void setOrganizador(Usuario organizador) {
+	public void setOrganizador(Empleado organizador) {
 		this.organizador = organizador;
 	}
 
