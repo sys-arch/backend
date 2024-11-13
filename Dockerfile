@@ -1,5 +1,5 @@
 # Etapa 1: Construir el programa
-FROM 3.9.9-eclipse-temurin-23-alpine AS build
+FROM maven:3.9.5-eclipse-temurin-21-alpine AS build
 
 WORKDIR /app
 
@@ -9,9 +9,12 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Etapa 2: Ejecutar el programa
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
+
+# Instalar openssl para crear el keystore PKCS12
+RUN apk add --no-cache openssl
 
 # Copiar el JAR construido
 COPY --from=build /app/target/*.jar app.jar
