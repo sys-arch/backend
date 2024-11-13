@@ -15,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.ResponseEntity;
+
 
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroEmp;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
+import com.equipo3.reuneme.security.JwtTokenProvider;
 
 
 @RestController
@@ -36,6 +39,10 @@ public class UsuarioController {
     
     @Autowired
     PasswordService pwdservice;
+    
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
 
     /*
      * 
@@ -87,14 +94,20 @@ public class UsuarioController {
     //LOGIN UNICO
     ////////////////////////////
 	@PutMapping("/login")
-	public String login (@RequestBody Map<String, Object>info) {
+	public ResponseEntity<Boolean> login(@RequestBody Map<String, Object> info) {
 		
 		String email = info.get("email").toString().toLowerCase();
 		String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
 		
-		return this.userservice.login(email, pwd);
-		
+		try {
+	        boolean loginResult = this.userservice.login(email, pwd);
+	        return ResponseEntity.ok(loginResult); // Devuelve true si el login es exitoso
+	    } catch (ResponseStatusException e) {
+	        // Devuelve false si hay algún error, pero con un mensaje genérico
+	        return ResponseEntity.status(e.getStatusCode()).body(false);
+	    }
 	}
+
 	/////////////////////////////
 	//GENERA CLAVE DOBLE FACTOR DE AUTHENTICACIÓN
 	////////////////////////////
@@ -109,12 +122,21 @@ public class UsuarioController {
 	//VERIFICACIÓN DOBLE FACTOR DE AUTHENTICACIÓN
 	////////////////////////////
 	@PutMapping("/verify-2fa")
-	public boolean verificarTwoFactorAuth(@RequestBody Map<String, Object> info) {
+	public ResponseEntity<?> verificarTwoFactorAuth(@RequestBody Map<String, Object> info) {
 	    String email = info.get("email").toString().toLowerCase();
 	    Integer authCode = (Integer) info.get("authCode");
 
-	    return userservice.verificarTwoFactorAuthCode(email, authCode);
+	    try {
+	        // Llamamos a verificarTwoFactorAuthCode que ahora devuelve el JWT si es exitoso
+	        String token = userservice.verificarTwoFactorAuthCode(email, authCode);
+	        return ResponseEntity.ok(Map.of("token", token)); // Retorna el JWT si el 2FA es exitoso
+	    } catch (ResponseStatusException ex) {
+	        // Devolver el mensaje de error en caso de fallo
+	        return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+	    }
 	}
+
+
 	
 	/////////////////////////////
 	//GENERACIÓN CÓDIGO QR

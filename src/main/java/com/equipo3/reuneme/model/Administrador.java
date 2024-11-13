@@ -18,5 +18,9 @@ public class Administrador extends Usuario {
 	public void setInterno(boolean interno) {
 		this.interno = interno;
 	}
+	public Administrador() {
+	    this.setRole("ROLE_ADMIN");
+	}
+
 
 }

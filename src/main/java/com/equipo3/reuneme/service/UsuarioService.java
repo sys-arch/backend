@@ -33,41 +33,43 @@ public class UsuarioService {
 	/////////////////////////////////////
 	//LOGIN GENERAL - EMPLEADOS Y ADMINS
 	/////////////////////////////////////
-	public String login(String email, String pwd) {
-		
-		//¿Existe el usuario?
-		Usuario u = this.userdao.findByEmail(email);
-		if (Objects.isNull(u)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
-					"El usuario no existe o las credenciales son incorrectas.");
-		}
-		
-		//¿La contraseña es correcta?
-		if(!u.getPwd().equals(pwd)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciales inválidas.");
-		}
-			
-		String pretoken;
-		String idToken  = UUID.randomUUID().toString();
-		Token token = new Token();
-		token.setId(idToken);
-		token.setEmail(u.getEmail());
-		token.setUsuario(u);
-		
-		
-		if (u instanceof Administrador) {
-			pretoken = "a-";
-			return pretoken + this.tokenService.generarToken(token);
-        } else {
-			pretoken = "e-";
-			Empleado e = this.empdao.findByEmail(email);
-			if(e.isBloqueado()) {
-				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario bloqueado");
-			}
-			return pretoken + this.tokenService.generarToken(token);
-        }
-		
+	public boolean login(String email, String pwd) {
+	    // Verificar si el usuario existe
+	    Usuario u = this.userdao.findByEmail(email);
+	    String errorMessage = "Credenciales incorrectas o desactivadas.";
+	    if (Objects.isNull(u)) {
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);
+	    }
+
+	    // Verificar si la contraseña es correcta
+	    if (!u.getPwd().equals(pwd)) {
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);
+	    }
+
+	    // Si el usuario es un Empleado, validar su estado
+	    if (u instanceof Empleado) {
+	        Empleado e = this.empdao.findByEmail(email);
+	        // Comprobar si el empleado está bloqueado o no verificado
+	        if (e.isBloqueado() || !e.isVerificado()) {
+	            throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);
+	        }
+	    }
+	    // Si todo está correcto, devolver true para permitir acceso a la pantalla de doble autenticación
+	    return true;
 	}
+
+	/////////////////////////////////////
+	//OBTENER ROL DEL USUARIO
+	/////////////////////////////////////
+	public String getRoleByEmail(String email) {
+        Usuario usuario = userdao.findByEmail(email);
+        if (usuario != null) {
+            return usuario.getRole(); 
+        }
+        return null;
+    }
+
+
 	
 	/////////////////////////////////////
 	//VER SI EL EMPLEADO ESTÁ BLOQUEADO
@@ -124,7 +126,7 @@ public class UsuarioService {
 	/////////////////////////////////////
 	//VERIFICA CODIGO DE GOOGLE AUTHENTICATOR
 	/////////////////////////////////////
-	public boolean verificarTwoFactorAuthCode(String email, Integer authCode) {
+	public String verificarTwoFactorAuthCode(String email, Integer authCode) {
 	    Usuario usuario = this.userdao.findByEmail(email);
 	    if (usuario == null) {
 	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
@@ -132,11 +134,16 @@ public class UsuarioService {
 	    if (authCode == null) {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de autenticación de dos factores requerido.");
 	    }
-	    return twoFactorAuthService.verifyCode(usuario.getClavesecreta(), authCode);
+	    
+	    // Validar el código de 2FA usando el servicio de 2FA
+	    if (twoFactorAuthService.verifyCode(usuario.getClavesecreta(), authCode)) {
+	        // Autenticación 2FA exitosa, generamos el JWT con el rol del usuario
+	        String role = usuario.getRole();
+	        return tokenService.generarToken(usuario.getEmail(), role); // Devuelve el JWT
+	    } else {
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto.");
+	    }
 	}
+
 	
-	
-
-
-
 }
