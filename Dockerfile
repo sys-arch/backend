@@ -1,5 +1,5 @@
 # Etapa 1: Construir el programa
-FROM maven:3.8.6-openjdk-17-slim AS build
+FROM 3.9.9-eclipse-temurin-23-alpine AS build
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Etapa 2: Ejecutar el programa
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 
