@@ -81,7 +81,7 @@ public class EmpleadoController {
 	////////////////////////////////////
     @PostMapping("/reunion")
     public Reunion añadirReunion(@RequestBody RegistroReunion reunion) {
-        return empleadoService.añadirReunion(reunion);
+        return empleadoService.anadirReunion(reunion);
     }
     
 	////////////////////////////////////

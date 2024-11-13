@@ -195,7 +195,7 @@ import com.equipo3.reuneme.service.PasswordService;
      *AÑADIR AUSENCIA
      ********************************/
 	@PutMapping(&quot;/anadirAusencia&quot;)
-	public void anadirAusencia(@RequestParam String email, @RequestBody RegistroAusencia ausencia) {
+	public Ausencia anadirAusencia(@RequestParam String email, @RequestBody RegistroAusencia ausencia) {
 		
 <span class="nc bnc" id="L200" title="All 2 branches missed.">    	if (!this.emailservice.validarEmail(email)) {</span>
 <span class="nc" id="L201">    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Revise el email, no es correcto&quot;);</span>
@@ -205,8 +205,8 @@ import com.equipo3.reuneme.service.PasswordService;
 <span class="nc" id="L205">    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;La ausencia que se intenta registrar está vacía&quot;);</span>
     	}
 		
-<span class="nc" id="L208">	    adminservice.anadirAusencias(email, ausencia); </span>
-<span class="nc" id="L209">	}</span>
+<span class="nc" id="L208">	    return adminservice.anadirAusencias(email, ausencia); </span>
+	}
 	
 	@GetMapping(&quot;/all&quot;)
 	@ResponseStatus(HttpStatus.OK)

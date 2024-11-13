@@ -1,10 +1,11 @@
 package com.equipo3.reuneme.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -16,22 +17,17 @@ import com.equipo3.reuneme.dao.AsistenteDAO;
 import com.equipo3.reuneme.dao.AusenciaDAO;
 import com.equipo3.reuneme.dao.EmpleadoDAO;
 import com.equipo3.reuneme.dao.ReunionDAO;
-import com.equipo3.reuneme.dao.UsuarioDAO;
 import com.equipo3.reuneme.model.Asistente;
 import com.equipo3.reuneme.model.AsistenteId;
 import com.equipo3.reuneme.model.Ausencia;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.Reunion;
-import com.equipo3.reuneme.model.Usuario;
 import com.equipo3.reuneme.model.EstadoReunion;
 import com.equipo3.reuneme.model.RegistroReunion;
 import com.equipo3.reuneme.model.EstadoAsistente;
 
 @Service
 public class EmpleadoService {
-	
-	@Autowired
-	private UsuarioDAO udao;
 	
 	@Autowired
 	private EmpleadoDAO edao;
@@ -77,19 +73,19 @@ public class EmpleadoService {
 	/////////////////////////
 	//AÑADIR REUNIÓN
 	/////////////////////////
-	public Reunion añadirReunion(RegistroReunion reunion) {
+	public Reunion anadirReunion(RegistroReunion reunion) {
 		
-		Usuario u = this.udao.findByEmail(reunion.getOrganizador());
+		Empleado emp = this.edao.findByEmail(reunion.getOrganizador());
 		
-		if(Objects.isNull(u)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizador no existe en usuarios");
+		if(Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El organizador proporcionado no existe o no es un empleado");
 		}
 		
 		Reunion re = new Reunion();
 		re.setEstado(reunion.getEstado());
 		re.setFin(formatoFechaHora(reunion.getFin()));
 		re.setInicio(formatoFechaHora(reunion.getInicio()));
-		re.setOrganizador(u);
+		re.setOrganizador(emp);
 		re.setObservaciones(reunion.getObservaciones());
 		re.setUbicacion(reunion.getUbicacion());
         
@@ -164,29 +160,35 @@ public class EmpleadoService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El asistente ya está registrado en esta reunión");
         }
         
-        List<Ausencia> ausencias = this.audao.findAllById(List.of(emp.getId()));
+        List<Ausencia> ausencias = this.audao.findAllByEmpleado(emp);
 		Reunion reunion = this.reunionRepository.getReferenceById(idReunion);
 		
 		if(Objects.isNull(reunion)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La reunion no existe!");
 		}
-        
-        if (!Objects.isNull(ausencias)) {
-        	for (Ausencia ausencia : ausencias) {
-        		// Convertir las fechas de ausencia de Date a LocalDateTime
-        		LocalDateTime ausenciaInicio = ausencia.getFechaInicio().toInstant()
-        				.atZone(ZoneId.systemDefault()).toLocalDateTime();
-        		LocalDateTime ausenciaFin = ausencia.getFechaFin().toInstant()
-        				.atZone(ZoneId.systemDefault()).toLocalDateTime();
+		
+		if(reunion.getOrganizador().getEmail().equals(email)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario al que intenta añadir es organizador");
+		}
 
-        		// Verificar si hay superposición entre la reunión y la ausencia
-        		// Si hay superposición, el usuario no está disponible
-        		if (reunion.getInicio().isBefore(ausenciaFin)
-        				|| ausenciaInicio.isBefore(reunion.getFin())) {
-        			throw new ResponseStatusException(HttpStatus.CONFLICT, "El usuario que intenta añadir estará ausente en las fechas de la reunión");
-        		}
-        	}
-        }
+		if (!Objects.isNull(ausencias)) {
+		    // Filtrar ausencias eliminando aquellas que finalizan antes de hoy
+		    LocalDateTime now = LocalDateTime.now();
+		    List<Ausencia> ausenciasFiltradas = ausencias.stream()
+		            .filter(ausencia -> ausencia.getFechaFin().isAfter(now))
+		            .collect(Collectors.toList());
+
+		    // Procesar las ausencias filtradas
+		    for (Ausencia ausencia : ausenciasFiltradas) {
+		        LocalDateTime ausenciaInicio = ausencia.getFechaInicio();
+		        LocalDateTime ausenciaFin = ausencia.getFechaFin();
+
+		        // Verificar si hay superposición entre la reunión y la ausencia
+		        if (reunion.getInicio().isBefore(ausenciaFin) && ausenciaInicio.isBefore(reunion.getFin())) {
+		            throw new ResponseStatusException(HttpStatus.CONFLICT, "El usuario que intenta añadir estará ausente en las fechas de la reunión");
+		        }
+		    }
+		}
         
         Asistente asistente = new Asistente();
         asistente.setIdReunion(idReunion);

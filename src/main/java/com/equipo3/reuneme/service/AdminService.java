@@ -179,16 +179,16 @@ public class AdminService {
 	//////////////////////////
 	// AÑADIR AUSENCIA A UN USUARIO
 	//////////////////////////
-	public void anadirAusencias(String email, RegistroAusencia au) {
+	public Ausencia anadirAusencias(String email, RegistroAusencia au) {
 
-		Usuario u = this.userdao.findByEmail(email);
+		Empleado emp = this.empdao.findByEmail(email);
 
-		if (Objects.isNull(u)) {
+		if (Objects.isNull(emp)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existe el usuario");
 		}
     
-		Ausencia a = new Ausencia(au.getFechaInicio(), au.getFechaFin(), au.getMotivo(), u);
-		this.adao.save(a);
+		Ausencia a = new Ausencia(au.getFechaInicio(), au.getFechaFin(), au.getMotivo(), emp);
+		return this.adao.save(a);
 
 	}
 

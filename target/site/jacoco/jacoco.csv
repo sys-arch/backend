@@ -10,7 +10,7 @@ ReuneMe,com.equipo3.reuneme.model,RegistroReunion,76,0,0,0,32,0,16,0,16,0
 ReuneMe,com.equipo3.reuneme.model,PasswordResetToken,43,0,0,0,16,0,9,0,9,0
 ReuneMe,com.equipo3.reuneme.model,Turno,36,0,0,0,15,0,8,0,8,0
 ReuneMe,com.equipo3.reuneme.model,Reunion,76,0,0,0,31,0,16,0,16,0
-ReuneMe,com.equipo3.reuneme.model,Ausencia,94,0,6,0,31,0,16,0,13,0
+ReuneMe,com.equipo3.reuneme.model,Ausencia,92,0,6,0,31,0,16,0,13,0
 ReuneMe,com.equipo3.reuneme.model,RegistroEmp,38,0,0,0,17,0,11,0,11,0
 ReuneMe,com.equipo3.reuneme.model,Usuario,71,0,0,0,30,0,19,0,19,0
 ReuneMe,com.equipo3.reuneme.model,Asistente,46,0,0,0,19,0,10,0,10,0
@@ -23,12 +23,12 @@ ReuneMe,com.equipo3.reuneme.service,TwoFactorAuthService,21,0,0,0,5,0,3,0,3,0
 ReuneMe,com.equipo3.reuneme.service,EmailService,47,0,0,0,17,0,3,0,3,0
 ReuneMe,com.equipo3.reuneme.service,PasswordService,74,0,0,0,13,0,3,0,3,0
 ReuneMe,com.equipo3.reuneme.service,PasswordResetTokenService,99,0,10,0,24,0,11,0,6,0
-ReuneMe,com.equipo3.reuneme.service,EmpleadoService,479,0,42,0,101,0,40,0,19,0
+ReuneMe,com.equipo3.reuneme.service,EmpleadoService,497,0,44,0,104,0,42,0,20,0
 ReuneMe,com.equipo3.reuneme.service,UsuarioService,194,0,18,0,46,0,16,0,7,0
-ReuneMe,com.equipo3.reuneme.service,AdminService,488,0,78,0,125,0,58,0,19,0
+ReuneMe,com.equipo3.reuneme.service,AdminService,488,0,78,0,124,0,58,0,19,0
 ReuneMe,com.equipo3.reuneme.controller,TokenController,13,0,0,0,4,0,3,0,3,0
 ReuneMe,com.equipo3.reuneme.controller,EmpleadoController,124,0,6,0,27,0,16,0,13,0
 ReuneMe,com.equipo3.reuneme.controller,UsuarioController,177,0,6,0,36,0,9,0,6,0
-ReuneMe,com.equipo3.reuneme.controller,AdminController,337,0,28,0,83,0,33,0,19,0
+ReuneMe,com.equipo3.reuneme.controller,AdminController,337,0,28,0,82,0,33,0,19,0
 ReuneMe,com.equipo3.reuneme.controller,PasswordResetController,164,0,14,0,39,0,11,0,4,0
 ReuneMe,com.equipo3.reuneme.config,AppConfiguration,25,0,0,0,8,0,3,0,3,0

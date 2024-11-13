@@ -179,18 +179,18 @@ import com.equipo3.reuneme.model.Usuario;
 	//////////////////////////
 	// AÑADIR AUSENCIA A UN USUARIO
 	//////////////////////////
-	public void anadirAusencias(String email, RegistroAusencia au) {
+	public Ausencia anadirAusencias(String email, RegistroAusencia au) {
 
-<span class="nc" id="L184">		Usuario u = this.userdao.findByEmail(email);</span>
+<span class="nc" id="L184">		Empleado emp = this.empdao.findByEmail(email);</span>
 
-<span class="nc bnc" id="L186" title="All 2 branches missed.">		if (Objects.isNull(u)) {</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">		if (Objects.isNull(emp)) {</span>
 <span class="nc" id="L187">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;No existe el usuario&quot;);</span>
 		}
     
-<span class="nc" id="L190">		Ausencia a = new Ausencia(au.getFechaInicio(), au.getFechaFin(), au.getMotivo(), u);</span>
-<span class="nc" id="L191">		this.adao.save(a);</span>
+<span class="nc" id="L190">		Ausencia a = new Ausencia(au.getFechaInicio(), au.getFechaFin(), au.getMotivo(), emp);</span>
+<span class="nc" id="L191">		return this.adao.save(a);</span>
 
-<span class="nc" id="L193">	}</span>
+	}
 
 	//////////////////////////
 	// DEVOLVER LISTA DE USUARIOS
