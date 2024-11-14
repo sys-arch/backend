@@ -41,9 +41,12 @@ public class Reunion {
     @Column(nullable = false)
     private EstadoReunion estado;
 
+     @Column(nullable = false)
+    private String asunto;
+
 	public Reunion() {}
 
-	public Reunion(Long id, Empleado organizador, LocalDateTime inicio, LocalDateTime fin, String ubicacion, String observaciones, EstadoReunion estado) {
+	public Reunion(Long id, Empleado organizador, LocalDateTime inicio, LocalDateTime fin, String ubicacion, String observaciones, EstadoReunion estado, String asunto) {
 		this.id = id;
 		this.organizador = organizador;
 		this.inicio = inicio;
@@ -51,6 +54,7 @@ public class Reunion {
 		this.ubicacion = ubicacion;
 		this.observaciones = observaciones;
 		this.estado = estado;
+		this.asunto = asunto;
 	}
 
 	public Long getId() {
@@ -108,6 +112,13 @@ public class Reunion {
 	public void setEstado(EstadoReunion estado) {
 		this.estado = estado;
 	}
+
+	public void setAsunto(String asunto) {
+		this.asunto = asunto;
+	}
+
+	public String getAsunto() {
+		return asunto;
+	}
     
 }
-

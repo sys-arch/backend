@@ -9,12 +9,13 @@ public class RegistroReunion {
 	    private String ubicacion;
 	    private String observaciones;
 	    private EstadoReunion estado;
+	    private String asunto;
 	
 	    public RegistroReunion() {
 		}
 
 		public RegistroReunion(Long id, String organizador, String inicio, String fin, String ubicacion,
-				String observaciones, EstadoReunion estado) {
+				String observaciones, EstadoReunion estado, String asunto) {
 			this.id = id;
 			this.organizador = organizador;
 			this.inicio = inicio;
@@ -22,6 +23,7 @@ public class RegistroReunion {
 			this.ubicacion = ubicacion;
 			this.observaciones = observaciones;
 			this.estado = estado;
+			this.asunto = asunto;
 		}
 
 		public Long getId() {
@@ -78,6 +80,14 @@ public class RegistroReunion {
 
 		public void setEstado(EstadoReunion estado) {
 			this.estado = estado;
+		}
+
+		public String getAsunto() {
+			return asunto;
+		}
+
+		public void setAsunto(String asunto) {
+			this.asunto = asunto;
 		}
 
 }
