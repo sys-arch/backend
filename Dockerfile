@@ -29,4 +29,4 @@ RUN chmod +x start.sh
 EXPOSE 8080
 
 # Establecer el entrypoint al script de inicio
-ENTRYPOINT ["./start.sh"]
+ENTRYPOINT ["sh", "./start.sh"]
