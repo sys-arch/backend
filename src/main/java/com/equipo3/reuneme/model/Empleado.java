@@ -25,6 +25,8 @@ public class Empleado extends Usuario {
 	@Column(nullable = false)
 	private Boolean verificado;
 	
+	
+	
 	public String getDepartamento() {
 		return departamento;
 	}
@@ -55,5 +57,10 @@ public class Empleado extends Usuario {
 	public void setVerificado(boolean verificado) {
 		this.verificado = verificado;
 	}
+	
+	public Empleado() {
+	    this.setRole("ROLE_EMPLOYEE");
+	}
+
 
 }

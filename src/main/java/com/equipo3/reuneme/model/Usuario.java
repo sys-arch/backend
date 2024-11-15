@@ -45,6 +45,17 @@ public class Usuario {
 	@Column(nullable = false)
 	private Boolean twoFA;
 	
+	@Column(length = 20, nullable = false)
+	private String role;
+
+	public String getRole() {
+	    return role;
+	}
+
+	public void setRole(String role) {
+	    this.role = role;
+	}
+
     public Usuario() {
         this.id = UUID.randomUUID().toString();
     }

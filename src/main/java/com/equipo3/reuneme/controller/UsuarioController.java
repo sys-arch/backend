@@ -15,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.ResponseEntity;
+
 
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroEmp;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
+import com.equipo3.reuneme.security.JwtTokenProvider;
 
 
 @RestController
@@ -36,6 +39,10 @@ public class UsuarioController {
     
     @Autowired
     PasswordService pwdservice;
+    
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
 
     /*
      * 
@@ -86,19 +93,32 @@ public class UsuarioController {
     /////////////////////////////
     //LOGIN UNICO
     ////////////////////////////
-	@PutMapping("/login")
-	public String login (@RequestBody Map<String, Object>info) {
-		
-		String email = info.get("email").toString().toLowerCase();
-		String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
-		
-		return this.userservice.login(email, pwd);
-		
-	}
+    @PutMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, Object> info) {
+        String email = info.get("email").toString().toLowerCase();
+        String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
+
+        try {
+            boolean loginResult = this.userservice.login(email, pwd);
+            if (loginResult) {
+                String role = userservice.getRoleByEmail(email);
+                String token = jwtTokenProvider.generateToken(email, role);
+                
+                // Devuelve el token y un mensaje de que 2FA es requerido
+                return ResponseEntity.ok(Map.of(
+                    "token", token));
+            } else {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas");
+            }
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+    }
+
+
 	/////////////////////////////
 	//GENERA CLAVE DOBLE FACTOR DE AUTHENTICACIÓN
 	////////////////////////////
-	
 	@PutMapping("/activar-2fa")
 	public String activar2FA(@RequestBody Map<String, String> info) {
 	    String email = info.get("email").toLowerCase();
@@ -109,11 +129,20 @@ public class UsuarioController {
 	//VERIFICACIÓN DOBLE FACTOR DE AUTHENTICACIÓN
 	////////////////////////////
 	@PutMapping("/verify-2fa")
-	public boolean verificarTwoFactorAuth(@RequestBody Map<String, Object> info) {
+	public ResponseEntity<?> verificarTwoFactorAuth(@RequestBody Map<String, Object> info) {
 	    String email = info.get("email").toString().toLowerCase();
 	    Integer authCode = (Integer) info.get("authCode");
 
-	    return userservice.verificarTwoFactorAuthCode(email, authCode);
+	    try {
+	        boolean isValidCode = userservice.verificarTwoFactorAuthCode(email, authCode);
+	        if (isValidCode) {
+	            return ResponseEntity.ok("Autenticación de doble factor exitosa");
+	        } else {
+	            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto");
+	        }
+	    } catch (ResponseStatusException ex) {
+	        return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+	    }
 	}
 	
 	/////////////////////////////

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.equipo3.reuneme.model.Administrador;
 import com.equipo3.reuneme.model.Ausencia;
@@ -49,6 +50,7 @@ public class AdminController {
     /*********************************
      *REGISTRO DE ADMINISTRADOR
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register")
     public void registerAdmin(@RequestBody RegistroAdmin re) {
         // Comprobamos que ambas contraseñas son iguales
@@ -87,6 +89,7 @@ public class AdminController {
     /*********************************
      *MODIFICAR EMPLEADO
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/modificarEmpleado")
     public void modificarEmpleado(@RequestBody Empleado emp) {
     	try {
@@ -99,6 +102,7 @@ public class AdminController {
     /*********************************
      *VERIFICAR EMPLEADO
      ********************************/    
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/verificarEmpleado")
     public void verificarEmpleado(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
@@ -115,6 +119,7 @@ public class AdminController {
     /*********************************
      *BLOQUEAR/DESBLOQUEAR EMPLEADO
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/cambiarEstadoBloqueo")
     public void cambiarEstadoBloqueoEmpleado(@RequestParam String email, @RequestParam boolean bloquear) {
     	
@@ -130,6 +135,7 @@ public class AdminController {
     /*********************************
      *BORRAR EMPLEADO
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/borrarEmpleado")
     public void borrarUsuario(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
@@ -145,6 +151,7 @@ public class AdminController {
     /*********************************
      *OBTENER LISTA DE EMPLEADOS
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listaEmpleados")
     public List<Empleado> verEmpleados () {
     	return this.adminservice.getEmpleados();
@@ -153,6 +160,7 @@ public class AdminController {
     /*********************************
      *OBTENER EMPLEADO
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/obtenerEmpleado")
     public Empleado verEmpleado (@RequestParam String email) {
     	
@@ -168,7 +176,8 @@ public class AdminController {
     /*********************************
      *CONSULTAR AUSENCIAS DE UN EMPLEADO
      ********************************/
-	@PutMapping("/todasAusencias")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/todasAusencias")
 	public List<Ausencia> getAusencias() {
 	    return this.adminservice.consultarAusencias(); 
 	}
@@ -176,7 +185,7 @@ public class AdminController {
 	/*********************************
      *CONSULTAR TODAS LAS AUSENCIAS
      ********************************/
-
+    @PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/todasAusencias")
     public List<Ausencia> obtenerTodasLasAusencias() {
         return adminservice.obtenerTodasLasAusencias();
@@ -194,6 +203,7 @@ public class AdminController {
     /*********************************
      *AÑADIR AUSENCIA
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/anadirAusencia")
 	public Ausencia anadirAusencia(@RequestParam String email, @RequestBody RegistroAusencia ausencia) {
 		
@@ -207,7 +217,10 @@ public class AdminController {
 		
 	    return adminservice.anadirAusencias(email, ausencia); 
 	}
-	
+    /*********************************
+     *VER LISTA DE USUARIOS
+     ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/all")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Usuario> verTodosLosUsuarios() {
@@ -217,7 +230,8 @@ public class AdminController {
 	/*********************************
 	 * VER DATOS DEL ADMINISTRADOR
 	 ********************************/
-	@GetMapping("/verDatos")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/verDatos")
 	public Administrador verDatosAdmin(@RequestParam String email) {
 	    if (!this.emailservice.validarEmail(email)) {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido: usuario@dominio.com");
@@ -228,7 +242,8 @@ public class AdminController {
     /*********************************
      *AÑADIR TURNO
      ********************************/
-	@PostMapping("/anadirTurno")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/anadirTurno")
 	@ResponseStatus(HttpStatus.OK)
 	public void anadirTurno( @RequestBody Turno t) {
     	if (Objects.isNull(t)) {
@@ -241,7 +256,8 @@ public class AdminController {
     /*********************************
      *DEVOLVER TODOS LOS TURNOS
      ********************************/
-	@PostMapping("/turnos")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/turnos")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Turno> turnos( @RequestBody Turno t) {
     	if (Objects.isNull(t)) {
@@ -254,6 +270,7 @@ public class AdminController {
 	/*********************************
      *MODIFICAR ADMINISTRADOR
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/modificarAdministrador")
     public void modificarAdministrador(@RequestBody Administrador admin) {
     	try {
@@ -270,6 +287,7 @@ public class AdminController {
 	/*********************************
      *COMPROBAR BLOQ./VALIDADO EMPLEADO
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/verificar")
     public boolean verificar(@RequestBody String email) {
     	
@@ -284,6 +302,7 @@ public class AdminController {
     /*********************************
      * OBTENER ROL DE USUARIO POR EMAIL
      ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUserRoleByEmail")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, String> getUserRoleByEmail(@RequestParam String email) {
