@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -88,6 +87,7 @@ public class EmpleadoService {
 		re.setOrganizador(emp);
 		re.setObservaciones(reunion.getObservaciones());
 		re.setUbicacion(reunion.getUbicacion());
+		re.setAsunto(reunion.getAsunto());
         
         return reunionRepository.save(re);
     }
