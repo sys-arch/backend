@@ -93,25 +93,32 @@ public class UsuarioController {
     /////////////////////////////
     //LOGIN UNICO
     ////////////////////////////
-	@PutMapping("/login")
-	public ResponseEntity<Boolean> login(@RequestBody Map<String, Object> info) {
-		
-		String email = info.get("email").toString().toLowerCase();
-		String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
-		
-		try {
-	        boolean loginResult = this.userservice.login(email, pwd);
-	        return ResponseEntity.ok(loginResult); // Devuelve true si el login es exitoso
-	    } catch (ResponseStatusException e) {
-	        // Devuelve false si hay algún error, pero con un mensaje genérico
-	        return ResponseEntity.status(e.getStatusCode()).body(false);
-	    }
-	}
+    @PutMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, Object> info) {
+        String email = info.get("email").toString().toLowerCase();
+        String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
+
+        try {
+            boolean loginResult = this.userservice.login(email, pwd);
+            if (loginResult) {
+                String role = userservice.getRoleByEmail(email);
+                String token = jwtTokenProvider.generateToken(email, role);
+                
+                // Devuelve el token y un mensaje de que 2FA es requerido
+                return ResponseEntity.ok(Map.of(
+                    "token", token));
+            } else {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas");
+            }
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+    }
+
 
 	/////////////////////////////
 	//GENERA CLAVE DOBLE FACTOR DE AUTHENTICACIÓN
 	////////////////////////////
-	
 	@PutMapping("/activar-2fa")
 	public String activar2FA(@RequestBody Map<String, String> info) {
 	    String email = info.get("email").toLowerCase();
@@ -127,16 +134,16 @@ public class UsuarioController {
 	    Integer authCode = (Integer) info.get("authCode");
 
 	    try {
-	        // Llamamos a verificarTwoFactorAuthCode que ahora devuelve el JWT si es exitoso
-	        String token = userservice.verificarTwoFactorAuthCode(email, authCode);
-	        return ResponseEntity.ok(Map.of("token", token)); // Retorna el JWT si el 2FA es exitoso
+	        boolean isValidCode = userservice.verificarTwoFactorAuthCode(email, authCode);
+	        if (isValidCode) {
+	            return ResponseEntity.ok("Autenticación de doble factor exitosa");
+	        } else {
+	            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto");
+	        }
 	    } catch (ResponseStatusException ex) {
-	        // Devolver el mensaje de error en caso de fallo
 	        return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
 	    }
 	}
-
-
 	
 	/////////////////////////////
 	//GENERACIÓN CÓDIGO QR

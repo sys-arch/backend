@@ -25,6 +25,8 @@ public class Empleado extends Usuario {
 	@Column(nullable = false)
 	private Boolean verificado;
 	
+	
+	
 	public String getDepartamento() {
 		return departamento;
 	}

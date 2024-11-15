@@ -126,8 +126,9 @@ public class UsuarioService {
 	/////////////////////////////////////
 	//VERIFICA CODIGO DE GOOGLE AUTHENTICATOR
 	/////////////////////////////////////
-	public String verificarTwoFactorAuthCode(String email, Integer authCode) {
+	public boolean verificarTwoFactorAuthCode(String email, Integer authCode) {
 	    Usuario usuario = this.userdao.findByEmail(email);
+	    
 	    if (usuario == null) {
 	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
 	    }
@@ -137,13 +138,13 @@ public class UsuarioService {
 	    
 	    // Validar el código de 2FA usando el servicio de 2FA
 	    if (twoFactorAuthService.verifyCode(usuario.getClavesecreta(), authCode)) {
-	        // Autenticación 2FA exitosa, generamos el JWT con el rol del usuario
-	        String role = usuario.getRole();
-	        return tokenService.generarToken(usuario.getEmail(), role); // Devuelve el JWT
+	        // Autenticación 2FA exitosa, retorno verdadero para indicar éxito
+	        return true;
 	    } else {
 	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto.");
 	    }
 	}
+
 
 	
 }

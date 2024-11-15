@@ -16,10 +16,13 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // Replaces @EnableGlobalMethodSecurity
+
 public class SecurityConfig {
 
 	private final JwtTokenProvider jwtTokenProvider;

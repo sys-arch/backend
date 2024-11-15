@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -28,20 +30,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String token = getJwtFromRequest(request);
+        logger.info("Token found: " + token);
 
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
             // Obtener username y rol del token
             String username = jwtTokenProvider.getUsernameFromToken(token);
             String role = jwtTokenProvider.getRoleFromToken(token);
-
+            
+            logger.info("Extracted username: " + username);
+            logger.info("Extracted role: " + role);
             // Crear el objeto de autenticación
             UsernamePasswordAuthenticationToken authentication = 
-                    new UsernamePasswordAuthenticationToken(username, null, List.of(() -> "ROLE_" + role));
+            	    new UsernamePasswordAuthenticationToken(username, null, List.of(() -> "ROLE_" + role));
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             // Establecer autenticación en el contexto de seguridad
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+        
+	    } else {
+	        logger.warn("No valid token found or token validation failed.");
+	    }
 
         chain.doFilter(request, response);
     }
