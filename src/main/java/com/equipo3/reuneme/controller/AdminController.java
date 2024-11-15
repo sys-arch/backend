@@ -35,7 +35,6 @@ import com.equipo3.reuneme.service.PasswordService;
 
 @RestController
 @RequestMapping("/admins")
-@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST, RequestMethod.GET, RequestMethod.DELETE})
 public class AdminController {
 
     @Autowired

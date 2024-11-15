@@ -28,7 +28,6 @@ import com.equipo3.reuneme.security.JwtTokenProvider;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST, RequestMethod.GET})
 public class UsuarioController {
 
     @Autowired

@@ -13,7 +13,6 @@ import com.equipo3.reuneme.service.TokenService;
 
 @RestController
 @RequestMapping("/tokens")
-@CrossOrigin(origins = "*", methods= {RequestMethod.GET})
 public class TokenController {
 
     @Autowired
