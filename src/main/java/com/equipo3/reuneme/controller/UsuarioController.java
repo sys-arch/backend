@@ -24,6 +24,7 @@ import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
 import com.equipo3.reuneme.security.JwtTokenProvider;
+import java.util.HashMap;
 
 
 @RestController
@@ -128,21 +129,26 @@ public class UsuarioController {
 	//VERIFICACIÓN DOBLE FACTOR DE AUTHENTICACIÓN
 	////////////////////////////
 	@PutMapping("/verify-2fa")
-	public ResponseEntity<?> verificarTwoFactorAuth(@RequestBody Map<String, Object> info) {
+	public ResponseEntity<Map<String, String>> verificarTwoFactorAuth(@RequestBody Map<String, Object> info) {
 	    String email = info.get("email").toString().toLowerCase();
 	    Integer authCode = (Integer) info.get("authCode");
 
+	    Map<String, String> response = new HashMap<>();
 	    try {
 	        boolean isValidCode = userservice.verificarTwoFactorAuthCode(email, authCode);
 	        if (isValidCode) {
-	            return ResponseEntity.ok("Autenticación de doble factor exitosa");
+	            response.put("message", "Autenticación de doble factor exitosa");
+	            return ResponseEntity.ok(response);
 	        } else {
-	            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto");
+	            response.put("message", "Código de autenticación incorrecto");
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	        }
 	    } catch (ResponseStatusException ex) {
-	        return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+	        response.put("message", ex.getReason());
+	        return ResponseEntity.status(ex.getStatusCode()).body(response);
 	    }
 	}
+
 	
 	/////////////////////////////
 	//GENERACIÓN CÓDIGO QR
@@ -160,10 +166,18 @@ public class UsuarioController {
 
 	    return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + URLEncoder.encode(qrCodeData, StandardCharsets.UTF_8);
 	}
+	
+	/////////////////////////////
+	//GENERACIÓN CÓDIGO QR
+	////////////////////////////
+	@PutMapping("/desactivar-2fa")
+    public void desactivarTwoFA(@RequestBody Map<String, Object> updateData) {
+        String email = (String) updateData.get("email");
+        String clavesecreta = (String) updateData.get("clavesecreta");
+        boolean twoFA = (boolean) updateData.get("twoFA");
 
-
-
-
+        userservice.desactivar2FA(email, clavesecreta, twoFA);
+    }
 
 }
 

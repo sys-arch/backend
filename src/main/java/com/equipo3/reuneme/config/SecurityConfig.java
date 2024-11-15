@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/tokens/obtenerRole")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN") // Solo accesible para administradores
                 .requestMatchers(new AntPathRequestMatcher("/empleados/**")).hasRole("EMPLOYEE") // Solo accesible para empleados
+                .requestMatchers(new AntPathRequestMatcher("/users/desactivar-2fa")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/public/**"), 
                                  new AntPathRequestMatcher("/pwd/**"), 
                                  new AntPathRequestMatcher("/tokens/**")).permitAll() // Rutas públicas
