@@ -16,6 +16,9 @@ import com.equipo3.reuneme.model.Administrador;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.Token;
 import com.equipo3.reuneme.model.Usuario;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 @Service
 public class UsuarioService {
@@ -144,6 +147,28 @@ public class UsuarioService {
 	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto.");
 	    }
 	}
+	
+	/////////////////////////////////////
+	//USUARIO CON 2FA EMPAREJADO
+	/////////////////////////////////////
+	public void desactivar2FA(String email, String clavesecreta, boolean twoFA) {
+	    // Obtener el usuario autenticado (a través del token)
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    if (authentication == null || !authentication.isAuthenticated()) {
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado. Token no válido.");
+	    }
+
+	    Usuario usuario = this.userdao.findByEmail(email);
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+
+	    // Actualizar la clave secreta y el estado de 2FA
+	    usuario.setClavesecreta(clavesecreta);
+	    usuario.setTwoFA(twoFA);
+	    userdao.save(usuario); // Guarda los cambios en la base de datos
+	}
+
 
 
 	
