@@ -30,7 +30,6 @@ import com.equipo3.reuneme.service.EmpleadoService;
 
 @RestController
 @RequestMapping(value = "/empleados")
-@CrossOrigin(origins = "*", methods= {RequestMethod.PUT,RequestMethod.POST, RequestMethod.GET, RequestMethod.DELETE})
 public class EmpleadoController {
 
 	@Autowired

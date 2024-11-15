@@ -18,6 +18,7 @@ com\equipo3\reuneme\dao\AdministradorDAO.class
 com\equipo3\reuneme\Auditable.class
 com\equipo3\reuneme\model\Ausencia.class
 com\equipo3\reuneme\dao\TurnoDAO.class
+com\equipo3\reuneme\config\WebConfig.class
 com\equipo3\reuneme\security\JwtAuthenticationFilter.class
 com\equipo3\reuneme\dao\AusenciaDAO.class
 com\equipo3\reuneme\model\Reunion.class
