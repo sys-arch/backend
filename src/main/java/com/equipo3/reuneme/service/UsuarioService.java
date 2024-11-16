@@ -169,6 +169,22 @@ public class UsuarioService {
 	    userdao.save(usuario); // Guarda los cambios en la base de datos
 	}
 
+	
+	public void updatePassword(String email, String newPassword) {
+	    // Buscar el usuario por email
+	    Usuario usuario = userdao.findByEmail(email);
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+
+	    // Cifrar la nueva contraseña usando SHA-512
+	    String hashedPassword = org.apache.commons.codec.digest.DigestUtils.sha512Hex(newPassword);
+
+	    // Actualizar la contraseña y guardar el usuario
+	    usuario.setPwd(hashedPassword); // Asumiendo que `setPwd` actualiza la contraseña
+	    userdao.save(usuario);
+	}
+
 
 
 	
