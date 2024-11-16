@@ -82,18 +82,30 @@ public class AdminService {
 	// BORRAR EMPLEADO
 	//////////////////////////
 	public void deleteUser(String email) {
-		Empleado empleado = this.empdao.findByEmail(email);
-		if (empleado != null) {
-			this.empdao.deleteById(empleado.getId());
-		}
+	    // Buscar empleado por email
+	    Empleado empleado = this.empdao.findByEmail(email);
+	    if (empleado != null) {
+	        // Obtener todas las ausencias asociadas al empleado
+	        List<Ausencia> ausencias = this.adao.findAllByEmpleado(empleado);
+	        // Eliminar todas las ausencias
+	        this.adao.deleteAll(ausencias);
+	        // Luego eliminar el empleado
+	        this.empdao.deleteById(empleado.getId());
+	        return; // Salir después de eliminar el empleado
+	    }
 
-		Administrador administrador = this.admindao.findByEmail(email);
-		if (administrador != null) {
-			this.admindao.deleteById(administrador.getId());
-		}
+	    // Buscar administrador por email (si no se encontró como empleado)
+	    Administrador administrador = this.admindao.findByEmail(email);
+	    if (administrador != null) {
+	        this.admindao.deleteById(administrador.getId());
+	        return; // Salir después de eliminar el administrador
+	    }
 
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con el email especificado no existe");
+	    // Lanzar excepción si no se encuentra ni empleado ni administrador
+	    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con el email especificado no existe");
 	}
+
+
 
 	//////////////////////////
 	// BLOQUEAR/DESBLOQUEAR EMPLEADO
