@@ -1,6 +1,7 @@
 package com.equipo3.reuneme.service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -16,11 +17,13 @@ import com.equipo3.reuneme.dao.AsistenteDAO;
 import com.equipo3.reuneme.dao.AusenciaDAO;
 import com.equipo3.reuneme.dao.EmpleadoDAO;
 import com.equipo3.reuneme.dao.ReunionDAO;
+import com.equipo3.reuneme.dao.TurnoDAO;
 import com.equipo3.reuneme.model.Asistente;
 import com.equipo3.reuneme.model.AsistenteId;
 import com.equipo3.reuneme.model.Ausencia;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.Reunion;
+import com.equipo3.reuneme.model.Turno;
 import com.equipo3.reuneme.model.EstadoReunion;
 import com.equipo3.reuneme.model.RegistroReunion;
 import com.equipo3.reuneme.model.EstadoAsistente;
@@ -39,6 +42,9 @@ public class EmpleadoService {
     
     @Autowired
     private AusenciaDAO audao;
+    
+    @Autowired
+    private TurnoDAO tdao;
 	
 	/////////////////////////
 	//VER DATOS (DEL PROPIO EMPLEADO)
@@ -88,6 +94,24 @@ public class EmpleadoService {
 		re.setObservaciones(reunion.getObservaciones());
 		re.setUbicacion(reunion.getUbicacion());
 		re.setAsunto(reunion.getAsunto());
+		
+		List<Turno> turnos = this.tdao.findAll();
+		
+		if(Objects.isNull(turnos)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El organizador proporcionado no existe o no es un empleado");
+		}
+		
+		Boolean valido = false;
+		
+	    for (Turno turno : turnos) {
+	        if (reunionTurno(re, turno)) {
+	            valido = true;
+	        }
+	    }
+	    
+		if(!valido) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No se puede programar una reunión fuera de los turnos establecidos");
+		}
         
         return reunionRepository.save(re);
     }
@@ -97,7 +121,16 @@ public class EmpleadoService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		return LocalDateTime.parse(fh, formatter);
 	}
+	
+	public boolean reunionTurno(Reunion reunion, Turno turno) {
+	    LocalTime inicioReunion = reunion.getInicio().toLocalTime();
+	    LocalTime finReunion = reunion.getFin().toLocalTime();
 
+	    LocalTime inicioTurno = turno.getHoraInicio().toLocalTime();
+	    LocalTime finTurno = turno.getHoraFinal().toLocalTime();
+
+	    return !inicioReunion.isBefore(inicioTurno) && !finReunion.isAfter(finTurno);
+	}
 
 	/////////////////////////
 	//CANCELAR REUNIÓN
@@ -114,8 +147,8 @@ public class EmpleadoService {
     public Reunion modificarReunion(Long id, Reunion reunionModificada) {
         Reunion reunion = verReunion(id);
 
-        if (reunion.getEstado() == EstadoReunion.CERRADA) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No se puede modificar una reunión cerrada o cancelada");
+        if (reunion.getEstado() == EstadoReunion.CERRADA || reunion.getEstado() == EstadoReunion.CANCELADA || reunion.getEstado() == EstadoReunion.REALIZADA) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No se puede modificar una reunión cerrada, cancelada o que ya ha sido realizada");
         }
 
         LocalDateTime ahora = LocalDateTime.now();
@@ -267,7 +300,7 @@ public class EmpleadoService {
 	/////////////////////////
 	//LISTADO EMPLEADOS A REUNIÓN
 	/////////////////////////
-	public List<Empleado> posiblesAsistentes(Object object) {
+	public List<Empleado> posiblesAsistentes() {
 		List<Empleado> lista = this.edao.findAll();
 
 		if (lista.isEmpty() || Objects.isNull(lista)) {
@@ -275,6 +308,19 @@ public class EmpleadoService {
 		}
 		
 		lista.removeIf(empleado -> empleado.isBloqueado() && !empleado.isVerificado());
+
+		return lista;
+	}
+	
+	/////////////////////////
+	//LISTADO REUNIONES
+	/////////////////////////
+	public List<Reunion> listadoReuniones() {
+		List<Reunion> lista = this.reunionRepository.findAll();
+
+		if (lista.isEmpty() || Objects.isNull(lista)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existen reuniones");
+		}
 
 		return lista;
 	}

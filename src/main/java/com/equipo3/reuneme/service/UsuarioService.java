@@ -2,8 +2,6 @@ package com.equipo3.reuneme.service;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,9 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.equipo3.reuneme.dao.AdministradorDAO;
 import com.equipo3.reuneme.dao.EmpleadoDAO;
 import com.equipo3.reuneme.dao.UsuarioDAO;
-import com.equipo3.reuneme.model.Administrador;
 import com.equipo3.reuneme.model.Empleado;
-import com.equipo3.reuneme.model.Token;
 import com.equipo3.reuneme.model.Usuario;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
