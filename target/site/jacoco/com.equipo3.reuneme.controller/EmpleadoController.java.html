@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmpleadoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ReuneMe</a> &gt; <a href="index.source.html" class="el_package">com.equipo3.reuneme.controller</a> &gt; <span class="el_source">EmpleadoController.java</span></div><h1>EmpleadoController.java</h1><pre class="source lang-java linenums">package com.equipo3.reuneme.controller;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.equipo3.reuneme.model.Asistente;
+import com.equipo3.reuneme.model.Empleado;
+import com.equipo3.reuneme.model.RegistroReunion;
+import com.equipo3.reuneme.model.Reunion;
+import com.equipo3.reuneme.service.EmailService;
+import com.equipo3.reuneme.service.EmpleadoService;
+
+@RestController
+@RequestMapping(value = &quot;/empleados&quot;)
+<span class="nc" id="L31">public class EmpleadoController {</span>
+
+	@Autowired
+	private EmpleadoService empleadoService;
+	
+	@Autowired
+	private EmailService emailService;
+
+	////////////////////////////////////
+	// DEVOLVER INFORMACIÓN EMPLEADO
+	////////////////////////////////////
+	@GetMapping(value = &quot;/verDatos&quot;)
+	@ResponseStatus(HttpStatus.OK)
+	public Empleado verDatos(@RequestParam String email) {
+		
+<span class="nc" id="L46">		email = email.toLowerCase();</span>
+		
+<span class="nc bnc" id="L48" title="All 2 branches missed.">	    if (!emailService.validarEmail(email)) {</span>
+<span class="nc" id="L49">	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email insertado no tiene un formato válido: usuario@dominio.com&quot;);</span>
+	    }
+	    
+<span class="nc" id="L52">	    return this.empleadoService.verDatos(email);</span>
+	}
+
+	
+	////////////////////////////////////
+	// ACTUALIZAR CONTRASEÑA
+	////////////////////////////////////
+	@PutMapping(value = &quot;/actualizarPwd&quot;)
+	@ResponseStatus(HttpStatus.OK)
+	public void actualizarPwd(@RequestBody Map&lt;String,String&gt; info ) {
+		
+<span class="nc" id="L63">		String email = info.get(&quot;email&quot;).toString();</span>
+<span class="nc" id="L64">		String pwd = info.get(&quot;pwd&quot;).toString();</span>
+		
+<span class="nc" id="L66">		email = email.toLowerCase();</span>
+		
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (!emailService.validarEmail(email)) {</span>
+<span class="nc" id="L69">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email insertado no tiene un formato válido: &quot;</span>
+            		+ &quot;usuario@dominio.com&quot;);
+        }
+		
+<span class="nc" id="L73">		this.empleadoService.actualizarPwd(email, pwd);</span>
+<span class="nc" id="L74">	}</span>
+	
+	////////////////////////////////////
+	// AÑADIR REUNION
+	////////////////////////////////////
+    @PostMapping(&quot;/reunion&quot;)
+    public Reunion añadirReunion(@RequestBody RegistroReunion reunion) {
+<span class="nc" id="L81">        return empleadoService.anadirReunion(reunion);</span>
+    }
+    
+	////////////////////////////////////
+	// VER REUNION
+	////////////////////////////////////
+    @PostMapping(&quot;/reunion/{id}/ver&quot;)
+    public Reunion verReunion(@PathVariable Long id) {
+<span class="nc" id="L89">        return empleadoService.verReunion(id);</span>
+    }
+
+	////////////////////////////////////
+	// CANCELAR REUNIÓN
+	////////////////////////////////////
+    @PutMapping(&quot;/reunion/{id}/cancelar&quot;)
+    public Reunion cancelarReunion(@PathVariable Long id) {
+<span class="nc" id="L97">        return empleadoService.cancelarReunion(id);</span>
+    }
+
+	////////////////////////////////////
+	// MODIFICAR REUNIÓN
+	////////////////////////////////////
+    @PutMapping(&quot;/reunion/{id}/modificar&quot;)
+    public Reunion modificarReunion(@PathVariable Long id, @RequestBody Reunion reunion) {
+<span class="nc" id="L105">        return empleadoService.modificarReunion(id, reunion);</span>
+    }
+
+	////////////////////////////////////
+	// CERRAR REUNION
+	////////////////////////////////////
+    @PutMapping(&quot;/reunion/{id}/cerrar&quot;)
+    public Reunion cerrarReunion(@PathVariable Long id) {
+<span class="nc" id="L113">        return empleadoService.cerrarReunion(id);</span>
+    }
+
+	////////////////////////////////////
+	//AÑADIR ASISTENTE
+	////////////////////////////////////
+	@PostMapping(&quot;/reunion/{idReunion}/asistente/{email}&quot;)
+	public void anadirAsistente(@PathVariable Long idReunion, @PathVariable String email) {
+		
+<span class="nc" id="L122">		email = URLDecoder.decode(email, StandardCharsets.UTF_8);</span>
+		
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (!emailService.validarEmail(email)) {</span>
+<span class="nc" id="L125">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email insertado no tiene un formato válido: &quot;</span>
+            		+ &quot;usuario@dominio.com&quot;);
+        }
+		
+<span class="nc" id="L129">		this.empleadoService.anadirAsistente(idReunion, email);</span>
+<span class="nc" id="L130">	}</span>
+
+
+	////////////////////////////////////
+	// BORRAR ASISTENTE
+	////////////////////////////////////
+    @DeleteMapping(&quot;/reunion/{idReunion}/asistente/{idUsuario}&quot;)
+    public void eliminarAsistente(@PathVariable Long idReunion, @PathVariable String idUsuario) {
+<span class="nc" id="L138">        empleadoService.eliminarAsistente(idReunion, idUsuario);</span>
+<span class="nc" id="L139">    }</span>
+
+	////////////////////////////////////
+	// CONFIRMAR ASISTENCIA
+	////////////////////////////////////
+    @PutMapping(&quot;/reunion/{idReunion}/asistente/{idUsuario}/confirmar&quot;)
+    public Asistente confirmarAsistencia(@PathVariable Long idReunion, @PathVariable String idUsuario) {
+<span class="nc" id="L146">        return empleadoService.confirmarAsistencia(idReunion, idUsuario);</span>
+    }
+
+	////////////////////////////////////
+	//ASISTIR
+	////////////////////////////////////
+    @PutMapping(&quot;/reunion/{idReunion}/asistente/{idUsuario}/asistir&quot;)
+    public Asistente asistir(@PathVariable Long idReunion, @PathVariable String idUsuario) {
+<span class="nc" id="L154">        return empleadoService.asistir(idReunion, idUsuario);</span>
+    }
+    
+	////////////////////////////////////
+	// OBTENER LISTA DE POSIBLES ASISTENTES
+	////////////////////////////////////
+    @GetMapping(&quot;/reunion/asistentes&quot;)
+    public List&lt;Empleado&gt; posiblesAsistentes () {
+<span class="nc" id="L162">    	return this.empleadoService.posiblesAsistentes();</span>
+    }
+    
+	////////////////////////////////////
+	// OBTENER LISTA DE REUNIONES
+	////////////////////////////////////
+    @GetMapping(&quot;/reunion/listado&quot;)
+    public List&lt;Reunion&gt; listadoReuniones() {
+<span class="nc" id="L170">    	return this.empleadoService.listadoReuniones();</span>
+    }
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
