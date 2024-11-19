@@ -335,7 +335,7 @@ public class EmpleadoService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El empleado no existe!");
 		}
 		
-		List<Reunion> reuniones = this.reunionRepository.findByOrganizador(emp.getId());
+		List<Reunion> reuniones = this.reunionRepository.findByOrganizador(emp);
 		
 		if (reuniones.isEmpty() || Objects.isNull(reuniones)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existen reuniones");

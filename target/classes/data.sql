@@ -33,7 +33,7 @@ INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoF
 VALUES ('86a54ba8-5c2d-496a-9250-ce7d35aabb11', 'yolanda.galvan@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Yolanda', 'Galván', 'Redondo', 'ESI UCLM', true, 'ROLE_ADMIN');
 
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
-VALUES ('22fad7d4-4746-4bdf-9606-6a5659615b11', 'adrian.gomez14@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Adrian', 'Gomez del Moral', 'Rodriguez-Madridejos', 'ESI UCLM', true, 'ROLE_ADMIN);
+VALUES ('22fad7d4-4746-4bdf-9606-6a5659615b11', 'adrian.gomez14@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Adrian', 'Gomez del Moral', 'Rodriguez-Madridejos', 'ESI UCLM', true, 'ROLE_ADMIN');
 
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
 VALUES ('1cff7cf2-4c6f-463f-b671-256d7c534fd6', 'ivan.jimenez4@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Iván', 'Jimenez', 'Quintana', 'ESI UCLM', true, 'ROLE_ADMIN');
