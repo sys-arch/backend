@@ -325,5 +325,43 @@ import com.equipo3.reuneme.model.EstadoAsistente;
 <span class="nc" id="L325">		return lista;</span>
 	}
 
+	///////////////////////////////////
+	// CONSEGUIR REUNIONES ORGANIZADAS
+	//////////////////////////////////
+	public List&lt;Reunion&gt; reunionesOrganizadas(String email) {
+<span class="nc" id="L332">    	Empleado emp = this.edao.findByEmail(email);</span>
+    	
+<span class="nc bnc" id="L334" title="All 2 branches missed.">		if(Objects.isNull(emp)) {</span>
+<span class="nc" id="L335">			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El empleado no existe!&quot;);</span>
+		}
+		
+<span class="nc" id="L338">		List&lt;Reunion&gt; reuniones = this.reunionRepository.findByOrganizador(emp.getId());</span>
+		
+<span class="nc bnc" id="L340" title="All 4 branches missed.">		if (reuniones.isEmpty() || Objects.isNull(reuniones)) {</span>
+<span class="nc" id="L341">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;No existen reuniones&quot;);</span>
+		}
+		
+<span class="nc" id="L344">		return reuniones;</span>
+	}
+
+	////////////////////////////////////
+	// OBTENER REUNIONES QUE ASISTE
+	////////////////////////////////////
+	public List&lt;Reunion&gt; reunionesAsistidas(String email) {
+<span class="nc" id="L351">    	Empleado emp = this.edao.findByEmail(email);</span>
+    	
+<span class="nc bnc" id="L353" title="All 2 branches missed.">		if(Objects.isNull(emp)) {</span>
+<span class="nc" id="L354">			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El empleado no existe!&quot;);</span>
+		}
+		
+<span class="nc" id="L357">		List&lt;Long&gt; ids = this.asistenteRepository.findReunionIdsByIdUsuario(emp.getId());</span>
+		
+<span class="nc bnc" id="L359" title="All 4 branches missed.">		if (ids.isEmpty() || Objects.isNull(ids)) {</span>
+<span class="nc" id="L360">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;El empleado no tiene reuniones asociadas como asistente&quot;);</span>
+		}
+		
+<span class="nc" id="L363">		return this.reunionRepository.findAllById(ids);</span>
+	}
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

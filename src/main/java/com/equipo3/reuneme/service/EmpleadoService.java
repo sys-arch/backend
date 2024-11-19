@@ -325,4 +325,42 @@ public class EmpleadoService {
 		return lista;
 	}
 
+	///////////////////////////////////
+	// CONSEGUIR REUNIONES ORGANIZADAS
+	//////////////////////////////////
+	public List<Reunion> reunionesOrganizadas(String email) {
+    	Empleado emp = this.edao.findByEmail(email);
+    	
+		if(Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El empleado no existe!");
+		}
+		
+		List<Reunion> reuniones = this.reunionRepository.findByOrganizador(emp.getId());
+		
+		if (reuniones.isEmpty() || Objects.isNull(reuniones)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No existen reuniones");
+		}
+		
+		return reuniones;
+	}
+
+	////////////////////////////////////
+	// OBTENER REUNIONES QUE ASISTE
+	////////////////////////////////////
+	public List<Reunion> reunionesAsistidas(String email) {
+    	Empleado emp = this.edao.findByEmail(email);
+    	
+		if(Objects.isNull(emp)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El empleado no existe!");
+		}
+		
+		List<Long> ids = this.asistenteRepository.findReunionIdsByIdUsuario(emp.getId());
+		
+		if (ids.isEmpty() || Objects.isNull(ids)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El empleado no tiene reuniones asociadas como asistente");
+		}
+		
+		return this.reunionRepository.findAllById(ids);
+	}
+
 }

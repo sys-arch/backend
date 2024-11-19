@@ -41,62 +41,55 @@ public class SecurityConfig {
 <span class="nc" id="L41">            .csrf(csrf -&gt; csrf.disable()) // Desactivar CSRF para APIs REST</span>
 <span class="nc" id="L42">            .sessionManagement(session -&gt; session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No mantener estado</span>
 <span class="nc" id="L43">            .authorizeHttpRequests((requests) -&gt; requests</span>
-<span class="nc" id="L44">                .requestMatchers(new AntPathRequestMatcher(&quot;/users/register&quot;)).permitAll()</span>
-<span class="nc" id="L45">                .requestMatchers(new AntPathRequestMatcher(&quot;/users/login&quot;)).permitAll()</span>
-<span class="nc" id="L46">                .requestMatchers(new AntPathRequestMatcher(&quot;/users/activar-2fa&quot;)).permitAll() </span>
-<span class="nc" id="L47">                .requestMatchers(new AntPathRequestMatcher(&quot;/users/verify-2fa&quot;)).permitAll() </span>
-<span class="nc" id="L48">                .requestMatchers(new AntPathRequestMatcher(&quot;/users/generate-qr-code&quot;)).permitAll() </span>
-<span class="nc" id="L49">                .requestMatchers(new AntPathRequestMatcher(&quot;/tokens/validarToken&quot;)).permitAll() </span>
-<span class="nc" id="L50">                .requestMatchers(new AntPathRequestMatcher(&quot;/tokens/obtenerEmail&quot;)).permitAll() </span>
-<span class="nc" id="L51">                .requestMatchers(new AntPathRequestMatcher(&quot;/tokens/obtenerRole&quot;)).permitAll()</span>
-<span class="nc" id="L52">                .requestMatchers(new AntPathRequestMatcher(&quot;/pwd/**&quot;)).permitAll() // Permitir todas las rutas bajo /pwd</span>
-<span class="nc" id="L53">                .requestMatchers(new AntPathRequestMatcher(&quot;/admins/**&quot;)).hasRole(&quot;ADMIN&quot;) // Solo accesible para administradores</span>
-<span class="nc" id="L54">                .requestMatchers(new AntPathRequestMatcher(&quot;/empleados/**&quot;)).hasRole(&quot;EMPLOYEE&quot;) // Solo accesible para empleados</span>
-<span class="nc" id="L55">                .requestMatchers(new AntPathRequestMatcher(&quot;/users/desactivar-2fa&quot;)).authenticated()</span>
-<span class="nc" id="L56">                .requestMatchers(new AntPathRequestMatcher(&quot;/reunion/**&quot;)).hasAnyRole(&quot;EMPLOYEE&quot;, &quot;ADMIN&quot;)</span>
-<span class="nc" id="L57">                .requestMatchers(new AntPathRequestMatcher(&quot;/pwd/reset&quot;)).permitAll()</span>
-<span class="nc" id="L58">                .requestMatchers(new AntPathRequestMatcher(&quot;/reset-password&quot;)).permitAll()</span>
-
-<span class="nc" id="L60">                .requestMatchers(new AntPathRequestMatcher(&quot;/public/**&quot;), </span>
+<span class="nc" id="L44">                .requestMatchers(new AntPathRequestMatcher(&quot;/users/**&quot;)).permitAll()</span>
+<span class="nc" id="L45">                .requestMatchers(new AntPathRequestMatcher(&quot;/users/desactivar-2fa&quot;)).authenticated()</span>
+<span class="nc" id="L46">                .requestMatchers(new AntPathRequestMatcher(&quot;/tokens/**&quot;)).permitAll()</span>
+<span class="nc" id="L47">                .requestMatchers(new AntPathRequestMatcher(&quot;/pwd/**&quot;)).permitAll() // Permitir todas las rutas bajo /pwd</span>
+<span class="nc" id="L48">                .requestMatchers(new AntPathRequestMatcher(&quot;/admins/**&quot;)).hasRole(&quot;ADMIN&quot;) // Solo accesible para administradores</span>
+<span class="nc" id="L49">                .requestMatchers(new AntPathRequestMatcher(&quot;/empleados/verDatos&quot;)).hasAnyRole(&quot;EMPLOYEE&quot;, &quot;ADMIN&quot;)</span>
+<span class="nc" id="L50">                .requestMatchers(new AntPathRequestMatcher(&quot;/empleados/**&quot;)).hasRole(&quot;EMPLOYEE&quot;) // Solo accesible para empleados</span>
+<span class="nc" id="L51">                .requestMatchers(new AntPathRequestMatcher(&quot;/reunion/**&quot;)).hasAnyRole(&quot;EMPLOYEE&quot;, &quot;ADMIN&quot;)</span>
+<span class="nc" id="L52">                .requestMatchers(new AntPathRequestMatcher(&quot;/reset-password&quot;)).permitAll()</span>
+<span class="nc" id="L53">                .requestMatchers(new AntPathRequestMatcher(&quot;/public/**&quot;), </span>
                                  new AntPathRequestMatcher(&quot;/pwd/**&quot;), 
-<span class="nc" id="L62">                                 new AntPathRequestMatcher(&quot;/tokens/**&quot;)).permitAll() // Rutas públicas</span>
-<span class="nc" id="L63">                .anyRequest().authenticated() // Otras rutas requieren autenticación</span>
+<span class="nc" id="L55">                                 new AntPathRequestMatcher(&quot;/tokens/**&quot;)).permitAll() // Rutas públicas</span>
+<span class="nc" id="L56">                .anyRequest().authenticated() // Otras rutas requieren autenticación</span>
             )
-<span class="nc" id="L65">            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // Añadir filtro de JWT</span>
+<span class="nc" id="L58">            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // Añadir filtro de JWT</span>
 
-<span class="nc" id="L67">        return http.build();</span>
+<span class="nc" id="L60">        return http.build();</span>
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-<span class="nc" id="L72">        CorsConfiguration configuration = new CorsConfiguration();</span>
-<span class="nc" id="L73">        configuration.setAllowedOrigins(List.of(&quot;http://localhost:4200&quot;)); // Especifica el origen permitido</span>
-<span class="nc" id="L74">        configuration.setAllowedMethods(List.of(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;));</span>
-<span class="nc" id="L75">        configuration.setAllowedHeaders(List.of(&quot;*&quot;));</span>
-<span class="nc" id="L76">        configuration.setAllowCredentials(true); // Permitir el envío de credenciales</span>
+<span class="nc" id="L65">        CorsConfiguration configuration = new CorsConfiguration();</span>
+<span class="nc" id="L66">        configuration.setAllowedOrigins(List.of(&quot;http://localhost:4200&quot;)); // Especifica el origen permitido</span>
+<span class="nc" id="L67">        configuration.setAllowedMethods(List.of(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;));</span>
+<span class="nc" id="L68">        configuration.setAllowedHeaders(List.of(&quot;*&quot;));</span>
+<span class="nc" id="L69">        configuration.setAllowCredentials(true); // Permitir el envío de credenciales</span>
 
-<span class="nc" id="L78">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
-<span class="nc" id="L79">        source.registerCorsConfiguration(&quot;/**&quot;, configuration);</span>
-<span class="nc" id="L80">        return source;</span>
+<span class="nc" id="L71">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
+<span class="nc" id="L72">        source.registerCorsConfiguration(&quot;/**&quot;, configuration);</span>
+<span class="nc" id="L73">        return source;</span>
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-<span class="nc" id="L85">        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();</span>
-<span class="nc" id="L86">        manager.createUser(User.withUsername(&quot;admin&quot;)</span>
-<span class="nc" id="L87">            .password(passwordEncoder().encode(&quot;adminPass&quot;))</span>
-<span class="nc" id="L88">            .roles(&quot;ADMIN&quot;)</span>
-<span class="nc" id="L89">            .build());</span>
-<span class="nc" id="L90">        manager.createUser(User.withUsername(&quot;employee&quot;)</span>
-<span class="nc" id="L91">            .password(passwordEncoder().encode(&quot;employeePass&quot;))</span>
-<span class="nc" id="L92">            .roles(&quot;EMPLOYEE&quot;)</span>
-<span class="nc" id="L93">            .build());</span>
-<span class="nc" id="L94">        return manager;</span>
+<span class="nc" id="L78">        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();</span>
+<span class="nc" id="L79">        manager.createUser(User.withUsername(&quot;admin&quot;)</span>
+<span class="nc" id="L80">            .password(passwordEncoder().encode(&quot;adminPass&quot;))</span>
+<span class="nc" id="L81">            .roles(&quot;ADMIN&quot;)</span>
+<span class="nc" id="L82">            .build());</span>
+<span class="nc" id="L83">        manager.createUser(User.withUsername(&quot;employee&quot;)</span>
+<span class="nc" id="L84">            .password(passwordEncoder().encode(&quot;employeePass&quot;))</span>
+<span class="nc" id="L85">            .roles(&quot;EMPLOYEE&quot;)</span>
+<span class="nc" id="L86">            .build());</span>
+<span class="nc" id="L87">        return manager;</span>
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-<span class="nc" id="L99">        return new BCryptPasswordEncoder();</span>
+<span class="nc" id="L92">        return new BCryptPasswordEncoder();</span>
     }
 }
 

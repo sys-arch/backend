@@ -169,5 +169,32 @@ public class EmpleadoController {
     public List<Reunion> listadoReuniones() {
     	return this.empleadoService.listadoReuniones();
     }
-	
+    
+	////////////////////////////////////
+	// OBTENER REUNIONES QUE ORGANIZA
+	////////////////////////////////////
+    @PutMapping("/reunion/organizador")
+    public List<Reunion> reunionesOrganizadas(@RequestBody String email) {
+        
+    	if (!emailService.validarEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
+            		+ "usuario@dominio.com");
+        }
+    	
+    	return this.empleadoService.reunionesOrganizadas(email);
+    }
+    
+	////////////////////////////////////
+	// OBTENER REUNIONES QUE ASISTE
+	////////////////////////////////////
+    @PutMapping("/reunion/asiste")
+    public List<Reunion> reunionesAsistidas(@RequestBody String email) {
+    	
+    	if (!emailService.validarEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
+            		+ "usuario@dominio.com");
+        }
+    	
+    	return this.empleadoService.reunionesAsistidas(email);
+    }
 }

@@ -169,6 +169,33 @@ import com.equipo3.reuneme.service.EmpleadoService;
     public List&lt;Reunion&gt; listadoReuniones() {
 <span class="nc" id="L170">    	return this.empleadoService.listadoReuniones();</span>
     }
-	
+    
+	////////////////////////////////////
+	// OBTENER REUNIONES QUE ORGANIZA
+	////////////////////////////////////
+    @PutMapping(&quot;/reunion/organizador&quot;)
+    public List&lt;Reunion&gt; reunionesOrganizadas(@RequestBody String email) {
+        
+<span class="nc bnc" id="L179" title="All 2 branches missed.">    	if (!emailService.validarEmail(email)) {</span>
+<span class="nc" id="L180">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email insertado no tiene un formato válido: &quot;</span>
+            		+ &quot;usuario@dominio.com&quot;);
+        }
+    	
+<span class="nc" id="L184">    	return this.empleadoService.reunionesOrganizadas(email);</span>
+    }
+    
+	////////////////////////////////////
+	// OBTENER REUNIONES QUE ASISTE
+	////////////////////////////////////
+    @PutMapping(&quot;/reunion/asiste&quot;)
+    public List&lt;Reunion&gt; reunionesAsistidas(@RequestBody String email) {
+    	
+<span class="nc bnc" id="L193" title="All 2 branches missed.">    	if (!emailService.validarEmail(email)) {</span>
+<span class="nc" id="L194">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email insertado no tiene un formato válido: &quot;</span>
+            		+ &quot;usuario@dominio.com&quot;);
+        }
+    	
+<span class="nc" id="L198">    	return this.empleadoService.reunionesAsistidas(email);</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
