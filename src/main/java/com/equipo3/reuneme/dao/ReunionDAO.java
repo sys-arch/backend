@@ -1,4 +1,5 @@
 package com.equipo3.reuneme.dao;
+import com.equipo3.reuneme.model.Empleado;
 
 import java.util.List;
 
@@ -8,6 +9,6 @@ import com.equipo3.reuneme.model.Reunion;
 
 public interface ReunionDAO extends JpaRepository<Reunion, Long> {
 	
-	public List<Reunion> findByOrganizador(String organizador);
+	public List<Reunion> findByOrganizador(Empleado organizador);
 
 }
