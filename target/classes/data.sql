@@ -1,4 +1,3 @@
--- Usuarios con campo 'role'
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
 VALUES ('c084162a-133f-4046-8866-fe5b8f43f6c9', 'juan.delgado@ejemplo.com', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Juan', 'Delgado', 'Pérez', 'Hospital Central', true, 'ROLE_ADMIN');
 
@@ -25,23 +24,34 @@ VALUES ('7d8e9f0a-1b2c-3d4e-5f6g-7h8i9j0k1l2', 'luis.fernandez@ejemplo.com', '06
 
 -- Usuarios adicionales con campo 'role'
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
-VALUES ('f25517b5-3304-4fa2-9133-bcb53e07ea18', 'luise.fdezmedina@gmail.com', '559a0612917c8c516c7980c38b376cf2bb2387ae1b6944b3b32245ff4f2bad4d5db3811f02cff394fb62fa3feefd03e2eb83ba7bcca72a912bb87ea609c424da', 'Luis Eduardo', 'Fernández-Medina', 'Cimas', 'ESI UCLM', true, 'ROLE_ADMIN');
+VALUES ('f25517b5-3304-4fa2-9133-bcb53e07ea18', 'luise.fdezmedina@gmail.com', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Luis Eduardo', 'Fernández-Medina', 'Cimas', 'ESI UCLM', true, 'ROLE_ADMIN');
 
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
-VALUES ('5803dc40-eec9-46c6-a308-b32588f294b6', 'guillermo.espejo@alu.uclm.es', '559a0612917c8c516c7980c38b376cf2bb2387ae1b6944b3b32245ff4f2bad4d5db3811f02cff394fb62fa3feefd03e2eb83ba7bcca72a912bb87ea609c424da', 'Guillermo', 'Espejo', 'Palomeque', 'ESI UCLM', true, 'ROLE_EMPLOYEE');
+VALUES ('5803dc40-eec9-46c6-a308-b32588f294b6', 'guillermo.espejo@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Guillermo', 'Espejo', 'Palomeque', 'ESI UCLM', true, 'ROLE_ADMIN');
 
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
-VALUES ('86a54ba8-5c2d-496a-9250-ce7d35aabb11', 'yolanda.galvan@alu.uclm.es', '559a0612917c8c516c7980c38b376cf2bb2387ae1b6944b3b32245ff4f2bad4d5db3811f02cff394fb62fa3feefd03e2eb83ba7bcca72a912bb87ea609c424da', 'Yolanda', 'Galván', 'Redondo', 'ESI UCLM', true, 'ROLE_EMPLOYEE');
+VALUES ('86a54ba8-5c2d-496a-9250-ce7d35aabb11', 'yolanda.galvan@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Yolanda', 'Galván', 'Redondo', 'ESI UCLM', true, 'ROLE_ADMIN');
 
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
-VALUES ('22fad7d4-4746-4bdf-9606-6a5659615b11', 'adrian.gomez14@alu.uclm.es', '559a0612917c8c516c7980c38b376cf2bb2387ae1b6944b3b32245ff4f2bad4d5db3811f02cff394fb62fa3feefd03e2eb83ba7bcca72a912bb87ea609c424da', 'Adrian', 'Gomez del Moral', 'Rodriguez-Madridejos', 'ESI UCLM', true, 'ROLE_EMPLOYEE');
+VALUES ('22fad7d4-4746-4bdf-9606-6a5659615b11', 'adrian.gomez14@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Adrian', 'Gomez del Moral', 'Rodriguez-Madridejos', 'ESI UCLM', true, 'ROLE_ADMIN);
 
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
-VALUES ('1cff7cf2-4c6f-463f-b671-256d7c534fd6', 'ivan.jimenez4@alu.uclm.es', '559a0612917c8c516c7980c38b376cf2bb2387ae1b6944b3b32245ff4f2bad4d5db3811f02cff394fb62fa3feefd03e2eb83ba7bcca72a912bb87ea609c424da', 'Iván', 'Jimenez', 'Quintana', 'ESI UCLM', true, 'ROLE_EMPLOYEE');
+VALUES ('1cff7cf2-4c6f-463f-b671-256d7c534fd6', 'ivan.jimenez4@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Iván', 'Jimenez', 'Quintana', 'ESI UCLM', true, 'ROLE_ADMIN');
 
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
-VALUES ('b6c34fef-9d99-423d-82cd-daa178f05f11', 'antonio.sanchez36@alu.uclm.es', '559a0612917c8c516c7980c38b376cf2bb2387ae1b6944b3b32245ff4f2bad4d5db3811f02cff394fb62fa3feefd03e2eb83ba7bcca72a912bb87ea609c424da', 'Antonio', 'Sanchez', 'Sanchez', 'ESI UCLM', true, 'ROLE_EMPLOYEE');
+VALUES ('b6c34fef-9d99-423d-82cd-daa178f05f11', 'antonio.sanchez36@alu.uclm.es', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Antonio', 'Sanchez', 'Sanchez', 'ESI UCLM', true, 'ROLE_ADMIN');
 
+-- Usuarios Queries
+INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
+VALUES ('a1d5e74b-4f6e-4323-9b87-8fce5cb8a2a6', 'empleado1@ejemplo.com', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Nombre1', 'Apellido1_1', 'Apellido2_1', 'Universidad de Ejemplo', true, 'ROLE_EMPLOYEE');
+INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
+VALUES ('5b3fa7fc-b862-46f3-92e1-438dc2c4763c', 'empleado2@ejemplo.com', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Nombre2', 'Apellido1_2', 'Apellido2_2', 'Universidad de Ejemplo', true, 'ROLE_EMPLOYEE');
+INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
+VALUES ('f1f8b8bc-88de-4aa2-81ff-e9e563a1b639', 'empleado3@ejemplo.com', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Nombre3', 'Apellido1_3', 'Apellido2_3', 'Universidad de Ejemplo', true, 'ROLE_EMPLOYEE');
+INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
+VALUES ('39be3c91-965f-40a3-9e7e-fef327fcd1c6', 'empleado4@ejemplo.com', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Nombre4', 'Apellido1_4', 'Apellido2_4', 'Universidad de Ejemplo', true, 'ROLE_EMPLOYEE');
+INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
+VALUES ('4f40bb3f-482f-4a69-8de1-9c83cf2c75d9', 'empleado5@ejemplo.com', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Nombre5', 'Apellido1_5', 'Apellido2_5', 'Universidad de Ejemplo', true, 'ROLE_EMPLOYEE');
 
 INSERT INTO Admins (id, interno) VALUES ('c084162a-133f-4046-8866-fe5b8f43f6c9', 1);
 INSERT INTO Admins (id, interno) VALUES ('4b95832f-685e-4116-b4ca-e681d7c03542', 0);
@@ -60,8 +70,28 @@ INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificad
 INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) VALUES ('5a6b7c8d-9e0f-1g2h-3i4j-5k6l7m8n9o0', 'Recepción', '2024-02-10', 'Recepcionista', 1, 0);
 INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) VALUES ('7d8e9f0a-1b2c-3d4e-5f6g-7h8i9j0k1l2', 'Cocina', '2023-12-15', 'Cocinero', 0, 1);
 
+INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) 
+VALUES ('a1d5e74b-4f6e-4323-9b87-8fce5cb8a2a6', 'Departamento1', '2023-11-15', 'Empleado', 0, 1);
+INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) 
+VALUES ('5b3fa7fc-b862-46f3-92e1-438dc2c4763c', 'Departamento2', '2023-11-15', 'Empleado', 0, 1);
+INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) 
+VALUES ('f1f8b8bc-88de-4aa2-81ff-e9e563a1b639', 'Departamento3', '2023-11-15', 'Empleado', 0, 1);
+INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) 
+VALUES ('39be3c91-965f-40a3-9e7e-fef327fcd1c6', 'Departamento4', '2023-11-15', 'Empleado', 0, 1);
+INSERT INTO Empleados (id, departamento, fechaalta, perfil, bloqueado, verificado) 
+VALUES ('4f40bb3f-482f-4a69-8de1-9c83cf2c75d9', 'Departamento5', '2023-11-15', 'Empleado', 0, 1);
+
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-03-15', '2025-03-16', 'Enfermedad', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-04-05', '2025-04-20', 'Vacaciones', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-03-20', '2025-03-22', 'Asuntos personales', '3a72b9f5-864c-40fe-821b-7d5ca1234567');
 
---INSERT INTO turnos (hora_inicio, hora_final) VALUES ("")
+INSERT INTO Turnos (id, hora_inicio, hora_final) 
+VALUES (1, '06:00:00', '14:00:00');
+
+-- Turno de tarde
+INSERT INTO Turnos (id, hora_inicio, hora_final) 
+VALUES (2, '14:00:00', '22:00:00');
+
+-- Turno de noche
+INSERT INTO Turnos (id, hora_inicio, hora_final) 
+VALUES (3, '22:00:00', '06:00:00');

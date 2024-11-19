@@ -41,22 +41,15 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Desactivar CSRF para APIs REST
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No mantener estado
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers(new AntPathRequestMatcher("/users/register")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/users/activar-2fa")).permitAll() 
-                .requestMatchers(new AntPathRequestMatcher("/users/verify-2fa")).permitAll() 
-                .requestMatchers(new AntPathRequestMatcher("/users/generate-qr-code")).permitAll() 
-                .requestMatchers(new AntPathRequestMatcher("/tokens/validarToken")).permitAll() 
-                .requestMatchers(new AntPathRequestMatcher("/tokens/obtenerEmail")).permitAll() 
-                .requestMatchers(new AntPathRequestMatcher("/tokens/obtenerRole")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/users/desactivar-2fa")).authenticated()
+                .requestMatchers(new AntPathRequestMatcher("/tokens/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/pwd/**")).permitAll() // Permitir todas las rutas bajo /pwd
                 .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN") // Solo accesible para administradores
+                .requestMatchers(new AntPathRequestMatcher("/empleados/verDatos")).hasAnyRole("EMPLOYEE", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/empleados/**")).hasRole("EMPLOYEE") // Solo accesible para empleados
-                .requestMatchers(new AntPathRequestMatcher("/users/desactivar-2fa")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/reunion/**")).hasAnyRole("EMPLOYEE", "ADMIN")
-                .requestMatchers(new AntPathRequestMatcher("/pwd/reset")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/reset-password")).permitAll()
-
                 .requestMatchers(new AntPathRequestMatcher("/public/**"), 
                                  new AntPathRequestMatcher("/pwd/**"), 
                                  new AntPathRequestMatcher("/tokens/**")).permitAll() // Rutas públicas

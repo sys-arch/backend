@@ -1,5 +1,6 @@
 package com.equipo3.reuneme.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +8,6 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -242,28 +241,24 @@ public class AdminController {
      *AÑADIR TURNO
      ********************************/
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/anadirTurno")
+    @PostMapping("/anadirTurnos")
 	@ResponseStatus(HttpStatus.OK)
-	public void anadirTurno( @RequestBody Turno t) {
-    	if (Objects.isNull(t)) {
-    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
+	public void anadirTurnos( @RequestBody List<Turno> turnos) {
+    	if (turnos.isEmpty() || Objects.isNull(turnos)) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No hay turnos para añadir");
     	}
     	
-    	this.adminservice.anadirTurno(t);
+    	this.adminservice.anadirTurnos(turnos);
 	}
 	
     /*********************************
      *DEVOLVER TODOS LOS TURNOS
      ********************************/
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/turnos")
+    @GetMapping("/turnos")
 	@ResponseStatus(HttpStatus.OK)
-	public List<Turno> turnos( @RequestBody Turno t) {
-    	if (Objects.isNull(t)) {
-    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Revise el email, no es correcto");
-    	}
-    	
-    	return this.adminservice.turnos(t);
+	public List<Turno> turnos() {    	
+    	return this.adminservice.turnos();
 	}
 	
 	/*********************************
@@ -273,11 +268,7 @@ public class AdminController {
     @PutMapping("/modificarAdministrador")
     public void modificarAdministrador(@RequestBody Administrador admin) {
     	try {
-
-  
-    		adminservice.actualizarAdministrador(admin.getEmail(), admin);
-        
-
+    		adminservice.actualizarAdministrador(admin.getEmail(), admin);  
     	} catch (Exception e) {
     		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Error al modifficar el empleado.");
     	}
@@ -315,6 +306,23 @@ public class AdminController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener el rol del usuario.");
         }
+    }
+    
+    /*********************************
+     * COMPROBAR REUNIONES DE EMPLEADO
+     ********************************/
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/comprobarReuniones")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean comprobarReuniones(@RequestBody String email, @RequestBody LocalDateTime inicio,
+    		@RequestBody LocalDateTime fin) {
+    	email = email.toLowerCase();
+    	
+	    if (!this.emailservice.validarEmail(email)) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido: usuario@dominio.com");
+	    }
+	    
+	    return this.adminservice.comprobarReuniones(email, inicio, fin);
     }
 
 

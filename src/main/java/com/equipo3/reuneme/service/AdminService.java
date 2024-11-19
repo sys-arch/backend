@@ -1,7 +1,12 @@
 package com.equipo3.reuneme.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +22,7 @@ import com.equipo3.reuneme.model.Administrador;
 import com.equipo3.reuneme.model.Ausencia;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroAusencia;
+import com.equipo3.reuneme.model.Reunion;
 import com.equipo3.reuneme.model.Turno;
 import com.equipo3.reuneme.model.Usuario;
 
@@ -37,6 +43,9 @@ public class AdminService {
 
 	@Autowired
 	private TurnoDAO tdao;
+	
+	@Autowired
+	private EmpleadoService eserv;
 
 	/////////////////////////
 	// REGISTRO ADMINISTRADOR
@@ -226,14 +235,19 @@ public class AdminService {
 	//////////////////////////
 	// AÑADIR TURNO
 	//////////////////////////
-	public void anadirTurno(Turno t) {
-		this.tdao.save(t);
+	public void anadirTurnos(List<Turno> turnos) {
+		
+		if(this.tdao.count() != 0) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Ya existen turnos y no se pueden modificar");
+		}
+		
+		this.tdao.saveAll(turnos);
 	}
 
 	//////////////////////////
 	// DEVOLVER LISTA DE TURNOS
 	//////////////////////////
-	public List<Turno> turnos(Turno t) {
+	public List<Turno> turnos() {
 		return this.tdao.findAll();
 	}
 
@@ -357,6 +371,30 @@ public class AdminService {
 	    }
 
 	    return rol;
+	}
+	
+	/////////////////////////////////////
+	// COMPROBAR REUNIONES DE UN USUARIO
+	/////////////////////////////////////
+	public boolean comprobarReuniones(String email, LocalDateTime inicio, LocalDateTime fin) {
+		
+		List<Reunion> l1 = this.eserv.reunionesOrganizadas(email);
+		List<Reunion> l2 = this.eserv.reunionesAsistidas(email);
+		
+		Set<Reunion> conjunto = new HashSet<>(l1);
+        conjunto.addAll(l2);
+        List<Reunion> reunionessinfiltrar = new ArrayList<>(conjunto);
+        
+        List<Reunion> reunionesFiltradas = reunionessinfiltrar.stream()
+                .filter(reunion -> reunion.getInicio().isAfter(inicio) || reunion.getInicio().isEqual(inicio))
+                .filter(reunion -> reunion.getFin().isBefore(fin) || reunion.getFin().isEqual(fin))
+                .collect(Collectors.toList());
+        
+        if (reunionesFiltradas.isEmpty() || Objects.isNull(reunionesFiltradas)) {
+        	return true;
+        } else {
+        	return false;
+        }
 	}
 
 }
