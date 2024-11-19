@@ -95,3 +95,16 @@ VALUES (2, '14:00:00', '22:00:00');
 -- Turno de noche
 INSERT INTO Turnos (id, hora_inicio, hora_final) 
 VALUES (3, '22:00:00', '06:00:00');
+
+INSERT INTO Reuniones (id, inicio, fin, id_organizador, ubicacion, observaciones, estado, asunto)
+VALUES 
+('1', '2024-11-20 10:00:00', '2024-11-20 11:00:00', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'Sala A', 'Sin observaciones', 'ABIERTA', 'Reunión Semanal'),
+('2', '2024-11-25 14:00:00', '2024-11-25 15:30:00', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'Sala B', 'Reunión estratégica', 'ABIERTA', 'Planificación Mensual'),
+('3', '2024-11-22 09:00:00', '2024-11-22 10:30:00', '7d8e9f0a-1b2c-3d4e-5f6g-7h8i9j0k1l2', 'Sala C', 'Revisar presupuesto anual', 'ABIERTA', 'Revisión de Presupuesto'),
+('4', '2024-11-28 15:00:00', '2024-11-28 16:30:00', '7d8e9f0a-1b2c-3d4e-5f6g-7h8i9j0k1l2', 'Sala D', 'Capacitación del equipo', 'ABIERTA', 'Formación Interna');
+
+INSERT INTO Asistente (id_reunion, id_usuario, estado, asiste)
+VALUES 
+('3', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'ACEPTADA', true),
+('4', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'ACEPTADA', true);
+

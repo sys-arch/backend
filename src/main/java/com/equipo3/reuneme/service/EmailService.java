@@ -36,6 +36,7 @@ public class EmailService {
 
     public boolean validarEmail(String email) {
         EmailValidator validator = EmailValidator.getInstance();
+        email = email.trim();
         return validator.isValid(email);
     }
 }
