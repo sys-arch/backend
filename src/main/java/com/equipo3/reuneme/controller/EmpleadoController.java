@@ -174,27 +174,29 @@ public class EmpleadoController {
 	// OBTENER REUNIONES QUE ORGANIZA
 	////////////////////////////////////
     @PutMapping("/reunion/organizador")
-    public List<Reunion> reunionesOrganizadas(@RequestBody String email) {
-        
-    	if (!emailService.validarEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
-            		+ "usuario@dominio.com");
+    public List<Reunion> reunionesOrganizadas(@RequestBody Map<String, String> payload) {
+        // Extraer el email del JSON
+        String email = payload.get("email");
+
+        // Validar que el email no sea nulo o vacío
+        if (email == null || email.trim().isEmpty() || !emailService.validarEmail(email.trim())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                "El email insertado no tiene un formato válido: usuario@dominio.com");
         }
-    	
-    	return this.empleadoService.reunionesOrganizadas(email);
+
+        // Llama al servicio con el email válido
+        return this.empleadoService.reunionesOrganizadas(email.trim());
     }
+
     
 	////////////////////////////////////
 	// OBTENER REUNIONES QUE ASISTE
 	////////////////////////////////////
     @PutMapping("/reunion/asiste")
-    public List<Reunion> reunionesAsistidas(@RequestBody String email) {
-    	
-    	if (!emailService.validarEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
-            		+ "usuario@dominio.com");
-        }
-    	
-    	return this.empleadoService.reunionesAsistidas(email);
+    public List<Reunion> reunionesAsistidas(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        System.out.println("Email extraído del JSON: " + email);
+        return this.empleadoService.reunionesAsistidas(email);
     }
+
 }

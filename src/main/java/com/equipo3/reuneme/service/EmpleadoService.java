@@ -353,9 +353,10 @@ public class EmpleadoService {
 		if(Objects.isNull(emp)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El empleado no existe!");
 		}
-		
+		System.out.println("Estamos en el metodo");
+
 		List<Long> ids = this.asistenteRepository.findReunionIdsByIdUsuario(emp.getId());
-		
+		System.out.println(ids);
 		if (ids.isEmpty() || Objects.isNull(ids)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El empleado no tiene reuniones asociadas como asistente");
 		}
