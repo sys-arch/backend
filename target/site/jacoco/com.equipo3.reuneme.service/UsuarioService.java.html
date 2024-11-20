@@ -15,9 +15,8 @@ import com.equipo3.reuneme.model.Usuario;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-
 @Service
-<span class="nc" id="L20">public class UsuarioService {</span>
+<span class="nc" id="L19">public class UsuarioService {</span>
 	@Autowired
 	protected UsuarioDAO userdao;
 	@Autowired
@@ -28,161 +27,189 @@ import org.springframework.security.core.context.SecurityContextHolder;
 	protected TokenService tokenService;
 	@Autowired
 	private TwoFactorAuthService twoFactorAuthService;
-	
+
+	private static final int MAX_ATTEMPTS = 3;
+
 	/////////////////////////////////////
-	//LOGIN GENERAL - EMPLEADOS Y ADMINS
+	// LOGIN GENERAL - EMPLEADOS Y ADMINS
 	/////////////////////////////////////
 	public boolean login(String email, String pwd) {
-	    // Verificar si el usuario existe
-<span class="nc" id="L37">	    Usuario u = this.userdao.findByEmail(email);</span>
-<span class="nc" id="L38">	    String errorMessage = &quot;Credenciales incorrectas o desactivadas.&quot;;</span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">	    if (Objects.isNull(u)) {</span>
-<span class="nc" id="L40">	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);</span>
-	    }
+		// Verificar si el usuario existe
+<span class="nc" id="L38">		Usuario u = this.userdao.findByEmail(email);</span>
+<span class="nc" id="L39">		String errorMessage = &quot;Credenciales incorrectas o desactivadas.&quot;;</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">		if (Objects.isNull(u)) {</span>
+<span class="nc" id="L41">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);</span>
+		}
 
-	    // Verificar si la contraseña es correcta
-<span class="nc bnc" id="L44" title="All 2 branches missed.">	    if (!u.getPwd().equals(pwd)) {</span>
-<span class="nc" id="L45">	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);</span>
-	    }
+		// Verificar si la contraseña es correcta
+<span class="nc bnc" id="L45" title="All 2 branches missed.">		if (!u.getPwd().equals(pwd)) {</span>
+<span class="nc" id="L46">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);</span>
+		}
 
-	    // Si el usuario es un Empleado, validar su estado
-<span class="nc bnc" id="L49" title="All 2 branches missed.">	    if (u instanceof Empleado) {</span>
-<span class="nc" id="L50">	        Empleado e = this.empdao.findByEmail(email);</span>
-	        // Comprobar si el empleado está bloqueado o no verificado
-<span class="nc bnc" id="L52" title="All 4 branches missed.">	        if (e.isBloqueado() || !e.isVerificado()) {</span>
-<span class="nc" id="L53">	            throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);</span>
-	        }
-	    }
-	    // Si todo está correcto, devolver true para permitir acceso a la pantalla de doble autenticación
-<span class="nc" id="L57">	    return true;</span>
+		// Si el usuario es un Empleado, validar su estado
+<span class="nc bnc" id="L50" title="All 2 branches missed.">		if (u instanceof Empleado) {</span>
+<span class="nc" id="L51">			Empleado e = this.empdao.findByEmail(email);</span>
+			// Comprobar si el empleado está bloqueado o no verificado
+<span class="nc bnc" id="L53" title="All 4 branches missed.">			if (e.isBloqueado() || !e.isVerificado()) {</span>
+<span class="nc" id="L54">				throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);</span>
+			}
+		}
+		// Si todo está correcto, devolver true para permitir acceso a la pantalla de
+		// doble autenticación
+<span class="nc" id="L59">		return true;</span>
 	}
 
 	/////////////////////////////////////
-	//OBTENER ROL DEL USUARIO
+	// OBTENER ROL DEL USUARIO
 	/////////////////////////////////////
 	public String getRoleByEmail(String email) {
-<span class="nc" id="L64">        Usuario usuario = userdao.findByEmail(email);</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (usuario != null) {</span>
-<span class="nc" id="L66">            return usuario.getRole(); </span>
-        }
-<span class="nc" id="L68">        return null;</span>
-    }
+<span class="nc" id="L66">		Usuario usuario = userdao.findByEmail(email);</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">		if (usuario != null) {</span>
+<span class="nc" id="L68">			return usuario.getRole();</span>
+		}
+<span class="nc" id="L70">		return null;</span>
+	}
 
-
-	
 	/////////////////////////////////////
-	//VER SI EL EMPLEADO ESTÁ BLOQUEADO
+	// VER SI EL EMPLEADO ESTÁ BLOQUEADO
 	/////////////////////////////////////
 	public String findActivo(Map&lt;String, Object&gt; info) {
 <span class="nc" id="L77">		Empleado e = this.empdao.findByEmail(info.get(&quot;email&quot;).toString());</span>
 <span class="nc" id="L78">		return String.valueOf(e.isBloqueado());</span>
 	}
-	
+
 	/////////////////////////////////////
-	//LOGIN GENERAL - EMPLEADOS Y ADMINS
+	// LOGIN GENERAL - EMPLEADOS Y ADMINS
 	/////////////////////////////////////
 	public void registrar(Empleado user) {
-	    // Comprobamos que el usuario no existe en la base de datos por email
-<span class="nc" id="L86">	    Empleado userdb = this.empdao.findByEmail(user.getEmail());</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">	    if (userdb != null) {</span>
-<span class="nc" id="L88">	        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, &quot;El usuario ya existe en la base de datos.&quot;);</span>
-	    }
-	    
+		// Comprobamos que el usuario no existe en la base de datos por email
+<span class="nc" id="L86">		Empleado userdb = this.empdao.findByEmail(user.getEmail());</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">		if (userdb != null) {</span>
+<span class="nc" id="L88">			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, &quot;El usuario ya existe en la base de datos.&quot;);</span>
+		}
+
 //	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
-<span class="nc" id="L92">	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));</span>
-<span class="nc" id="L93">	    user.setTwoFA(true);</span>
-<span class="nc" id="L94">	    this.empdao.save(user);</span>
+<span class="nc" id="L92">		user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));</span>
+<span class="nc" id="L93">		user.setTwoFA(true);</span>
+<span class="nc" id="L94">		this.empdao.save(user);</span>
 <span class="nc" id="L95">	}</span>
-	
+
 	/////////////////////////////////////
-	//BUSQUEDA USUARIOS (SOLO PARA PWD RESET)
+	// BUSQUEDA USUARIOS (SOLO PARA PWD RESET)
 	/////////////////////////////////////
 	public Usuario findByEmail(String email) {
-<span class="nc" id="L101">        Usuario usuario = userdao.findByEmail(email);</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (usuario == null) {</span>
-<span class="nc" id="L103">            throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
-        }
-<span class="nc" id="L105">        return usuario;</span>
-    }
-	
-	
+<span class="nc" id="L101">		Usuario usuario = userdao.findByEmail(email);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">		if (usuario == null) {</span>
+<span class="nc" id="L103">			throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
+		}
+<span class="nc" id="L105">		return usuario;</span>
+	}
+
 	/////////////////////////////////////
-	//GUARDA LA CLAVE SECRETA DE USUARIO POR PRIMERA VEZ
+	// GUARDA LA CLAVE SECRETA DE USUARIO POR PRIMERA VEZ
 	/////////////////////////////////////
 	public String activar2FA(String email) {
-<span class="nc" id="L113">	    Usuario usuario = this.userdao.findByEmail(email);</span>
-<span class="nc bnc" id="L114" title="All 2 branches missed.">	    if (usuario == null) {</span>
-<span class="nc" id="L115">	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
-	    }
-<span class="nc" id="L117">	    String secretKey = twoFactorAuthService.generateSecretKey();</span>
-<span class="nc" id="L118">	    usuario.setClavesecreta(secretKey);</span>
-<span class="nc" id="L119">	    usuario.setTwoFA(true);</span>
-<span class="nc" id="L120">	    userdao.save(usuario); </span>
+<span class="nc" id="L112">		Usuario usuario = this.userdao.findByEmail(email);</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">		if (usuario == null) {</span>
+<span class="nc" id="L114">			throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
+		}
+<span class="nc" id="L116">		String secretKey = twoFactorAuthService.generateSecretKey();</span>
+<span class="nc" id="L117">		usuario.setClavesecreta(secretKey);</span>
+<span class="nc" id="L118">		usuario.setTwoFA(true);</span>
+<span class="nc" id="L119">		userdao.save(usuario);</span>
 
-<span class="nc" id="L122">	    return secretKey; </span>
+<span class="nc" id="L121">		return secretKey;</span>
 	}
-	
+
 	/////////////////////////////////////
-	//VERIFICA CODIGO DE GOOGLE AUTHENTICATOR
+	// VERIFICA CODIGO DE GOOGLE AUTHENTICATOR
 	/////////////////////////////////////
 	public boolean verificarTwoFactorAuthCode(String email, Integer authCode) {
-<span class="nc" id="L129">	    Usuario usuario = this.userdao.findByEmail(email);</span>
-	    
-<span class="nc bnc" id="L131" title="All 2 branches missed.">	    if (usuario == null) {</span>
-<span class="nc" id="L132">	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
-	    }
-<span class="nc bnc" id="L134" title="All 2 branches missed.">	    if (authCode == null) {</span>
-<span class="nc" id="L135">	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Código de autenticación de dos factores requerido.&quot;);</span>
-	    }
-	    
-	    // Validar el código de 2FA usando el servicio de 2FA
-<span class="nc bnc" id="L139" title="All 2 branches missed.">	    if (twoFactorAuthService.verifyCode(usuario.getClavesecreta(), authCode)) {</span>
-	        // Autenticación 2FA exitosa, retorno verdadero para indicar éxito
-<span class="nc" id="L141">	        return true;</span>
-	    } else {
-<span class="nc" id="L143">	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Código de autenticación incorrecto.&quot;);</span>
-	    }
+<span class="nc" id="L128">		Usuario usuario = this.userdao.findByEmail(email);</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">		if (usuario == null) {</span>
+<span class="nc" id="L131">			throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
+		}
+<span class="nc bnc" id="L133" title="All 2 branches missed.">		if (authCode == null) {</span>
+<span class="nc" id="L134">			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,</span>
+					&quot;Código de autenticación de dos factores requerido.&quot;);
+		}
+
+		// Validar el código de 2FA usando el servicio de 2FA
+<span class="nc bnc" id="L139" title="All 2 branches missed.">		if (twoFactorAuthService.verifyCode(usuario.getClavesecreta(), authCode)) {</span>
+			// Autenticación 2FA exitosa, retorno verdadero para indicar éxito
+<span class="nc" id="L141">			return true;</span>
+		} else {
+<span class="nc" id="L143">			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Código de autenticación incorrecto.&quot;);</span>
+		}
 	}
-	
+
 	/////////////////////////////////////
-	//USUARIO CON 2FA EMPAREJADO
+	// USUARIO CON 2FA EMPAREJADO
 	/////////////////////////////////////
 	public void desactivar2FA(String email, String clavesecreta, boolean twoFA) {
-	    // Obtener el usuario autenticado (a través del token)
-<span class="nc" id="L152">	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
-<span class="nc bnc" id="L153" title="All 4 branches missed.">	    if (authentication == null || !authentication.isAuthenticated()) {</span>
-<span class="nc" id="L154">	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Acceso denegado. Token no válido.&quot;);</span>
-	    }
+		// Obtener el usuario autenticado (a través del token)
+<span class="nc" id="L152">		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc bnc" id="L153" title="All 4 branches missed.">		if (authentication == null || !authentication.isAuthenticated()) {</span>
+<span class="nc" id="L154">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Acceso denegado. Token no válido.&quot;);</span>
+		}
 
-<span class="nc" id="L157">	    Usuario usuario = this.userdao.findByEmail(email);</span>
-<span class="nc bnc" id="L158" title="All 2 branches missed.">	    if (usuario == null) {</span>
-<span class="nc" id="L159">	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
-	    }
+<span class="nc" id="L157">		Usuario usuario = this.userdao.findByEmail(email);</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">		if (usuario == null) {</span>
+<span class="nc" id="L159">			throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
+		}
 
-	    // Actualizar la clave secreta y el estado de 2FA
-<span class="nc" id="L163">	    usuario.setClavesecreta(clavesecreta);</span>
-<span class="nc" id="L164">	    usuario.setTwoFA(twoFA);</span>
-<span class="nc" id="L165">	    userdao.save(usuario); // Guarda los cambios en la base de datos</span>
+		// Actualizar la clave secreta y el estado de 2FA
+<span class="nc" id="L163">		usuario.setClavesecreta(clavesecreta);</span>
+<span class="nc" id="L164">		usuario.setTwoFA(twoFA);</span>
+<span class="nc" id="L165">		userdao.save(usuario); // Guarda los cambios en la base de datos</span>
 <span class="nc" id="L166">	}</span>
 
-	
 	public void updatePassword(String email, String newPassword) {
-	    // Buscar el usuario por email
-<span class="nc" id="L171">	    Usuario usuario = userdao.findByEmail(email);</span>
-<span class="nc bnc" id="L172" title="All 2 branches missed.">	    if (usuario == null) {</span>
-<span class="nc" id="L173">	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
-	    }
+		// Buscar el usuario por email
+<span class="nc" id="L170">		Usuario usuario = userdao.findByEmail(email);</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">		if (usuario == null) {</span>
+<span class="nc" id="L172">			throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Usuario no encontrado.&quot;);</span>
+		}
 
-	    // Cifrar la nueva contraseña usando SHA-512
-<span class="nc" id="L177">	    String hashedPassword = org.apache.commons.codec.digest.DigestUtils.sha512Hex(newPassword);</span>
+		// Cifrar la nueva contraseña usando SHA-512
+<span class="nc" id="L176">		String hashedPassword = org.apache.commons.codec.digest.DigestUtils.sha512Hex(newPassword);</span>
 
-	    // Actualizar la contraseña y guardar el usuario
-<span class="nc" id="L180">	    usuario.setPwd(hashedPassword); // Asumiendo que `setPwd` actualiza la contraseña</span>
-<span class="nc" id="L181">	    userdao.save(usuario);</span>
-<span class="nc" id="L182">	}</span>
+		// Actualizar la contraseña y guardar el usuario
+<span class="nc" id="L179">		usuario.setPwd(hashedPassword); // Asumiendo que `setPwd` actualiza la contraseña</span>
+<span class="nc" id="L180">		userdao.save(usuario);</span>
+<span class="nc" id="L181">	}</span>
 
+/////////////////////////////
+//INCREMENTAR FALLOS DE LOGIN
+////////////////////////////
+	public void incrementFailedAttempts(String email) {
+<span class="nc" id="L187">		Usuario usuario = userdao.findByEmail(email);</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">		if (usuario != null) {</span>
+<span class="nc" id="L189">			int attempts = usuario.getFailedAttempts() + 1;</span>
+<span class="nc" id="L190">			usuario.setFailedAttempts(attempts);</span>
 
+<span class="nc bnc" id="L192" title="All 2 branches missed.">			if (attempts &gt;= MAX_ATTEMPTS) {</span>
+<span class="nc" id="L193">				usuario.setBloqueado(true); // Bloquea al usuario</span>
+			}
 
-	
+<span class="nc" id="L196">			userdao.save(usuario);</span>
+		}
+<span class="nc" id="L198">	}</span>
+	 // Reiniciar intentos fallidos
+    public void resetFailedAttempts(String email) {
+<span class="nc" id="L201">        Usuario usuario = userdao.findByEmail(email);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (usuario != null) {</span>
+<span class="nc" id="L203">            usuario.setFailedAttempts(0);</span>
+<span class="nc" id="L204">            userdao.save(usuario);</span>
+        }
+<span class="nc" id="L206">    }</span>
+
+    // Verificar si el usuario está bloqueado
+    public boolean isBlocked(String email) {
+<span class="nc" id="L210">        Usuario usuario = userdao.findByEmail(email);</span>
+<span class="nc bnc" id="L211" title="All 4 branches missed.">        return usuario != null &amp;&amp; usuario.getBloqueado();</span>
+    }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

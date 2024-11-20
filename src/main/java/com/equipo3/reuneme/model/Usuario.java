@@ -47,6 +47,28 @@ public class Usuario {
 	
 	@Column(length = 20, nullable = false)
 	private String role;
+	
+
+    @Column(name="blocklogin",nullable = false)
+    private Boolean bloqueado = false;
+    @Column(name="fallologin",nullable = false)
+    private int failedAttempts = 0; 
+    
+    public void setBloqueado(Boolean bloqueado) {
+        this.bloqueado = bloqueado;
+    }
+
+    public int getFailedAttempts() {
+        return failedAttempts;
+    }
+
+    public void setFailedAttempts(int failedAttempts) {
+        this.failedAttempts = failedAttempts;
+    }
+
+    public Boolean getBloqueado() {
+        return bloqueado;
+    }
 
 	public String getRole() {
 	    return role;

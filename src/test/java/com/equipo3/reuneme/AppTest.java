@@ -1,26 +1,13 @@
 package com.equipo3.reuneme;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.equipo3.reuneme.controller.AdminController;
 import com.equipo3.reuneme.controller.UsuarioController;
-import com.equipo3.reuneme.model.Administrador;
-import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.UsuarioService;
 

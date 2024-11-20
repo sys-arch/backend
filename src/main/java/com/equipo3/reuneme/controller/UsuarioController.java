@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroEmp;
+import com.equipo3.reuneme.model.Usuario;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
@@ -40,6 +41,7 @@ public class UsuarioController {
     
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    
 
 
     /*
@@ -97,23 +99,30 @@ public class UsuarioController {
         String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
 
         try {
-            boolean loginResult = this.userservice.login(email, pwd);
+            // Verifica si el usuario está bloqueado
+            if (userservice.isBlocked(email)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario bloqueado por múltiples intentos fallidos. Contacte con soporte.");
+            }
+
+            boolean loginResult = userservice.login(email, pwd);
             if (loginResult) {
+                // Reinicia el contador de intentos fallidos tras inicio exitoso
+                userservice.resetFailedAttempts(email);
+
                 String role = userservice.getRoleByEmail(email);
                 String token = jwtTokenProvider.generateToken(email, role);
-                
-                // Devuelve el token y un mensaje de que 2FA es requerido
-                return ResponseEntity.ok(Map.of(
-                    "token", token));
+
+                return ResponseEntity.ok(Map.of("token", token));
             } else {
+                // Incrementa el contador de intentos fallidos
+                userservice.incrementFailedAttempts(email);
+
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas");
             }
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
-
-
 	/////////////////////////////
 	//GENERA CLAVE DOBLE FACTOR DE AUTHENTICACIÓN
 	////////////////////////////
@@ -176,6 +185,6 @@ public class UsuarioController {
 
         userservice.desactivar2FA(email, clavesecreta, twoFA);
     }
-
+	
 }
 
