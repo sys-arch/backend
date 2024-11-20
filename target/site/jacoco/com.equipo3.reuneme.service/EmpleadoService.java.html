@@ -335,7 +335,7 @@ import com.equipo3.reuneme.model.EstadoAsistente;
 <span class="nc" id="L335">			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El empleado no existe!&quot;);</span>
 		}
 		
-<span class="nc" id="L338">		List&lt;Reunion&gt; reuniones = this.reunionRepository.findByOrganizador(emp.getId());</span>
+<span class="nc" id="L338">		List&lt;Reunion&gt; reuniones = this.reunionRepository.findByOrganizador(emp);</span>
 		
 <span class="nc bnc" id="L340" title="All 4 branches missed.">		if (reuniones.isEmpty() || Objects.isNull(reuniones)) {</span>
 <span class="nc" id="L341">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;No existen reuniones&quot;);</span>
@@ -353,14 +353,15 @@ import com.equipo3.reuneme.model.EstadoAsistente;
 <span class="nc bnc" id="L353" title="All 2 branches missed.">		if(Objects.isNull(emp)) {</span>
 <span class="nc" id="L354">			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El empleado no existe!&quot;);</span>
 		}
-		
-<span class="nc" id="L357">		List&lt;Long&gt; ids = this.asistenteRepository.findReunionIdsByIdUsuario(emp.getId());</span>
-		
-<span class="nc bnc" id="L359" title="All 4 branches missed.">		if (ids.isEmpty() || Objects.isNull(ids)) {</span>
-<span class="nc" id="L360">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;El empleado no tiene reuniones asociadas como asistente&quot;);</span>
+<span class="nc" id="L356">		System.out.println(&quot;Estamos en el metodo&quot;);</span>
+
+<span class="nc" id="L358">		List&lt;Long&gt; ids = this.asistenteRepository.findReunionIdsByIdUsuario(emp.getId());</span>
+<span class="nc" id="L359">		System.out.println(ids);</span>
+<span class="nc bnc" id="L360" title="All 4 branches missed.">		if (ids.isEmpty() || Objects.isNull(ids)) {</span>
+<span class="nc" id="L361">			throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;El empleado no tiene reuniones asociadas como asistente&quot;);</span>
 		}
 		
-<span class="nc" id="L363">		return this.reunionRepository.findAllById(ids);</span>
+<span class="nc" id="L364">		return this.reunionRepository.findAllById(ids);</span>
 	}
 
 }
