@@ -36,7 +36,8 @@ public class EmailService {
 
     public boolean validarEmail(String email) {
 <span class="nc" id="L38">        EmailValidator validator = EmailValidator.getInstance();</span>
-<span class="nc" id="L39">        return validator.isValid(email);</span>
+<span class="nc" id="L39">        email = email.trim();</span>
+<span class="nc" id="L40">        return validator.isValid(email);</span>
     }
 }
 
