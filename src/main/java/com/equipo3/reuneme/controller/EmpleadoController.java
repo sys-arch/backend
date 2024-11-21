@@ -161,6 +161,14 @@ public class EmpleadoController {
     public List<Empleado> posiblesAsistentes () {
     	return this.empleadoService.posiblesAsistentes();
     }
+	    
+	////////////////////////////////////
+	// OBTENER LISTA DE ASISTENTES POR REUNIÓN
+	////////////////////////////////////
+    @GetMapping("reunion/{idReunion}/asistentes")
+    public List<Asistente> obtenerAsistentesPorReunion(@PathVariable Long idReunion) {
+        return this.empleadoService.obtenerAsistentesPorReunion(idReunion);
+    }
     
 	////////////////////////////////////
 	// OBTENER LISTA DE REUNIONES
