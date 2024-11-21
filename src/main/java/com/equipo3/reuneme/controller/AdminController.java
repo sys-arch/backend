@@ -312,10 +312,13 @@ public class AdminController {
      * COMPROBAR REUNIONES DE EMPLEADO
      ********************************/
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/comprobarReuniones")
+    @PutMapping("/comprobarReuniones")
     @ResponseStatus(HttpStatus.OK)
-    public boolean comprobarReuniones(@RequestBody String email, @RequestBody LocalDateTime inicio,
-    		@RequestBody LocalDateTime fin) {
+    public boolean comprobarReuniones(@RequestBody Map<String, String> payload) {
+    	
+    	String email = payload.get("email");
+    	LocalDateTime inicio = LocalDateTime.parse(payload.get("inicio"));
+    	LocalDateTime fin = LocalDateTime.parse(payload.get("fin"));
     	email = email.toLowerCase();
     	
 	    if (!this.emailservice.validarEmail(email)) {
