@@ -10,10 +10,10 @@ public class AppConfiguration implements WebServerFactoryCustomizer<TomcatServle
     @Override
     public void customize(TomcatServletWebServerFactory factory) {
         factory.addConnectorCustomizers((connector) -> {
-            connector.setPort(443);
+            connector.setPort(8442);
             connector.setSecure(true);
             connector.setScheme("https");
-            connector.setRedirectPort(443);
+            connector.setRedirectPort(8442);
         });
     }
 }
