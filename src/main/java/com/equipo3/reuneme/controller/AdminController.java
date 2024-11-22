@@ -183,7 +183,6 @@ public class AdminController {
 	/*********************************
      *CONSULTAR TODAS LAS AUSENCIAS
      ********************************/
-    @PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/todasAusencias")
     public List<Ausencia> obtenerTodasLasAusencias() {
         return adminservice.obtenerTodasLasAusencias();
