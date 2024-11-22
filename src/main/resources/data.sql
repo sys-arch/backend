@@ -83,7 +83,7 @@ VALUES ('4f40bb3f-482f-4a69-8de1-9c83cf2c75d9', 'Departamento5', '2023-11-15', '
 
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-03-15', '2025-03-16', 'Enfermedad', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-04-05', '2025-04-20', 'Vacaciones', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
-INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-03-20', '2025-03-22', 'Asuntos personales', '3a72b9f5-864c-40fe-821b-7d5ca1234567');
+INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-11-15', '2024-11-19', 'Asuntos personales', '3a72b9f5-864c-40fe-821b-7d5ca1234567');
 
 --INSERT INTO Turnos (id, hora_inicio, hora_final) 
 --VALUES (1, '06:00:00', '14:00:00');

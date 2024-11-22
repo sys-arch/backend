@@ -44,8 +44,9 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/users/desactivar-2fa")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/tokens/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/pwd/**")).permitAll() // Permitir todas las rutas bajo /pwd
-                .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN") // Solo accesible para administradores
+                .requestMatchers(new AntPathRequestMatcher("/pwd/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/admins/todasAusencias")).authenticated()
+                .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN") 
                 .requestMatchers(new AntPathRequestMatcher("/empleados/verDatos")).hasAnyRole("EMPLOYEE", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/empleados/**")).hasRole("EMPLOYEE") // Solo accesible para empleados
                 .requestMatchers(new AntPathRequestMatcher("/reunion/**")).hasAnyRole("EMPLOYEE", "ADMIN")
