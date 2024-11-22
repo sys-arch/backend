@@ -85,16 +85,16 @@ INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('20
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-04-05', '2025-04-20', 'Vacaciones', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-03-20', '2025-03-22', 'Asuntos personales', '3a72b9f5-864c-40fe-821b-7d5ca1234567');
 
-INSERT INTO Turnos (id, hora_inicio, hora_final) 
-VALUES (1, '06:00:00', '14:00:00');
-
--- Turno de tarde
-INSERT INTO Turnos (id, hora_inicio, hora_final) 
-VALUES (2, '14:00:00', '22:00:00');
-
--- Turno de noche
-INSERT INTO Turnos (id, hora_inicio, hora_final) 
-VALUES (3, '22:00:00', '06:00:00');
+--INSERT INTO Turnos (id, hora_inicio, hora_final) 
+--VALUES (1, '06:00:00', '14:00:00');
+--
+---- Turno de tarde
+--INSERT INTO Turnos (id, hora_inicio, hora_final) 
+--VALUES (2, '14:00:00', '22:00:00');
+--
+---- Turno de noche
+--INSERT INTO Turnos (id, hora_inicio, hora_final) 
+--VALUES (3, '22:00:00', '06:00:00');
 
 INSERT INTO Reuniones (id, inicio, fin, id_organizador, ubicacion, observaciones, estado, asunto)
 VALUES 
@@ -107,4 +107,5 @@ INSERT INTO Asistente (id_reunion, id_usuario, estado, asiste)
 VALUES 
 ('3', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'ACEPTADA', true),
 ('4', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'ACEPTADA', true);
+
 
