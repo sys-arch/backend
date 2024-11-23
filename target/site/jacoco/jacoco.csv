@@ -24,15 +24,26 @@ ReuneMe,com.equipo3.reuneme.service,TokenService,53,0,6,0,11,0,8,0,5,0
 ReuneMe,com.equipo3.reuneme.service,TwoFactorAuthService,21,0,0,0,5,0,3,0,3,0
 ReuneMe,com.equipo3.reuneme.service,EmailService,50,0,0,0,18,0,3,0,3,0
 ReuneMe,com.equipo3.reuneme.service,PasswordService,74,0,0,0,13,0,3,0,3,0
+ReuneMe,com.equipo3.reuneme.service,LoginAttemptService,79,0,8,0,18,0,8,0,4,0
 ReuneMe,com.equipo3.reuneme.service,PasswordResetTokenService,99,0,10,0,24,0,11,0,6,0
 ReuneMe,com.equipo3.reuneme.service,EmpleadoService,675,0,76,0,140,0,62,0,24,0
+<<<<<<< Updated upstream
 ReuneMe,com.equipo3.reuneme.service,UsuarioService,309,0,42,0,77,0,34,0,13,0
 ReuneMe,com.equipo3.reuneme.service,AdminService,585,0,92,0,142,0,68,0,22,0
 ReuneMe,com.equipo3.reuneme.controller,TokenController,46,0,4,0,11,0,6,0,4,0
 ReuneMe,com.equipo3.reuneme.controller,EmpleadoController,170,0,12,0,35,0,22,0,16,0
 ReuneMe,com.equipo3.reuneme.controller,UsuarioController,288,0,12,0,61,0,13,0,7,0
 ReuneMe,com.equipo3.reuneme.controller,AdminController,351,0,30,0,84,0,35,0,20,0
+=======
+ReuneMe,com.equipo3.reuneme.service,UsuarioService,250,0,32,0,62,0,26,0,10,0
+ReuneMe,com.equipo3.reuneme.service,LoginAttemptService.LoginAttempt,23,0,0,0,10,0,5,0,5,0
+ReuneMe,com.equipo3.reuneme.service,AdminService,585,0,92,0,142,0,68,0,22,0
+ReuneMe,com.equipo3.reuneme.controller,TokenController,46,0,4,0,11,0,6,0,4,0
+ReuneMe,com.equipo3.reuneme.controller,EmpleadoController,175,0,12,0,36,0,23,0,17,0
+ReuneMe,com.equipo3.reuneme.controller,UsuarioController,282,0,12,0,61,0,13,0,7,0
+ReuneMe,com.equipo3.reuneme.controller,AdminController,368,0,30,0,87,0,35,0,20,0
+>>>>>>> Stashed changes
 ReuneMe,com.equipo3.reuneme.controller,PasswordResetController,176,0,12,0,41,0,10,0,4,0
 ReuneMe,com.equipo3.reuneme.config,WebConfig,48,0,0,0,7,0,2,0,2,0
-ReuneMe,com.equipo3.reuneme.config,SecurityConfig,277,0,0,0,42,0,8,0,8,0
+ReuneMe,com.equipo3.reuneme.config,SecurityConfig,290,0,0,0,43,0,8,0,8,0
 ReuneMe,com.equipo3.reuneme.config,AppConfiguration,25,0,0,0,8,0,3,0,3,0

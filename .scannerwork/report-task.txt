@@ -2,5 +2,10 @@ projectKey=2024-g03-backend
 serverUrl=http://seralu4.esi.uclm.es:1521
 serverVersion=10.6.0.92116
 dashboardUrl=http://seralu4.esi.uclm.es:1521/dashboard?id=2024-g03-backend
+<<<<<<< Updated upstream
 ceTaskId=27397422-01f6-498a-a2a4-21f777c81018
 ceTaskUrl=http://seralu4.esi.uclm.es:1521/api/ce/task?id=27397422-01f6-498a-a2a4-21f777c81018
+=======
+ceTaskId=23b125ee-2893-4fdb-b183-9775e406bcd4
+ceTaskUrl=http://seralu4.esi.uclm.es:1521/api/ce/task?id=23b125ee-2893-4fdb-b183-9775e406bcd4
+>>>>>>> Stashed changes

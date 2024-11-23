@@ -161,13 +161,21 @@ import com.equipo3.reuneme.service.EmpleadoService;
     public List&lt;Empleado&gt; posiblesAsistentes () {
 <span class="nc" id="L162">    	return this.empleadoService.posiblesAsistentes();</span>
     }
+
+	////////////////////////////////////
+	// OBTENER LISTA DE ASISTENTES POR REUNIÓN
+	////////////////////////////////////
+    @GetMapping(&quot;reunion/{idReunion}/asistentes&quot;)
+    public List&lt;Asistente&gt; obtenerAsistentesPorReunion(@PathVariable Long idReunion) {
+<span class="nc" id="L170">        return this.empleadoService.obtenerAsistentesPorReunion(idReunion);</span>
+    }
     
 	////////////////////////////////////
 	// OBTENER LISTA DE REUNIONES
 	////////////////////////////////////
     @GetMapping(&quot;/reunion/listado&quot;)
     public List&lt;Reunion&gt; listadoReuniones() {
-<span class="nc" id="L170">    	return this.empleadoService.listadoReuniones();</span>
+<span class="nc" id="L178">    	return this.empleadoService.listadoReuniones();</span>
     }
     
 	////////////////////////////////////
@@ -176,16 +184,16 @@ import com.equipo3.reuneme.service.EmpleadoService;
     @PutMapping(&quot;/reunion/organizador&quot;)
     public List&lt;Reunion&gt; reunionesOrganizadas(@RequestBody Map&lt;String, String&gt; payload) {
         // Extraer el email del JSON
-<span class="nc" id="L179">        String email = payload.get(&quot;email&quot;);</span>
+<span class="nc" id="L187">        String email = payload.get(&quot;email&quot;);</span>
 
         // Validar que el email no sea nulo o vacío
-<span class="nc bnc" id="L182" title="All 6 branches missed.">        if (email == null || email.trim().isEmpty() || !emailService.validarEmail(email.trim())) {</span>
-<span class="nc" id="L183">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, </span>
+<span class="nc bnc" id="L190" title="All 6 branches missed.">        if (email == null || email.trim().isEmpty() || !emailService.validarEmail(email.trim())) {</span>
+<span class="nc" id="L191">            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, </span>
                 &quot;El email insertado no tiene un formato válido: usuario@dominio.com&quot;);
         }
 
         // Llama al servicio con el email válido
-<span class="nc" id="L188">        return this.empleadoService.reunionesOrganizadas(email.trim());</span>
+<span class="nc" id="L196">        return this.empleadoService.reunionesOrganizadas(email.trim());</span>
     }
 
     
@@ -194,9 +202,9 @@ import com.equipo3.reuneme.service.EmpleadoService;
 	////////////////////////////////////
     @PutMapping(&quot;/reunion/asiste&quot;)
     public List&lt;Reunion&gt; reunionesAsistidas(@RequestBody Map&lt;String, String&gt; payload) {
-<span class="nc" id="L197">        String email = payload.get(&quot;email&quot;);</span>
-<span class="nc" id="L198">        System.out.println(&quot;Email extraído del JSON: &quot; + email);</span>
-<span class="nc" id="L199">        return this.empleadoService.reunionesAsistidas(email);</span>
+<span class="nc" id="L205">        String email = payload.get(&quot;email&quot;);</span>
+<span class="nc" id="L206">        System.out.println(&quot;Email extraído del JSON: &quot; + email);</span>
+<span class="nc" id="L207">        return this.empleadoService.reunionesAsistidas(email);</span>
     }
 
 }

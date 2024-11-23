@@ -183,10 +183,9 @@ import com.equipo3.reuneme.service.PasswordService;
 	/*********************************
      *CONSULTAR TODAS LAS AUSENCIAS
      ********************************/
-    @PreAuthorize(&quot;hasRole('ADMIN')&quot;)
 	@GetMapping(&quot;/todasAusencias&quot;)
     public List&lt;Ausencia&gt; obtenerTodasLasAusencias() {
-<span class="nc" id="L189">        return adminservice.obtenerTodasLasAusencias();</span>
+<span class="nc" id="L188">        return adminservice.obtenerTodasLasAusencias();</span>
     }
 	
 	/*********************************
@@ -195,8 +194,8 @@ import com.equipo3.reuneme.service.PasswordService;
 
 	@DeleteMapping(&quot;/eliminarAusencia/{id}&quot;)
     public void eliminarAusencia(@PathVariable String id) {
-<span class="nc" id="L198">        adminservice.eliminarAusencia(id);</span>
-<span class="nc" id="L199">    }</span>
+<span class="nc" id="L197">        adminservice.eliminarAusencia(id);</span>
+<span class="nc" id="L198">    }</span>
 
     /*********************************
      *AÑADIR AUSENCIA
@@ -205,15 +204,15 @@ import com.equipo3.reuneme.service.PasswordService;
 	@PutMapping(&quot;/anadirAusencia&quot;)
 	public Ausencia anadirAusencia(@RequestParam String email, @RequestBody RegistroAusencia ausencia) {
 		
-<span class="nc bnc" id="L208" title="All 2 branches missed.">    	if (!this.emailservice.validarEmail(email)) {</span>
-<span class="nc" id="L209">    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Revise el email, no es correcto&quot;);</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">    	if (!this.emailservice.validarEmail(email)) {</span>
+<span class="nc" id="L208">    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Revise el email, no es correcto&quot;);</span>
     	}
     	
-<span class="nc bnc" id="L212" title="All 2 branches missed.">    	if(Objects.isNull(ausencia)) {</span>
-<span class="nc" id="L213">    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;La ausencia que se intenta registrar está vacía&quot;);</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">    	if(Objects.isNull(ausencia)) {</span>
+<span class="nc" id="L212">    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;La ausencia que se intenta registrar está vacía&quot;);</span>
     	}
 		
-<span class="nc" id="L216">	    return adminservice.anadirAusencias(email, ausencia); </span>
+<span class="nc" id="L215">	    return adminservice.anadirAusencias(email, ausencia); </span>
 	}
     /*********************************
      *VER LISTA DE USUARIOS
@@ -222,7 +221,7 @@ import com.equipo3.reuneme.service.PasswordService;
 	@GetMapping(&quot;/all&quot;)
 	@ResponseStatus(HttpStatus.OK)
 	public List&lt;Usuario&gt; verTodosLosUsuarios() {
-<span class="nc" id="L225">	    return this.adminservice.obtenerTodosLosUsuarios();</span>
+<span class="nc" id="L224">	    return this.adminservice.obtenerTodosLosUsuarios();</span>
 	}
 	
 	/*********************************
@@ -231,10 +230,10 @@ import com.equipo3.reuneme.service.PasswordService;
     @PreAuthorize(&quot;hasRole('ADMIN')&quot;)
     @GetMapping(&quot;/verDatos&quot;)
 	public Administrador verDatosAdmin(@RequestParam String email) {
-<span class="nc bnc" id="L234" title="All 2 branches missed.">	    if (!this.emailservice.validarEmail(email)) {</span>
-<span class="nc" id="L235">	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email no tiene un formato válido: usuario@dominio.com&quot;);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">	    if (!this.emailservice.validarEmail(email)) {</span>
+<span class="nc" id="L234">	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email no tiene un formato válido: usuario@dominio.com&quot;);</span>
 	    }
-<span class="nc" id="L237">	    return this.adminservice.verDatos(email);</span>
+<span class="nc" id="L236">	    return this.adminservice.verDatos(email);</span>
 	}
 	
     /*********************************
@@ -244,12 +243,12 @@ import com.equipo3.reuneme.service.PasswordService;
     @PostMapping(&quot;/anadirTurnos&quot;)
 	@ResponseStatus(HttpStatus.OK)
 	public void anadirTurnos( @RequestBody List&lt;Turno&gt; turnos) {
-<span class="nc bnc" id="L247" title="All 4 branches missed.">    	if (turnos.isEmpty() || Objects.isNull(turnos)) {</span>
-<span class="nc" id="L248">    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;No hay turnos para añadir&quot;);</span>
+<span class="nc bnc" id="L246" title="All 4 branches missed.">    	if (turnos.isEmpty() || Objects.isNull(turnos)) {</span>
+<span class="nc" id="L247">    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;No hay turnos para añadir&quot;);</span>
     	}
     	
-<span class="nc" id="L251">    	this.adminservice.anadirTurnos(turnos);</span>
-<span class="nc" id="L252">	}</span>
+<span class="nc" id="L250">    	this.adminservice.anadirTurnos(turnos);</span>
+<span class="nc" id="L251">	}</span>
 	
     /*********************************
      *DEVOLVER TODOS LOS TURNOS
@@ -258,7 +257,7 @@ import com.equipo3.reuneme.service.PasswordService;
     @GetMapping(&quot;/turnos&quot;)
 	@ResponseStatus(HttpStatus.OK)
 	public List&lt;Turno&gt; turnos() {    	
-<span class="nc" id="L261">    	return this.adminservice.turnos();</span>
+<span class="nc" id="L260">    	return this.adminservice.turnos();</span>
 	}
 	
 	/*********************************
@@ -268,11 +267,11 @@ import com.equipo3.reuneme.service.PasswordService;
     @PutMapping(&quot;/modificarAdministrador&quot;)
     public void modificarAdministrador(@RequestBody Administrador admin) {
     	try {
-<span class="nc" id="L271">    		adminservice.actualizarAdministrador(admin.getEmail(), admin);  </span>
-<span class="nc" id="L272">    	} catch (Exception e) {</span>
-<span class="nc" id="L273">    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, &quot;Error al modifficar el empleado.&quot;);</span>
-<span class="nc" id="L274">    	}</span>
-<span class="nc" id="L275">	}</span>
+<span class="nc" id="L270">    		adminservice.actualizarAdministrador(admin.getEmail(), admin);  </span>
+<span class="nc" id="L271">    	} catch (Exception e) {</span>
+<span class="nc" id="L272">    		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, &quot;Error al modifficar el empleado.&quot;);</span>
+<span class="nc" id="L273">    	}</span>
+<span class="nc" id="L274">	}</span>
     
 	/*********************************
      *COMPROBAR BLOQ./VALIDADO EMPLEADO
@@ -281,12 +280,12 @@ import com.equipo3.reuneme.service.PasswordService;
     @PutMapping(&quot;/verificar&quot;)
     public boolean verificar(@RequestBody String email) {
     	
-<span class="nc" id="L284">    	email = email.toLowerCase();</span>
+<span class="nc" id="L283">    	email = email.toLowerCase();</span>
     	
-<span class="nc bnc" id="L286" title="All 2 branches missed.">	    if (!this.emailservice.validarEmail(email)) {</span>
-<span class="nc" id="L287">	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email no tiene un formato válido: usuario@dominio.com&quot;);</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">	    if (!this.emailservice.validarEmail(email)) {</span>
+<span class="nc" id="L286">	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email no tiene un formato válido: usuario@dominio.com&quot;);</span>
 	    }
-<span class="nc" id="L289">	    return this.adminservice.comprobar(email);</span>
+<span class="nc" id="L288">	    return this.adminservice.comprobar(email);</span>
 	}
 
     /*********************************
@@ -297,14 +296,14 @@ import com.equipo3.reuneme.service.PasswordService;
     @ResponseStatus(HttpStatus.OK)
     public Map&lt;String, String&gt; getUserRoleByEmail(@RequestParam String email) {
         try {
-<span class="nc" id="L300">            String role = adminservice.getUserRoleByEmail(email);</span>
-<span class="nc" id="L301">            Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L302">            response.put(&quot;role&quot;, role); // Clave &quot;role&quot; con el valor del rol</span>
-<span class="nc" id="L303">            return response;</span>
-<span class="nc" id="L304">        } catch (ResponseStatusException e) {</span>
-<span class="nc" id="L305">            throw e; // Lanza la excepción tal cual para que el controlador maneje la respuesta HTTP</span>
-<span class="nc" id="L306">        } catch (Exception e) {</span>
-<span class="nc" id="L307">            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, &quot;Error al obtener el rol del usuario.&quot;);</span>
+<span class="nc" id="L299">            String role = adminservice.getUserRoleByEmail(email);</span>
+<span class="nc" id="L300">            Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L301">            response.put(&quot;role&quot;, role); // Clave &quot;role&quot; con el valor del rol</span>
+<span class="nc" id="L302">            return response;</span>
+<span class="nc" id="L303">        } catch (ResponseStatusException e) {</span>
+<span class="nc" id="L304">            throw e; // Lanza la excepción tal cual para que el controlador maneje la respuesta HTTP</span>
+<span class="nc" id="L305">        } catch (Exception e) {</span>
+<span class="nc" id="L306">            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, &quot;Error al obtener el rol del usuario.&quot;);</span>
         }
     }
     
@@ -312,17 +311,20 @@ import com.equipo3.reuneme.service.PasswordService;
      * COMPROBAR REUNIONES DE EMPLEADO
      ********************************/
     @PreAuthorize(&quot;hasRole('ADMIN')&quot;)
-    @GetMapping(&quot;/comprobarReuniones&quot;)
+    @PutMapping(&quot;/comprobarReuniones&quot;)
     @ResponseStatus(HttpStatus.OK)
-    public boolean comprobarReuniones(@RequestBody String email, @RequestBody LocalDateTime inicio,
-    		@RequestBody LocalDateTime fin) {
-<span class="nc" id="L319">    	email = email.toLowerCase();</span>
+    public boolean comprobarReuniones(@RequestBody Map&lt;String, String&gt; payload) {
     	
-<span class="nc bnc" id="L321" title="All 2 branches missed.">	    if (!this.emailservice.validarEmail(email)) {</span>
-<span class="nc" id="L322">	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email no tiene un formato válido: usuario@dominio.com&quot;);</span>
+<span class="nc" id="L318">    	String email = payload.get(&quot;email&quot;);</span>
+<span class="nc" id="L319">    	LocalDateTime inicio = LocalDateTime.parse(payload.get(&quot;inicio&quot;));</span>
+<span class="nc" id="L320">    	LocalDateTime fin = LocalDateTime.parse(payload.get(&quot;fin&quot;));</span>
+<span class="nc" id="L321">    	email = email.toLowerCase();</span>
+    	
+<span class="nc bnc" id="L323" title="All 2 branches missed.">	    if (!this.emailservice.validarEmail(email)) {</span>
+<span class="nc" id="L324">	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;El email no tiene un formato válido: usuario@dominio.com&quot;);</span>
 	    }
 	    
-<span class="nc" id="L325">	    return this.adminservice.comprobarReuniones(email, inicio, fin);</span>
+<span class="nc" id="L327">	    return this.adminservice.comprobarReuniones(email, inicio, fin);</span>
     }
 
 

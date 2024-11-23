@@ -3,6 +3,7 @@ com\equipo3\reuneme\model\RegistroEmp.class
 com\equipo3\reuneme\model\Administrador.class
 com\equipo3\reuneme\model\RegistroDatos.class
 com\equipo3\reuneme\model\Usuario.class
+com\equipo3\reuneme\service\LoginAttemptService.class
 com\equipo3\reuneme\model\AsistenteId.class
 com\equipo3\reuneme\model\Token.class
 com\equipo3\reuneme\service\TwoFactorAuthService.class
@@ -21,6 +22,10 @@ com\equipo3\reuneme\model\Empleado.class
 com\equipo3\reuneme\model\Asistente.class
 com\equipo3\reuneme\model\EstadoReunion.class
 com\equipo3\reuneme\dao\UsuarioDAO.class
+<<<<<<< Updated upstream
+=======
+com\equipo3\reuneme\service\LoginAttemptService$LoginAttempt.class
+>>>>>>> Stashed changes
 com\equipo3\reuneme\service\EmailService.class
 com\equipo3\reuneme\service\PasswordResetTokenService.class
 com\equipo3\reuneme\controller\TokenController.class

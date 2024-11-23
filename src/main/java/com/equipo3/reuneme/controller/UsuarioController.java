@@ -20,6 +20,7 @@ import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.RegistroEmp;
 import com.equipo3.reuneme.model.Usuario;
 import com.equipo3.reuneme.service.EmailService;
+import com.equipo3.reuneme.service.LoginAttemptService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
 import com.equipo3.reuneme.security.JwtTokenProvider;
@@ -32,7 +33,9 @@ public class UsuarioController {
 
     @Autowired
     UsuarioService userservice;
-
+   
+    @Autowired
+    private LoginAttemptService loginAttemptService;
     @Autowired
     EmailService emailservice;
     
@@ -98,7 +101,13 @@ public class UsuarioController {
         String email = info.get("email").toString().toLowerCase();
         String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
 
+        if (loginAttemptService.isBlocked(email)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Algo ha pasado, inténtelo más tarde.")); // Mensaje para el front
+        }
+
         try {
+<<<<<<< Updated upstream
             // Verifica si el usuario está bloqueado
             if (userservice.isBlocked(email)) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario bloqueado por múltiples intentos fallidos. Contacte con soporte.");
@@ -118,9 +127,19 @@ public class UsuarioController {
                 userservice.incrementFailedAttempts(email);
 
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas");
+=======
+            boolean loginResult = userservice.login(email, pwd);
+
+            if (loginResult) {
+                String token = "fake-jwt-token"; // Sustituir por la lógica de generación de tokens
+                return ResponseEntity.ok(Map.of("token", token));
+            } else {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas.");
+>>>>>>> Stashed changes
             }
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+            loginAttemptService.loginFailed(email); // Incrementa los intentos
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
         }
     }
 	/////////////////////////////

@@ -44,3 +44,7 @@ C:\Users\galca\eclipse-workspace\reuneme\src\main\java\com\equipo3\reuneme\model
 C:\Users\galca\eclipse-workspace\reuneme\src\main\java\com\equipo3\reuneme\service\TwoFactorAuthService.java
 C:\Users\galca\eclipse-workspace\reuneme\src\main\java\com\equipo3\reuneme\model\RegistroDatos.java
 C:\Users\galca\eclipse-workspace\reuneme\src\main\java\com\equipo3\reuneme\controller\EmpleadoController.java
+<<<<<<< Updated upstream
+=======
+C:\Users\galca\eclipse-workspace\reuneme\src\main\java\com\equipo3\reuneme\service\LoginAttemptService.java
+>>>>>>> Stashed changes
