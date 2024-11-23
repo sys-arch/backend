@@ -87,7 +87,7 @@ public class AdminController {
     /*********************************
      *MODIFICAR EMPLEADO
      ********************************/
-    @PreAuthorize("hasRole('ADMIN')")
+    
     @PutMapping("/modificarEmpleado")
     public void modificarEmpleado(@RequestBody Empleado emp) {
     	try {
@@ -291,7 +291,6 @@ public class AdminController {
     /*********************************
      * OBTENER ROL DE USUARIO POR EMAIL
      ********************************/
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUserRoleByEmail")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, String> getUserRoleByEmail(@RequestParam String email) {

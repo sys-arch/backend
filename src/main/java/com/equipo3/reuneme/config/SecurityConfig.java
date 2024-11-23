@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/users/desactivar-2fa")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/tokens/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/pwd/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/admins/getUserRoleByEmail")).authenticated()
+                .requestMatchers(new AntPathRequestMatcher("/admins/modificarEmpleado")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/admins/todasAusencias")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN") 
                 .requestMatchers(new AntPathRequestMatcher("/empleados/verDatos")).hasAnyRole("EMPLOYEE", "ADMIN")
