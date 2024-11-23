@@ -242,14 +242,23 @@ public class EmpleadoService {
         asistenteRepository.deleteById(asistenteId);
     }
 
+	
 	/////////////////////////
-	//CONFIRMAR ASISTENCIA
+	//ACTUALIZAR ESTADO DE ASISTENCIA
 	/////////////////////////
-    public Asistente confirmarAsistencia(Long idReunion, String idUsuario) {
-        Asistente asistente = obtenerAsistente(idReunion, idUsuario);
-        asistente.setEstado(EstadoAsistente.ACEPTADA);
-        return asistenteRepository.save(asistente);
-    }
+	public Asistente actualizarEstadoAsistencia(Long idReunion, String idUsuario, EstadoAsistente estado) {
+	Asistente asistente = obtenerAsistente(idReunion, idUsuario);
+	
+	// Verifica que el estado sea válido
+	if (estado != EstadoAsistente.ACEPTADA && estado != EstadoAsistente.RECHAZADA) {
+	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado de asistencia no válido");
+	}
+	
+	asistente.setEstado(estado);
+	return asistenteRepository.save(asistente);
+	}
+
+
 
 	/////////////////////////
 	//ASISTIR (COMO ASISTENTE A REUNION)
@@ -278,11 +287,12 @@ public class EmpleadoService {
 	/////////////////////////
 	//COMPROBAR SI USUARIO ASISTE A TAL REUNION
 	/////////////////////////
-    private Asistente obtenerAsistente(Long idReunion, String idUsuario) {
-        AsistenteId asistenteId = new AsistenteId(idReunion, idUsuario);
-        return asistenteRepository.findById(asistenteId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Asistente no encontrado"));
-    }
+	public Asistente obtenerAsistente(Long idReunion, String idUsuario) {
+	AsistenteId asistenteId = new AsistenteId(idReunion, idUsuario);
+	return asistenteRepository.findById(asistenteId)
+	.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Asistente no encontrado"));
+	}
+
     
 	/////////////////////////
 	//OBTENER ASISTENTES DE REUNION
@@ -353,7 +363,6 @@ public class EmpleadoService {
 		if(Objects.isNull(emp)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El empleado no existe!");
 		}
-		System.out.println("Estamos en el metodo");
 
 		List<Long> ids = this.asistenteRepository.findReunionIdsByIdUsuario(emp.getId());
 		System.out.println(ids);
@@ -363,5 +372,26 @@ public class EmpleadoService {
 		
 		return this.reunionRepository.findAllById(ids);
 	}
+	////////////////////////////////////
+	//OBTENER REUNIONES ASISTIDAS PENDIENTES
+	////////////////////////////////////
+	public List<Reunion> reunionesAsistidasPendientes(String email) {
+	Empleado emp = this.edao.findByEmail(email);
+	
+	if (Objects.isNull(emp)) {
+	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El empleado no existe!");
+	}
+	
+	// Obtener IDs de reuniones donde el usuario es asistente
+	List<Long> ids = this.asistenteRepository.findReunionIdsByIdUsuarioAndEstado(emp.getId(), EstadoAsistente.PENDIENTE);
+	
+	if (ids.isEmpty() || Objects.isNull(ids)) {
+	throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El empleado no tiene reuniones pendientes asociadas como asistente");
+	}
+	
+	// Retornar reuniones con estado pendiente
+	return this.reunionRepository.findAllById(ids);
+	}
+
 
 }

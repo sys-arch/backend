@@ -25,6 +25,11 @@ import com.equipo3.reuneme.model.RegistroReunion;
 import com.equipo3.reuneme.model.Reunion;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.EmpleadoService;
+import com.equipo3.reuneme.model.EstadoAsistente;
+import com.equipo3.reuneme.model.AsistenteId;
+
+
+
 
 @RestController
 @RequestMapping(value = "/empleados")
@@ -139,15 +144,19 @@ public class EmpleadoController {
     }
 
 	////////////////////////////////////
-	// CONFIRMAR ASISTENCIA
+	//ACTUALIZAR ESTADO DE ASISTENCIA
 	////////////////////////////////////
-    @PutMapping("/reunion/{idReunion}/asistente/{idUsuario}/confirmar")
-    public Asistente confirmarAsistencia(@PathVariable Long idReunion, @PathVariable String idUsuario) {
-        return empleadoService.confirmarAsistencia(idReunion, idUsuario);
-    }
+	@PutMapping("/reunion/{idReunion}/asistente/{idUsuario}/estado")
+	public Asistente actualizarEstadoAsistencia(
+	@PathVariable Long idReunion,
+	@PathVariable String idUsuario,
+	@RequestParam EstadoAsistente estado) {
+	return empleadoService.actualizarEstadoAsistencia(idReunion, idUsuario, estado);
+	}
+
 
 	////////////////////////////////////
-	//ASISTIR
+	//ASISTIR O RECHAZAR
 	////////////////////////////////////
     @PutMapping("/reunion/{idReunion}/asistente/{idUsuario}/asistir")
     public Asistente asistir(@PathVariable Long idReunion, @PathVariable String idUsuario) {
@@ -198,5 +207,34 @@ public class EmpleadoController {
         System.out.println("Email extraído del JSON: " + email);
         return this.empleadoService.reunionesAsistidas(email);
     }
+    
+	////////////////////////////////////
+	// OBTENER INVITACIONES A REUNION
+    ////////////////////////////////////
+    @PutMapping("/reunion/asiste-pendiente")
+    public List<Reunion> reunionesAsistidasPendientes(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+
+        if (email == null || email.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no puede estar vacío.");
+        }
+
+        return empleadoService.reunionesAsistidasPendientes(email.trim());
+    }
+	/////////////////////////
+	//OBTENER ASISTENTE POR CORREO
+	/////////////////////////
+	@GetMapping("/reunion/{idReunion}/asistente")
+	public Asistente obtenerAsistentePorEmail(@PathVariable Long idReunion, @RequestParam String email) {
+	Empleado empleado = empleadoService.verDatos(email); // Busca al empleado usando su correo
+	if (empleado == null) {
+	throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+	}
+	
+	// Busca al asistente utilizando el idReunion y el id del empleado
+	return empleadoService.obtenerAsistente(idReunion, empleado.getId());
+	}
+
+
 
 }

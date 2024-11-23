@@ -105,7 +105,7 @@ VALUES
 
 INSERT INTO Asistente (id_reunion, id_usuario, estado, asiste)
 VALUES 
-('3', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'ACEPTADA', true),
+('3', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'PENDIENTE', true),
 ('4', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'ACEPTADA', true);
 
 
