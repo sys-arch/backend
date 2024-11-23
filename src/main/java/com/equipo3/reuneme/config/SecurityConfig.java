@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/admins/todasAusencias")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN") 
                 .requestMatchers(new AntPathRequestMatcher("/empleados/verDatos")).hasAnyRole("EMPLOYEE", "ADMIN")
+                .requestMatchers(new AntPathRequestMatcher("/admins/modificarEmpleado")).hasAnyRole("EMPLOYEE", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/empleados/**")).hasRole("EMPLOYEE") // Solo accesible para empleados
                 .requestMatchers(new AntPathRequestMatcher("/reunion/**")).hasAnyRole("EMPLOYEE", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/reset-password")).permitAll()
