@@ -318,6 +318,9 @@ public class AdminService {
 	    if (empleadoActualizado.getCentro() != null) {
 	        empleadoExistente.setCentro(empleadoActualizado.getCentro());
 	    }
+	    if(empleadoActualizado.getFechaalta() != null) {
+	    	emleadoExistente.setFechaalta(empleadoActualizado.getFechaalta());
+	    }
 	    if (empleadoActualizado.getClavesecreta() != null) {
 	        empleadoExistente.setClavesecreta(empleadoActualizado.getClavesecreta());
 	    }
