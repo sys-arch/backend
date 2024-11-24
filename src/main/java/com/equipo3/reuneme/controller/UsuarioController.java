@@ -21,6 +21,7 @@ import com.equipo3.reuneme.model.RegistroEmp;
 import com.equipo3.reuneme.service.EmailService;
 import com.equipo3.reuneme.service.PasswordService;
 import com.equipo3.reuneme.service.UsuarioService;
+import com.equipo3.reuneme.service.LoginAttemptService;
 import com.equipo3.reuneme.security.JwtTokenProvider;
 import java.util.HashMap;
 
@@ -31,6 +32,9 @@ public class UsuarioController {
 
     @Autowired
     UsuarioService userservice;
+    
+    @Autowired
+    LoginAttemptService loginAttemptService;
 
     @Autowired
     EmailService emailservice;
@@ -105,7 +109,8 @@ public class UsuarioController {
             boolean loginResult = userservice.login(email, pwd);
 
             if (loginResult) {
-                String token = "fake-jwt-token"; // Sustituir por la lógica de generación de tokens
+            	String role = userservice.getRoleByEmail(email);
+                String token = jwtTokenProvider.generateToken(email, role);
                 return ResponseEntity.ok(Map.of("token", token));
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas.");
