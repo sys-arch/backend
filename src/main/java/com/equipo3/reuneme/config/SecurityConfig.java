@@ -48,7 +48,12 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/admins/getUserRoleByEmail")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/admins/modificarEmpleado")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/admins/todasAusencias")).authenticated()
-                .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN") 
+                .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN")   
+                .requestMatchers(new AntPathRequestMatcher("/empleados/reunion/{idReunion}/asistente/{idUsuario}")).hasAnyRole("EMPLOYEE", "ADMIN")
+                .requestMatchers(new AntPathRequestMatcher("/empleados/verDatos")).hasAnyRole("EMPLOYEE", "ADMIN")
+                .requestMatchers(new AntPathRequestMatcher("/empleados/reunion/organizador")).hasAnyRole("EMPLOYEE", "ADMIN")
+                .requestMatchers(new AntPathRequestMatcher("/empleados/reunion/asiste")).hasAnyRole("EMPLOYEE", "ADMIN")
+                .requestMatchers(new AntPathRequestMatcher("/empleados//reunion/{id}/cancelar")).hasAnyRole("EMPLOYEE", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/empleados/verDatos")).hasAnyRole("EMPLOYEE", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/admins/modificarEmpleado")).hasAnyRole("EMPLOYEE", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/empleados/**")).hasRole("EMPLOYEE") // Solo accesible para empleados
