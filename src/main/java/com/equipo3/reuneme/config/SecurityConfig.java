@@ -41,7 +41,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Desactivar CSRF para APIs REST
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No mantener estado
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
+            	.requestMatchers(new AntPathRequestMatcher("/users/activar-2fa")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/users/verify-2fa")).permitAll()
+            	.requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/users/desactivar-2fa")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/tokens/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/pwd/**")).permitAll()

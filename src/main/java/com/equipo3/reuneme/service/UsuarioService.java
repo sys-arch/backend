@@ -114,13 +114,24 @@ public class UsuarioService {
 	    if (usuario == null) {
 	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
 	    }
+
+	    // Si el usuario ya tiene una clave secreta, no permitir cambiarla
+	    if (usuario.getClavesecreta() != null && !usuario.getClavesecreta().isEmpty()) {
+	        System.out.println("El usuario ya tiene una clave secreta asignada: " + usuario.getClavesecreta());
+	        return usuario.getClavesecreta();
+	    }
+
+	    // Generar una nueva clave secreta si no existe
 	    String secretKey = twoFactorAuthService.generateSecretKey();
 	    usuario.setClavesecreta(secretKey);
-	    usuario.setTwoFA(true);
-	    userdao.save(usuario); 
+	    usuario.setTwoFA(false); // Activar 2FA
+	    userdao.save(usuario);
 
-	    return secretKey; 
+	    System.out.println("Nueva clave secreta generada y asignada: " + secretKey);
+	    return secretKey;
 	}
+
+
 	
 	/////////////////////////////////////
 	//VERIFICA CODIGO DE GOOGLE AUTHENTICATOR
@@ -160,7 +171,6 @@ public class UsuarioService {
 	    }
 
 	    // Actualizar la clave secreta y el estado de 2FA
-	    usuario.setClavesecreta(clavesecreta);
 	    usuario.setTwoFA(twoFA);
 	    userdao.save(usuario); // Guarda los cambios en la base de datos
 	}

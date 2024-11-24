@@ -42,7 +42,7 @@ public class Usuario {
 	@Column(length = 100)
 	private String clavesecreta;
 	
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private Boolean twoFA;
 	
 	@Column(length = 20, nullable = false)
