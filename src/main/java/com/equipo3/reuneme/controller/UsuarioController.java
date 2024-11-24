@@ -96,23 +96,25 @@ public class UsuarioController {
         String email = info.get("email").toString().toLowerCase();
         String pwd = org.apache.commons.codec.digest.DigestUtils.sha512Hex(info.get("pwd").toString());
 
+        if (loginAttemptService.isBlocked(email)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Algo ha pasado, inténtelo más tarde.")); // Mensaje para el front
+        }
+
         try {
-            boolean loginResult = this.userservice.login(email, pwd);
+            boolean loginResult = userservice.login(email, pwd);
+
             if (loginResult) {
-                String role = userservice.getRoleByEmail(email);
-                String token = jwtTokenProvider.generateToken(email, role);
-                
-                // Devuelve el token y un mensaje de que 2FA es requerido
-                return ResponseEntity.ok(Map.of(
-                    "token", token));
+                String token = "fake-jwt-token"; // Sustituir por la lógica de generación de tokens
+                return ResponseEntity.ok(Map.of("token", token));
             } else {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas.");
             }
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+            loginAttemptService.loginFailed(email); // Incrementa los intentos
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
         }
     }
-
 
 	/////////////////////////////
 	//GENERA CLAVE DOBLE FACTOR DE AUTHENTICACIÓN
