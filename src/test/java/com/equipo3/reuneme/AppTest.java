@@ -1,7 +1,15 @@
 package com.equipo3.reuneme;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -11,10 +19,14 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.equipo3.reuneme.controller.AdminController;
@@ -26,160 +38,173 @@ import com.equipo3.reuneme.service.UsuarioService;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@AutoConfigureMockMvc // Opcional si usas MockMvc
 public class AppTest {
+	  @Autowired
+	    private UsuarioController ucontrol;
 
-    @Autowired
-    private UsuarioController ucontrol;
-    
-    @Autowired
-    private AdminController adController;
+	    @Autowired
+	    private AdminController adController;
 
-    @MockBean
-    private UsuarioService uservice;
-    
-    @MockBean
-    private AdminService adService;
+	    @MockBean
+	    private UsuarioService uservice;
 
-    /*@Test
-    public void testLoginBien() {
-        String email = "guille@gmail.com";
-        String password = "Aa123456?";
+	    @MockBean
+	    private AdminService adService;
 
-        // Simulamos un token válido, ya sea "a-" o "e-" seguido de un UUID
-        when(uservice.login(email, password)).thenReturn("a-" + UUID.randomUUID().toString());
+	    // --------------------------
+	    // Pruebas de Login
+	    // --------------------------
 
-        Map<String, Object> loginInfo = new HashMap<>();
-        loginInfo.put("email", email);
-        loginInfo.put("pwd", password);
+	    @Test
+	    public void testLoginBien() {
+	        String email = "guille@gmail.com";
+	        String password = "Aa123456?";
+	        String hashedPassword = org.apache.commons.codec.digest.DigestUtils.sha512Hex(password);
 
-        String response = ucontrol.login(loginInfo);
+	        when(uservice.login(email, hashedPassword)).thenReturn(true);
+	        when(uservice.getRoleByEmail(email)).thenReturn("ROLE_USER");
 
-        // Validamos que el token empiece con "a-" o "e-" y que lo que sigue sea un UUID válido
-        assertTrue(response.matches("^(a|e)-[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"));
-    }
+	        Map<String, Object> loginInfo = new HashMap<>();
+	        loginInfo.put("email", email);
+	        loginInfo.put("pwd", password);
 
-    @Test
-    public void testLoginNoExisteUsuario() {
-        String email = "nonexistent@example.com";
-        String password = "anyPassword";
+	        ResponseEntity<?> response = ucontrol.login(loginInfo);
 
-        when(uservice.login(email, password)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "El usuario no existe o las credenciales son incorrectas."));
+	        assertTrue(response.getStatusCode().is2xxSuccessful());
+	        Map<String, String> body = (Map<String, String>) response.getBody();
+	        assertTrue(body.containsKey("token"));
+	        assertTrue(body.get("token").startsWith("eyJ")); // Verifica que parece un JWT
+	    }
+	    @Test
+	    public void testLoginUsuarioNoExiste() {
+	        String email = "nonexistent@example.com";
+	        String password = "anyPassword";
+	        String hashedPassword = org.apache.commons.codec.digest.DigestUtils.sha512Hex(password);
 
-        Map<String, Object> loginInfo = new HashMap<>();
-        loginInfo.put("email", email);
-        loginInfo.put("pwd", password);
+	        // Mock: configurar para lanzar la excepción esperada
+	        when(uservice.login(eq(email), eq(hashedPassword)))
+	            .thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "El usuario no existe o las credenciales son incorrectas."));
 
-        assertThrows(ResponseStatusException.class, () -> {
-            ucontrol.login(loginInfo);
-        });
-    }
-    
-    @Test
-    public void testLoginPwdMal() {
-        String email = "guille@gmail.com";
-        String password = "1234";
+	        // Entrada simulada
+	        Map<String, Object> loginInfo = new HashMap<>();
+	        loginInfo.put("email", email);
+	        loginInfo.put("pwd", password);
 
-        // Simulamos que el servicio lanza la excepción al recibir credenciales inválidas
-        when(uservice.login(email, password)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciales inválidas."));
+	        // Ejecutar y verificar el comportamiento
+	        try {
+	            ucontrol.login(loginInfo);
+	            fail("Se esperaba una ResponseStatusException pero no se lanzó ninguna excepción."); // Solo se ejecuta si falla
+	        } catch (ResponseStatusException e) {
+	            // Validar la excepción
+	            assertEquals(HttpStatus.FORBIDDEN, e.getStatusCode());
+	            assertEquals("El usuario no existe o las credenciales son incorrectas.", e.getReason());
+	        }
+	    }
 
-        Map<String, Object> loginInfo = new HashMap<>();
-        loginInfo.put("email", email);
-        loginInfo.put("pwd", password);
+	    // --------------------------
+	    // Pruebas de 2FA
+	    // --------------------------
 
-        // Capturamos la excepción esperada
-        assertThrows(ResponseStatusException.class, () -> {
-            ucontrol.login(loginInfo);
-        });
-    }*/
-    
-    /************ TESTS PARA MODIFICAR EMPLEADO ************/
+	    @Test
+	    public void testActivar2FASuccess() {
+	        String email = "user@example.com";
+	        String secretKey = "SAMPLE_SECRET_KEY";
 
-    /*@Test
-    public void testModificarEmpleadoExito() {
-        Empleado empleadoActualizado = new Empleado();
-        empleadoActualizado.setEmail("empleado@example.com");
-        empleadoActualizado.setNombre("Nuevo Nombre");
+	        when(uservice.activar2FA(email)).thenReturn(secretKey);
 
-        // Simulamos que el servicio actualiza correctamente
-        when(adService.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado)).thenReturn(empleadoActualizado);
+	        Map<String, String> info = new HashMap<>();
+	        info.put("email", email);
 
-        // No esperamos excepción en este caso exitoso
-        adController.modificarEmpleado(empleadoActualizado);
-    }
+	        String result = ucontrol.activar2FA(info);
 
-    @Test
-    public void testModificarEmpleadoNoExistente() {
-        Empleado empleadoActualizado = new Empleado();
-        empleadoActualizado.setEmail("inexistente@example.com");
+	        assertEquals(secretKey, result);
+	        verify(uservice, times(1)).activar2FA(email);
+	    }
 
-        // Simulamos que el servicio lanza excepción al no encontrar el empleado
-        when(adService.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado))
-            .thenThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el empleado seleccionado"));
+	    @Test
+	    public void testVerificar2FACorrecto() {
+	        String email = "user@example.com";
+	        int code = 123456;
 
-        // Validamos que se lance la excepción esperada
-        assertThrows(ResponseStatusException.class, () -> {
-            adController.modificarEmpleado(empleadoActualizado);
-        });
-    }
+	        when(uservice.verificarTwoFactorAuthCode(email, code)).thenReturn(true);
 
-    @Test
-    public void testModificarEmpleadoFormatoIncorrecto() {
-        Empleado empleadoActualizado = new Empleado();
-        empleadoActualizado.setEmail("empleado_malformateado");
+	        Map<String, Object> info = new HashMap<>();
+	        info.put("email", email);
+	        info.put("authCode", code);
 
-        // Simulamos que el servicio lanza excepción por email mal formado
-        when(adService.actualizarEmpleado(empleadoActualizado.getEmail(), empleadoActualizado))
-            .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido"));
+	        ResponseEntity<Map<String, String>> response = ucontrol.verificarTwoFactorAuth(info);
 
-        // Validamos que se lance la excepción esperada
-        assertThrows(ResponseStatusException.class, () -> {
-            adController.modificarEmpleado(empleadoActualizado);
-        });
-    }*/
+	        assertEquals(HttpStatus.OK, response.getStatusCode());
+	        assertEquals("Autenticación de doble factor exitosa", response.getBody().get("message"));
+	    }
+	    @Test
+	    public void testVerificar2FAFallido() {
+	        String email = "test@example.com";
+	        Integer authCode = 123456;
 
-    /************ TESTS PARA MODIFICAR ADMINISTRADOR ************/
+	        // Mock: configurar para lanzar la excepción esperada
+	        when(uservice.verificarTwoFactorAuthCode(eq(email), eq(authCode)))
+	            .thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto."));
 
-    /*@Test
-    public void testModificarAdministradorExito() {
-        Administrador administradorActualizado = new Administrador();
-        administradorActualizado.setEmail("admin@example.com");
-        administradorActualizado.setNombre("Nuevo Nombre Admin");
+	        // Entrada simulada
+	        Map<String, Object> requestBody = new HashMap<>();
+	        requestBody.put("email", email);
+	        requestBody.put("authCode", authCode);
 
-        // Simulamos que el servicio actualiza correctamente
-        when(adService.actualizarAdministrador(administradorActualizado.getEmail(), administradorActualizado)).thenReturn(administradorActualizado);
+	        // Ejecutar y verificar el comportamiento
+	        try {
+	            ucontrol.verificarTwoFactorAuth(requestBody);
+	            fail("Se esperaba una ResponseStatusException pero no se lanzó ninguna excepción."); // Solo se ejecuta si falla
+	        } catch (ResponseStatusException e) {
+	            // Validar la excepción
+	            assertEquals(HttpStatus.UNAUTHORIZED, e.getStatusCode());
+	            assertEquals("Código de autenticación incorrecto.", e.getReason());
+	        }
+	    }
 
-        // No esperamos excepción en este caso exitoso
-        adController.modificarAdministrador(administradorActualizado);
-    }
+	    @Test
+	    public void testDesactivar2FA() {
+	        String email = "user@example.com";
+	        String secretKey = "SAMPLE_SECRET_KEY";
+	        boolean twoFA = false;
 
-    @Test
-    public void testModificarAdministradorNoExistente() {
-        Administrador administradorActualizado = new Administrador();
-        administradorActualizado.setEmail("inexistente_admin@example.com");
+	        doNothing().when(uservice).desactivar2FA(email, secretKey, twoFA);
 
-        // Simulamos que el servicio lanza excepción al no encontrar el administrador
-        when(adService.actualizarAdministrador(administradorActualizado.getEmail(), administradorActualizado))
-            .thenThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado"));
+	        Map<String, Object> updateData = new HashMap<>();
+	        updateData.put("email", email);
+	        updateData.put("clavesecreta", secretKey);
+	        updateData.put("twoFA", twoFA);
 
-        // Validamos que se lance la excepción esperada
-        assertThrows(ResponseStatusException.class, () -> {
-            adController.modificarAdministrador(administradorActualizado);
-        });
-    }
+	        assertDoesNotThrow(() -> ucontrol.desactivarTwoFA(updateData));
+	        verify(uservice, times(1)).desactivar2FA(email, secretKey, twoFA);
+	    }
 
-    @Test
-    public void testModificarAdministradorFormatoIncorrecto() {
-        Administrador administradorActualizado = new Administrador();
-        administradorActualizado.setEmail("admin_malformateado");
+	    // --------------------------
+	    // Pruebas de Modificar Administrador
+	    // --------------------------
 
-        // Simulamos que el servicio lanza excepción por email mal formado
-        when(adService.actualizarAdministrador(administradorActualizado.getEmail(), administradorActualizado))
-            .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email no tiene un formato válido"));
+	    @Test
+	    @WithMockUser(username = "admin", roles = {"ADMIN"})
+	    public void testModificarAdministradorExito() {
+	        Administrador admin = new Administrador();
+	        admin.setEmail("admin@example.com");
+	        admin.setNombre("Nuevo Nombre Admin");
 
-        // Validamos que se lance la excepción esperada
-        assertThrows(ResponseStatusException.class, () -> {
-            adController.modificarAdministrador(administradorActualizado);
-        });
-    }*/
+	        doNothing().when(adService).actualizarAdministrador(admin.getEmail(), admin);
 
-}
+	        assertDoesNotThrow(() -> adController.modificarAdministrador(admin));
+	    }
+
+	    @Test
+	    @WithMockUser(username = "admin", roles = {"ADMIN"})
+	    public void testModificarAdministradorNoExistente() {
+	        Administrador admin = new Administrador();
+	        admin.setEmail("inexistente_admin@example.com");
+
+	        doThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No existe el administrador seleccionado"))
+	                .when(adService).actualizarAdministrador(admin.getEmail(), admin);
+
+	        assertThrows(ResponseStatusException.class, () -> adController.modificarAdministrador(admin));
+	    }
+	}
