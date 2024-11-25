@@ -74,7 +74,8 @@ public class PasswordResetController {
         String mensaje = "<p>Hola,</p>"
                 + "<p>Hemos recibido una solicitud para restablecer tu contraseña. "
                 + "Para continuar con el proceso, haz clic en el enlace a continuación:</p>"
-                + "<a href=\"" + resetLink + "\">Restablecer contraseña</a>"
+                + "<a href=\"" + resetLink + "\">"+resetLink+"</a>"
+                + "<br><br><p>Ten en cuenta que este link tiene una validez de 24 horas</p>"
                 + "<p>Si no has solicitado este cambio, puedes ignorar este correo.</p>";
         emailService.enviarEmail(email, asunto, mensaje);
 
