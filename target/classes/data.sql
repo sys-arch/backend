@@ -1,4 +1,3 @@
-ALTER TABLE Reuniones ALTER COLUMN id RESTART WITH 100;
 INSERT INTO Usuarios (id, email, pwd, nombre, apellido1, apellido2, centro, twoFA, role) 
 VALUES ('c084162a-133f-4046-8866-fe5b8f43f6c9', 'juan.delgado@ejemplo.com', '066b38460608c7c7745116cfa7b000d14fccdf34cd639a73180c845bca796c2c1817ff694bec90bee6f8dbca8d0f5c07ae09a3abf7711e77993328e456b894bb', 'Juan', 'Delgado', 'Pérez', 'Hospital Central', true, 'ROLE_ADMIN');
 
@@ -86,8 +85,8 @@ INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('20
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-04-05', '2025-04-20', 'Vacaciones', '9f384d71-22ee-4b54-9467-5c2a4856b42f');
 INSERT INTO ausencias (fecha_inicio, fecha_fin, motivo, id_empleado) VALUES ('2024-11-15', '2024-11-19', 'Asuntos personales', '3a72b9f5-864c-40fe-821b-7d5ca1234567');
 
---INSERT INTO Turnos (id, hora_inicio, hora_final) 
---VALUES (1, '06:00:00', '14:00:00');
+INSERT INTO Turnos (id, hora_inicio, hora_final) 
+VALUES (1, '06:00:00', '14:00:00');
 --
 ---- Turno de tarde
 --INSERT INTO Turnos (id, hora_inicio, hora_final) 
@@ -105,7 +104,7 @@ VALUES
 ('4', '2024-11-28 15:00:00', '2024-11-28 16:30:00', '7d8e9f0a-1b2c-3d4e-5f6g-7h8i9j0k1l2', 'Sala D', 'Capacitación del equipo', 'CANCELADA', 'Formación Interna'),
 ('5', '2024-12-10 15:00:00', '2024-12-10 16:30:00', '7d8e9f0a-1b2c-3d4e-5f6g-7h8i9j0k1l2', 'Sala D', 'Capacitación del equipo', 'ABIERTA', 'Formación Interna'),
 ('6', '2024-12-18 15:00:00', '2024-12-18 16:30:00', '3a72b9f5-864c-40fe-821b-7d5ca1234567', 'Sala D', 'Capacitación del equipo', 'ABIERTA', 'Formación Interna'); -- organiza maria
-
+ALTER TABLE Reuniones ALTER COLUMN id RESTART WITH 100;
 
 INSERT INTO Asistente (id_reunion, id_usuario, estado, asiste)
 VALUES 

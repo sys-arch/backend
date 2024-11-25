@@ -4,6 +4,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -133,6 +134,24 @@ public class EmpleadoController {
 		
 		this.empleadoService.anadirAsistente(idReunion, email);
 	}
+	
+	////////////////////////////////////
+	//AÑADIR LISTA ASISTENTES
+	////////////////////////////////////
+	@PostMapping("/reunion/{idReunion}/asistentes")
+	public void anadirAsistentes(@PathVariable Long idReunion, @RequestBody List<String> emails) {
+	// Decodificar y validar cada email
+		List<String> decodedEmails = emails.stream()
+			.map(email -> URLDecoder.decode(email, StandardCharsets.UTF_8))
+			.collect(Collectors.toList());
+		
+		for (String email : decodedEmails) {
+			if (!emailService.validarEmail(email)) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: usuario@dominio.com. Error en: " + email);
+			}
+		}
+		this.empleadoService.anadirListaAsistentes(idReunion, decodedEmails);
+	}
 
 
 	////////////////////////////////////
@@ -170,6 +189,14 @@ public class EmpleadoController {
     public List<Empleado> posiblesAsistentes () {
     	return this.empleadoService.posiblesAsistentes();
     }
+    
+	////////////////////////////////////
+	// OBTENER LISTA DE ASISTENTES POR REUNIÓN
+	////////////////////////////////////
+	@GetMapping("reunion/{idReunion}/asistentes")
+	public List<Asistente> obtenerAsistentesPorReunion(@PathVariable Long idReunion) {
+		return this.empleadoService.obtenerAsistentesPorReunion(idReunion);
+	}
     
 	////////////////////////////////////
 	// OBTENER LISTA DE REUNIONES
