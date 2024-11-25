@@ -41,6 +41,18 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Desactivar CSRF para APIs REST
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No mantener estado
             .authorizeHttpRequests((requests) -> requests
+            		
+            		.requestMatchers(new AntPathRequestMatcher("/empleados/reunion/{idReunion}/asistente/{idUsuario}")).hasAnyRole("EMPLOYEE", "ADMIN")
+                    .requestMatchers(new AntPathRequestMatcher("/empleados/reunion/organizador")).hasAnyRole("EMPLOYEE", "ADMIN")
+                    .requestMatchers(new AntPathRequestMatcher("/empleados/reunion/asiste")).hasAnyRole("EMPLOYEE", "ADMIN")
+                    .requestMatchers(new AntPathRequestMatcher("/empleados/reunion/{id}/cancelar")).hasAnyRole("EMPLOYEE", "ADMIN")
+                    .requestMatchers(new AntPathRequestMatcher("/admins/modificarEmpleado")).hasAnyRole("EMPLOYEE", "ADMIN")
+                    .requestMatchers(new AntPathRequestMatcher("/empleados/")).hasRole("EMPLOYEE") // Solo accesible para empleados
+                    .requestMatchers(new AntPathRequestMatcher("/reunion/")).hasAnyRole("EMPLOYEE", "ADMIN")
+                    .requestMatchers(new AntPathRequestMatcher("/reset-password")).permitAll()
+                       
+            		
+            		
             	.requestMatchers(new AntPathRequestMatcher("/users/activar-2fa")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/users/verify-2fa")).permitAll()
             	.requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
