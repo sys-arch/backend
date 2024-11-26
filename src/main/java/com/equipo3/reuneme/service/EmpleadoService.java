@@ -230,6 +230,59 @@ public class EmpleadoService {
         asistente.setAsiste(false);
         asistenteRepository.save(asistente);
     }
+	/////////////////////////
+	//AÑADIR LISTA ASISTENTES
+	/////////////////////////
+    public void anadirListaAsistentes(Long idReunion, List<String> emails) {
+        Reunion reunion = this.reunionRepository.getReferenceById(idReunion);
+
+        if (Objects.isNull(reunion)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La reunión no existe!");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        for (String email : emails) {
+            Empleado emp = this.edao.findByEmail(email);
+
+            if (Objects.isNull(emp)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El empleado con email " + email + " no existe!");
+            }
+
+            AsistenteId asistenteId = new AsistenteId(idReunion, emp.getId());
+            if (asistenteRepository.existsById(asistenteId)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "El asistente con email " + email + " ya está registrado en esta reunión");
+            }
+
+            if (reunion.getOrganizador().getEmail().equals(email)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario con email " + email + " es el organizador de la reunión");
+            }
+
+            List<Ausencia> ausencias = this.audao.findAllByEmpleado(emp);
+            if (!Objects.isNull(ausencias)) {
+                List<Ausencia> ausenciasFiltradas = ausencias.stream()
+                        .filter(ausencia -> ausencia.getFechaFin().isAfter(now))
+                        .collect(Collectors.toList());
+
+                for (Ausencia ausencia : ausenciasFiltradas) {
+                    LocalDateTime ausenciaInicio = ausencia.getFechaInicio();
+                    LocalDateTime ausenciaFin = ausencia.getFechaFin();
+
+                    if (reunion.getInicio().isBefore(ausenciaFin) && ausenciaInicio.isBefore(reunion.getFin())) {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "El usuario con email " + email + " estará ausente en las fechas de la reunión");
+                    }
+                }
+            }
+
+            Asistente asistente = new Asistente();
+            asistente.setIdReunion(idReunion);
+            asistente.setIdUsuario(emp.getId());
+            asistente.setEstado(EstadoAsistente.PENDIENTE);
+            asistente.setAsiste(false);
+            asistenteRepository.save(asistente);
+        }
+    }
+    
 
 	/////////////////////////
 	//ELIMINAR ASISTENTE
