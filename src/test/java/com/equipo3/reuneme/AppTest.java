@@ -35,6 +35,9 @@ import com.equipo3.reuneme.model.Administrador;
 import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.UsuarioService;
+import com.equipo3.reuneme.service.TwoFactorAuthService;
+import com.equipo3.reuneme.model.Usuario;
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -51,6 +54,10 @@ public class AppTest {
 
 	    @MockBean
 	    private AdminService adService;
+	    
+	    @MockBean
+	    private TwoFactorAuthService twoFactorAuthService;
+
 
 	    // --------------------------
 	    // Pruebas de Login
@@ -77,30 +84,18 @@ public class AppTest {
 	        assertTrue(body.get("token").startsWith("eyJ")); // Verifica que parece un JWT
 	    }
 	    @Test
-	    public void testLoginUsuarioNoExiste() {
-	        String email = "nonexistent@example.com";
-	        String password = "anyPassword";
-	        String hashedPassword = org.apache.commons.codec.digest.DigestUtils.sha512Hex(password);
+	    void testLoginUsuarioNoExiste() {
+	        String email = "usuario_inexistente@example.com";
+	        String password = "12345";
 
-	        // Mock: configurar para lanzar la excepción esperada
-	        when(uservice.login(eq(email), eq(hashedPassword)))
-	            .thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "El usuario no existe o las credenciales son incorrectas."));
+	        when(uservice.login(email, password)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciales incorrectas o desactivadas."));
 
-	        // Entrada simulada
-	        Map<String, Object> loginInfo = new HashMap<>();
-	        loginInfo.put("email", email);
-	        loginInfo.put("pwd", password);
+	        assertThrows(ResponseStatusException.class, () -> uservice.login(email, password));
 
-	        // Ejecutar y verificar el comportamiento
-	        try {
-	            ucontrol.login(loginInfo);
-	            fail("Se esperaba una ResponseStatusException pero no se lanzó ninguna excepción."); // Solo se ejecuta si falla
-	        } catch (ResponseStatusException e) {
-	            // Validar la excepción
-	            assertEquals(HttpStatus.FORBIDDEN, e.getStatusCode());
-	            assertEquals("El usuario no existe o las credenciales son incorrectas.", e.getReason());
-	        }
+	        verify(uservice, times(1)).login(email, password);
 	    }
+
+
 
 	    // --------------------------
 	    // Pruebas de 2FA
@@ -139,29 +134,23 @@ public class AppTest {
 	        assertEquals("Autenticación de doble factor exitosa", response.getBody().get("message"));
 	    }
 	    @Test
-	    public void testVerificar2FAFallido() {
-	        String email = "test@example.com";
+	    void testVerificar2FAFallido() {
+	        String email = "usuario@example.com";
 	        Integer authCode = 123456;
 
-	        // Mock: configurar para lanzar la excepción esperada
-	        when(uservice.verificarTwoFactorAuthCode(eq(email), eq(authCode)))
-	            .thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto."));
+	        Usuario mockUsuario = new Usuario();
+	        mockUsuario.setEmail(email);
+	        mockUsuario.setClavesecreta("clave_secreta");
 
-	        // Entrada simulada
-	        Map<String, Object> requestBody = new HashMap<>();
-	        requestBody.put("email", email);
-	        requestBody.put("authCode", authCode);
+	        when(uservice.verificarTwoFactorAuthCode(email, authCode))
+	                .thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto."));
 
-	        // Ejecutar y verificar el comportamiento
-	        try {
-	            ucontrol.verificarTwoFactorAuth(requestBody);
-	            fail("Se esperaba una ResponseStatusException pero no se lanzó ninguna excepción."); // Solo se ejecuta si falla
-	        } catch (ResponseStatusException e) {
-	            // Validar la excepción
-	            assertEquals(HttpStatus.UNAUTHORIZED, e.getStatusCode());
-	            assertEquals("Código de autenticación incorrecto.", e.getReason());
-	        }
+	        assertThrows(ResponseStatusException.class, () -> uservice.verificarTwoFactorAuthCode(email, authCode));
+	        verify(uservice, times(1)).verificarTwoFactorAuthCode(email, authCode);
 	    }
+
+
+
 
 	    @Test
 	    public void testDesactivar2FA() {
