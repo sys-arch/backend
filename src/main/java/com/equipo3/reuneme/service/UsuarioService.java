@@ -2,8 +2,6 @@ package com.equipo3.reuneme.service;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,10 +10,11 @@ import org.springframework.web.server.ResponseStatusException;
 import com.equipo3.reuneme.dao.AdministradorDAO;
 import com.equipo3.reuneme.dao.EmpleadoDAO;
 import com.equipo3.reuneme.dao.UsuarioDAO;
-import com.equipo3.reuneme.model.Administrador;
 import com.equipo3.reuneme.model.Empleado;
-import com.equipo3.reuneme.model.Token;
 import com.equipo3.reuneme.model.Usuario;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 @Service
 public class UsuarioService {
@@ -27,45 +26,49 @@ public class UsuarioService {
 	protected AdministradorDAO admindao;
 	@Autowired
 	protected TokenService tokenService;
+	@Autowired
+	private TwoFactorAuthService twoFactorAuthService;
 	
 	/////////////////////////////////////
 	//LOGIN GENERAL - EMPLEADOS Y ADMINS
 	/////////////////////////////////////
-	public String login(String email, String pwd) {
-		
-		//¿Existe el usuario?
-		Usuario u = this.userdao.findByEmail(email);
-		if (Objects.isNull(u)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
-					"El usuario no existe o las credenciales son incorrectas.");
-		}
-		
-		//¿La contraseña es correcta?
-		if(!u.getPwd().equals(pwd)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Credenciales inválidas.");
-		}
-			
-		String pretoken;
-		String idToken  = UUID.randomUUID().toString();
-		Token token = new Token();
-		token.setId(idToken);
-		token.setEmail(u.getEmail());
-		token.setUsuario(u);
-		
-		
-		if (u instanceof Administrador) {
-			pretoken = "a-";
-			return pretoken + this.tokenService.generarToken(token);
-        } else {
-			pretoken = "e-";
-			Empleado e = this.empdao.findByEmail(email);
-			if(e.isBloqueado()) {
-				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario bloqueado");
-			}
-			return pretoken + this.tokenService.generarToken(token);
-        }
-		
+	public boolean login(String email, String pwd) {
+	    // Verificar si el usuario existe
+	    Usuario u = this.userdao.findByEmail(email);
+	    String errorMessage = "Credenciales incorrectas o desactivadas.";
+	    if (Objects.isNull(u)) {
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);
+	    }
+
+	    // Verificar si la contraseña es correcta
+	    if (!u.getPwd().equals(pwd)) {
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);
+	    }
+
+	    // Si el usuario es un Empleado, validar su estado
+	    if (u instanceof Empleado) {
+	        Empleado e = this.empdao.findByEmail(email);
+	        // Comprobar si el empleado está bloqueado o no verificado
+	        if (e.isBloqueado() || !e.isVerificado()) {
+	            throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);
+	        }
+	    }
+	    // Si todo está correcto, devolver true para permitir acceso a la pantalla de doble autenticación
+	    return true;
 	}
+
+	/////////////////////////////////////
+	//OBTENER ROL DEL USUARIO
+	/////////////////////////////////////
+	public String getRoleByEmail(String email) {
+        Usuario usuario = userdao.findByEmail(email);
+        if (usuario != null) {
+            return usuario.getRole(); 
+        }
+        return null;
+    }
+
+
 	
 	/////////////////////////////////////
 	//VER SI EL EMPLEADO ESTÁ BLOQUEADO
@@ -87,6 +90,7 @@ public class UsuarioService {
 	    
 //	    // Hashear la contraseña y guardar el nuevo usuario en la base de datos
 	    user.setPwd(org.apache.commons.codec.digest.DigestUtils.sha512Hex(user.getPwd()));
+	    user.setTwoFA(true);
 	    this.empdao.save(user);
 	}
 	
@@ -100,6 +104,84 @@ public class UsuarioService {
         }
         return usuario;
     }
+	
+	
+	/////////////////////////////////////
+	//GUARDA LA CLAVE SECRETA DE USUARIO POR PRIMERA VEZ
+	/////////////////////////////////////
+	public String activar2FA(String email) {
+	    Usuario usuario = this.userdao.findByEmail(email);
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+	    String secretKey = twoFactorAuthService.generateSecretKey();
+	    usuario.setClavesecreta(secretKey);
+	    usuario.setTwoFA(true);
+	    userdao.save(usuario); 
+
+	    return secretKey; 
+	}
+	
+	/////////////////////////////////////
+	//VERIFICA CODIGO DE GOOGLE AUTHENTICATOR
+	/////////////////////////////////////
+	public boolean verificarTwoFactorAuthCode(String email, Integer authCode) {
+	    Usuario usuario = this.userdao.findByEmail(email);
+	    
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+	    if (authCode == null) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de autenticación de dos factores requerido.");
+	    }
+	    
+	    // Validar el código de 2FA usando el servicio de 2FA
+	    if (twoFactorAuthService.verifyCode(usuario.getClavesecreta(), authCode)) {
+	        // Autenticación 2FA exitosa, retorno verdadero para indicar éxito
+	        return true;
+	    } else {
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código de autenticación incorrecto.");
+	    }
+	}
+	
+	/////////////////////////////////////
+	//USUARIO CON 2FA EMPAREJADO
+	/////////////////////////////////////
+	public void desactivar2FA(String email, String clavesecreta, boolean twoFA) {
+	    // Obtener el usuario autenticado (a través del token)
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    if (authentication == null || !authentication.isAuthenticated()) {
+	        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado. Token no válido.");
+	    }
+
+	    Usuario usuario = this.userdao.findByEmail(email);
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+
+	    // Actualizar la clave secreta y el estado de 2FA
+	    usuario.setClavesecreta(clavesecreta);
+	    usuario.setTwoFA(twoFA);
+	    userdao.save(usuario); // Guarda los cambios en la base de datos
+	}
+
+	
+	public void updatePassword(String email, String newPassword) {
+	    // Buscar el usuario por email
+	    Usuario usuario = userdao.findByEmail(email);
+	    if (usuario == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+	    }
+
+	    // Cifrar la nueva contraseña usando SHA-512
+	    String hashedPassword = org.apache.commons.codec.digest.DigestUtils.sha512Hex(newPassword);
+
+	    // Actualizar la contraseña y guardar el usuario
+	    usuario.setPwd(hashedPassword); // Asumiendo que `setPwd` actualiza la contraseña
+	    userdao.save(usuario);
+	}
 
 
+
+	
 }

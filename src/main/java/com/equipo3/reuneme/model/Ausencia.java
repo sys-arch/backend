@@ -1,6 +1,6 @@
 package com.equipo3.reuneme.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,8 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "ausencias")
@@ -22,45 +20,45 @@ public class Ausencia {
     private Long id;
 
     @Column(name = "fecha_inicio")
-    @Temporal(TemporalType.DATE)
-    private Date fechaInicio;
+    private LocalDateTime fechaInicio;
 
     @Column(name = "fecha_fin")
-    @Temporal(TemporalType.DATE)
-    private Date fechaFin;  
+    private LocalDateTime fechaFin;  
 
     @Column(nullable = false)
     private String motivo;
     
     @ManyToOne
-    @JoinColumn(name = "fk_usuario", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "id_empleado", nullable = false)
+    private Empleado empleado;
 
-    public Ausencia(Date fechaInicio, Date fechaFin, String motivo, Usuario usuario ) {
+    public Ausencia(LocalDateTime fechaInicio, LocalDateTime fechaFin, String motivo, Empleado empleado ) {
         // Validamos las fechas al crear la instancia
         validarFechas(fechaInicio, fechaFin);
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.motivo = motivo;
-        this.usuario = usuario;
+        this.empleado = empleado;
     }
+    
+    public Ausencia() {}
 
     // Getters y setters
-    public Date getFechaInicio() {
+    public LocalDateTime getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
+    public void setFechaInicio(LocalDateTime fechaInicio) {
         // Validamos la fecha al modificarla
         validarFechas(fechaInicio, fechaFin);
         this.fechaInicio = fechaInicio;
     }
 
-    public Date getFechaFin() {
+    public LocalDateTime getFechaFin() {
         return fechaFin;
     }
 
-    public void setFechaFin(Date fechaFin) {
+    public void setFechaFin(LocalDateTime fechaFin) {
         // Validamos la fecha al modificarla
         validarFechas(fechaInicio, fechaFin);
         this.fechaFin = fechaFin;
@@ -82,22 +80,21 @@ public class Ausencia {
 		this.id = id;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
+	public Empleado getEmpleado() {
+		return this.empleado;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setEmpleado(Empleado empleado) {
+		this.empleado = empleado;
 	}
-
 
     // Método privado para validar las fechas
-    private void validarFechas(Date fechaInicio, Date fechaFin) {
-        Date fechaActual = new Date();
-        if (fechaInicio.before(fechaActual)) {
+    private void validarFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+    	LocalDateTime fechaActual = LocalDateTime.now();
+        if (fechaInicio.isBefore(fechaActual)) {
             throw new IllegalArgumentException("La fecha de inicio no puede ser anterior a la fecha actual.");
         }
-        if (fechaFin.before(fechaInicio) || fechaFin.before(fechaActual)) {
+        if (fechaFin.isBefore(fechaInicio) || fechaFin.isBefore(fechaActual)) {
             throw new IllegalArgumentException("La fecha de fin debe ser igual o posterior a la fecha de inicio y a la fecha actual.");
         }
     }

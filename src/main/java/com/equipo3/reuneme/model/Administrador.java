@@ -9,14 +9,18 @@ import jakarta.persistence.Table;
 public class Administrador extends Usuario {
 	
 	@Column(nullable = false)
-	private boolean interno;
+	private Boolean interno;
 
-	public boolean isInterno() {
+	public Boolean isInterno() {
 		return this.interno;
 	}
 
 	public void setInterno(boolean interno) {
 		this.interno = interno;
 	}
+	public Administrador() {
+	    this.setRole("ROLE_ADMIN");
+	}
+
 
 }

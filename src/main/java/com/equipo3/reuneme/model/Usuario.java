@@ -39,10 +39,43 @@ public class Usuario {
 	@Column(length = 100)
 	private String centro;
 	
+	@Column(length = 100)
+	private String clavesecreta;
+	
+	@Column(nullable = false)
+	private Boolean twoFA;
+	
+	@Column(length = 20, nullable = false)
+	private String role;
+
+	public String getRole() {
+	    return role;
+	}
+
+	public void setRole(String role) {
+	    this.role = role;
+	}
+
     public Usuario() {
         this.id = UUID.randomUUID().toString();
     }
 
+    public String getClavesecreta() {
+    	return clavesecreta;
+    }
+    
+    public void setClavesecreta(String clavesecreta) {
+    	this.clavesecreta = clavesecreta;
+    }
+    
+    public Boolean getTwoFA() {
+    	return twoFA;
+    }
+    
+    public void setTwoFA(boolean TwoFA) {
+    	this.twoFA = TwoFA;
+    }
+    
 	public String getId() {
 		return this.id;
 	}

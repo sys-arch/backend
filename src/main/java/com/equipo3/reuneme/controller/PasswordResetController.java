@@ -1,13 +1,15 @@
 package com.equipo3.reuneme.controller;
 
+import com.equipo3.reuneme.service.AdminService;
 import com.equipo3.reuneme.service.EmailService;
-import com.equipo3.reuneme.model.PasswordResetToken;
+import com.equipo3.reuneme.model.Empleado;
 import com.equipo3.reuneme.model.Usuario;
-import com.equipo3.reuneme.service.PasswordResetTokenService;
 import com.equipo3.reuneme.service.PasswordService;
+import com.equipo3.reuneme.service.TokenService;
 import com.equipo3.reuneme.service.UsuarioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +18,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/pwd")
-@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST})
 public class PasswordResetController {
 
     @Autowired
-    private PasswordResetTokenService tokenService;
+    private TokenService tokenService; // Usa TokenService en lugar de PasswordResetTokenService
 
     @Autowired
     private UsuarioService uservice;
@@ -33,32 +33,43 @@ public class PasswordResetController {
     private EmailService emailService;
     
     @Autowired
+    private AdminService aservice;
+    
+    @Autowired
     private PasswordService passwordService;
+    
+    @Value("${APP_URL}")
+    private String appUrl;
 
     // Endpoint para solicitar el token de recuperación de contraseña
     @PostMapping("/forgot")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
-   	
-    	//Verificar el email correctamente
-        // Comprobamos que el email tiene un formato válido
+        email = email.toLowerCase();
+
+        // Validar el formato del email
         if (!emailService.validarEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: "
-            		+ "usuario@dominio.com");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El email insertado no tiene un formato válido: usuario@dominio.com");
         }
-    	
+
         // Verificar que el usuario con ese email existe
-        
         Usuario u = uservice.findByEmail(email);
         if (Objects.isNull(u)) {
-            return ResponseEntity.badRequest().body("Empleado no existe");
-
+            return ResponseEntity.badRequest().body("El usuario que buscas no existe");
         }
 
-        // Generar el token de recuperación
-        String token = tokenService.createPasswordResetToken(email);
-        String dominio = System.getenv("APP_URL");
-        String resetLink = dominio + "/reset-password?token=" + token;
-        
+        // Verificar si el usuario es un empleado bloqueado
+        if (u instanceof Empleado) {
+            Empleado e = aservice.getEmpleado(email);
+            if (e.isBloqueado()) {
+                return ResponseEntity.status(403).body("El usuario que buscas no existe");
+            }
+        }
+
+        // Generar el token de recuperación (usando TokenService)
+        String token = tokenService.generarToken(email, "RESET_PASSWORD");
+        String resetLink = appUrl + "/reset-contrasena?token=" + token;
+
+        // Enviar email con el enlace de recuperación
         String asunto = "Recuperación de contraseña de tu cuenta ReuneMe";
         String mensaje = "<p>Hola,</p>"
                 + "<p>Hemos recibido una solicitud para restablecer tu contraseña. "
@@ -67,34 +78,29 @@ public class PasswordResetController {
                 + "<p>Si no has solicitado este cambio, puedes ignorar este correo.</p>";
         emailService.enviarEmail(email, asunto, mensaje);
 
-        return ResponseEntity.ok("Se ha enviado un enlace para recuperar la contraseña a tu email. Token: "+token);
-
+        return ResponseEntity.ok("Se ha enviado un enlace para recuperar la contraseña a tu email. Token: " + token);
     }
 
     // Endpoint para validar el token cuando el usuario hace clic en el enlace de recuperación
     @GetMapping("/reset")
-
     public ResponseEntity<Map<String, String>> validateResetToken(@RequestParam String token) {
-        Optional<PasswordResetToken> resetToken = tokenService.validatePasswordResetToken(token);
+        System.out.println("Solicitud recibida para validar token: " + token);
+        try {
+            tokenService.validarToken(token);
+            String email = tokenService.obtenerEmail(token);
 
-        if (resetToken.isPresent()) {
-            // Obtener el email asociado al token
-            String email = resetToken.get().getEmail();
-            
-            // Devolver un mapa con la validación del token y el email
             Map<String, String> response = new HashMap<>();
             response.put("message", "Token válido.");
             response.put("email", email);
-            
             return ResponseEntity.ok(response);
-        } else {
-            // Si el token no es válido o ha caducado
+        } catch (ResponseStatusException e) {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Token inválido o ha caducado.");
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.status(e.getStatusCode()).body(response);
         }
     }
-   
+
+
     @PostMapping("/reset")
     public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
         String token = request.get("token");
@@ -110,11 +116,20 @@ public class PasswordResetController {
         }
 
         try {
-            tokenService.resetPassword(token, newPassword); // Restablece la contraseña si es válida
+            // Validar el token
+            tokenService.validarToken(token);
+
+            // Obtener el email asociado al token
+            String email = tokenService.obtenerEmail(token);
+
+            // Restablecer la contraseña
+            uservice.updatePassword(email, newPassword);
+
             return ResponseEntity.ok("¡Contraseña restablecida con éxito!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
 }
+
 
